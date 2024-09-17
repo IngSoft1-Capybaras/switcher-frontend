@@ -8,13 +8,13 @@ Para eso ir a la seccion:
 * Hecho lo anterior hacemos lo siguiente:
 * Clonar el repositorio del proyecto 
 
-        git clone https://github.com/IngSoft1-Capybaras/switcher-frontend.git
+        $ git clone https://github.com/IngSoft1-Capybaras/switcher-frontend.git
 
 * Nos Posicionamos en el directorio y ejecutar los dos comandos siguientes
         
         $ cd switcher
         $ npm install
-        $ nom run dev
+        $ npm run dev
 * Por ultimo copiamos la URL que nos sale en la consola y lo pegamos en un navagedor.
 
 ## Instalar o Verificar Node.js usando nvm (Node Version Manager)

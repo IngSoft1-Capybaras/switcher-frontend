@@ -1,6 +1,6 @@
 import { Slider } from '@mui/material';
 import { useState } from 'react';
-import { z } from "zod"
+import { z } from "zod";
 
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
@@ -10,13 +10,14 @@ const MIN_PLAYERS = 2;
 const formSchema = z.object({
     name: z.string().min(1, "El nombre de la partida es obligatorio"),
     password: z.string()
-    .optional()
-    .min(8,"La contraseña debe tener 8 caracteres mínimo")
-    .max(16,"La contraseña debe tener 16 caracteres máximo")
-})
+      .optional()
+      .refine(val => val === undefined || (val.length >= 8 && val.length <= 16), {
+        message: "La contraseña debe tener entre 8 y 16 caracteres.",
+      }),
+  });
 
 
-function FormSlider() {
+export function FormSlider() {
     const [SliderValue, setSliderValue] = useState([MIN_PLAYERS,MAX_PLAYERS]);
     
     const handleSliderChange = (event, newValue) => {
@@ -32,6 +33,7 @@ function FormSlider() {
         valueLabelDisplay='auto'
         min={MIN_PLAYERS}
         max={MAX_PLAYERS}
+        sx={{ width: 150 }}
         />   
     )
 }

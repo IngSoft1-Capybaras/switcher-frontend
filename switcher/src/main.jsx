@@ -15,9 +15,11 @@ const Main = () => (
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
           {/* <Route path="/games" element={<Games />} /> */}
-          {/* <Route path="/games/:gameId" element={<ActiveGame />} /> */}
+          {/* <Route path="/games/create" element={<CreateGame />} /> */}
+          {/* <Route path="/games/lobby/:gameId" element={<Lobby />} /> */}
+          {/* <Route path="/games/ongoing/:gameId" element={<ActiveGame />} /> */}
+          {/* <Route path="/winner" element={<Winner />} /> */}
         </Routes>
       </Suspense>
     </Router>

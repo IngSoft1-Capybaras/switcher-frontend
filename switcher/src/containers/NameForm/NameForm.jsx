@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom"
 
 const FormSchema = z.object({
   username: z.string().min(3, {
@@ -25,6 +26,10 @@ const FormSchema = z.object({
 })
 
 export default function InputForm() {
+  const navigate = useNavigate();
+
+
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -41,6 +46,8 @@ export default function InputForm() {
         </pre>
       ),
     })
+    // redirigir
+    navigate('/games');
   }
 
   return (
@@ -51,9 +58,9 @@ export default function InputForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Ingrese su nombre de usuario</FormLabel>
+              <FormLabel className="text-white">Ingrese su nombre de usuario</FormLabel>
               <FormControl>
-                <Input placeholder="Nombre de usuario" {...field} />
+                <Input className="" placeholder="Nombre de usuario" {...field} />
               </FormControl>
               <FormDescription>
                 Este nombre sera visible para el resto de jugadores.
@@ -62,7 +69,7 @@ export default function InputForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Ingresar</Button>
       </form>
     </Form>
   )

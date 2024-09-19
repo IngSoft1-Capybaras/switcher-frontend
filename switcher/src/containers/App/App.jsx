@@ -1,10 +1,10 @@
-import { FormSlider } from '../../components/form/form.jsx'
+import { CreateGame } from '../../components/form/form.jsx'
 import './App.css'
 
 function App() {
   return (
     <div>
-      <FormSlider/>
+      <CreateGame/>
     </div>
   );
 }

@@ -44,6 +44,7 @@ export function CreateGameForm() {
 
   const onSubmit = (data) => {
     console.log('Datos del formulario: ', data);
+    form.reset()
   };
 
   return (

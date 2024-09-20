@@ -17,18 +17,18 @@ import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
 
 const FormSchema = z.object({
-  username: z.string().min(3, {
-    message: "El nombre de usuario debe tener al menos 3 caracteres.",
-  }),
-  username: z.string().max(15, {
-    message: "El nombre de usuario debe tener como maximo 15 caracteres.",
-  }),
+  username: z
+    .string()
+    .min(3, {
+      message: "El nombre de usuario debe tener al menos 3 caracteres.",
+    })
+    .max(15, {
+      message: "El nombre de usuario debe tener como máximo 15 caracteres.",
+    }),
 })
 
 export default function InputForm() {
   const navigate = useNavigate();
-
-
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -53,22 +53,24 @@ export default function InputForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Ingrese su nombre de usuario</FormLabel>
-              <FormControl>
-                <Input className="" placeholder="Nombre de usuario" {...field} />
-              </FormControl>
-              <FormDescription>
-                Este nombre sera visible para el resto de jugadores.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-4"> {/* Add space between form items */}
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Ingrese su nombre de usuario</FormLabel>
+                <FormControl>
+                  <Input className="" placeholder="Nombre de usuario" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Este nombre será visible para el resto de jugadores.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <Button type="submit">Ingresar</Button>
       </form>
     </Form>

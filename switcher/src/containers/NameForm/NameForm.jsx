@@ -1,0 +1,78 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import { toast } from "@/components/hooks/use-toast"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom"
+
+const FormSchema = z.object({
+  username: z
+    .string()
+    .min(3, {
+      message: "El nombre de usuario debe tener al menos 3 caracteres.",
+    })
+    .max(15, {
+      message: "El nombre de usuario debe tener como máximo 15 caracteres.",
+    }),
+})
+
+export default function InputForm() {
+  const navigate = useNavigate();
+
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+    },
+  })
+
+  function onSubmit(data) {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    })
+    // redirigir
+    navigate('/games');
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-10">
+        <div className="space-y-10"> {/* Add space between form items */}
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="space-y-5">
+                <FormLabel className="text-white text-3xl">Ingrese su nombre de usuario</FormLabel>
+                <FormControl>
+                  <Input className="text-lg w-2/3" placeholder="Nombre de usuario" {...field} />
+                </FormControl>
+                <FormDescription className="text-base">
+                  Este nombre será visible para el resto de jugadores.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <Button className="bg-green-500 text-xl" type="submit">Ingresar</Button>
+      </form>
+    </Form>
+  )
+}

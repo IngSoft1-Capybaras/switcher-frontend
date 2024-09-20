@@ -5,7 +5,7 @@ import './index.css';
 import { GameProvider } from './contexts/GameContext';
 
 const Home = lazy(() => import('./pages/Home'));
-// const Games = lazy(() => import('./Games'));
+const Games = lazy(() => import('./pages/Games'));
 
 const Loader = () => <div>Loading...</div>;
 
@@ -15,7 +15,7 @@ const Main = () => (
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/games" element={<Games />} /> */}
+          <Route path="/games" element={<Games />} />
           {/* <Route path="/games/create" element={<CreateGame />} /> */}
           {/* <Route path="/games/lobby/:gameId" element={<Lobby />} /> */}
           {/* <Route path="/games/ongoing/:gameId" element={<ActiveGame />} /> */}

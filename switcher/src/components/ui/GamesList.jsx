@@ -1,72 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const mockGames = {
-    games: [
-      {
-        id: 1,
-        name: 'Game 1',
-        description: 'Description for Game 1',
-        currentPlayers: 3,
-        maxPlayers: 5,
-        isPrivate: false
-      },
-      {
-        id: 2,
-        name: 'Game 2',
-        description: 'Description for Game 2',
-        currentPlayers: 2,
-        maxPlayers: 4,
-        isPrivate: true
-      }
-    ],
-    totalPages: 3
-  };
-  
 
-export default function GamesList() {
-    const [games, setGames] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [loading, setLoading] = useState(true);
+export default function GamesList({games, currentPage, setCurrentPage, totalPages, loading}) {
     const navigate = useNavigate();
-    const socketRef = useRef(null);
-
-    const fetchGames = async (page) => {
-        setLoading(true);
-        try {
-
-        // TODO: conectar con back (hacer fetch al endpoint y utilizar listado real)
-        setGames(mockGames.games);
-        setTotalPages(mockGames.totalPages);
-        } catch (error) {
-        console.error('Error setting mock games:', error);
-        } finally {
-        setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchGames(currentPage);
-    }, [currentPage]);
-
-    useEffect(() => {
-        socketRef.current = new WebSocket('ws://localhost:3000/games'); // Adjust URL as necessary
-
-        socketRef.current.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'update') {
-            fetchGames(currentPage);
-        }
-        };
-
-        return () => {
-        if (socketRef.current) {
-            socketRef.current.close();
-        }
-        };
-    }, [currentPage]);
-
+    
     const handleGameSelect = (gameId) => {
         navigate(`/games/${gameId}`);
     };
@@ -85,8 +22,8 @@ export default function GamesList() {
             </button>
 
             {loading ? (
-            <div className="text-center">Loading games...</div>
-            ) : (
+            <div className="text-center"> No hay partidas en creadas aun.</div>
+            ) : ( (games.length()===0) ? <div className="text-center"> No hay partidas en creadas aun.</div> : 
             <div>
                 <ul className="flex flex-col gap-4 bg-zinc-900 ">
                 {games.map((game) => (

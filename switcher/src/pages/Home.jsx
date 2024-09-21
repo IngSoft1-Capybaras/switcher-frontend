@@ -1,5 +1,5 @@
 import React from 'react';
-import NameForm from '../containers/NameForm/NameForm';
+import NameForm from '../components/ui/NameForm';
 
 const Home = () => {
   return (

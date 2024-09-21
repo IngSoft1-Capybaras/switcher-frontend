@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
-import NameForm from '../containers/NameForm/NameForm';
+import NameForm from '../components/ui/NameForm';
 import { toast } from "@/components/hooks/use-toast"
 import "@testing-library/jest-dom"
 

@@ -22,8 +22,8 @@ export default function GamesList({games, currentPage, setCurrentPage, totalPage
             </button>
 
             {loading ? (
-            <div className="text-center"> No hay partidas en creadas aun.</div>
-            ) : ( (games.length()===0) ? <div className="text-center"> No hay partidas en creadas aun.</div> : 
+            <div className="text-center"> Loading...</div>
+            ) : ( (games.length===0) ? <div className="text-center"> No hay partidas en creadas aun.</div> : 
             <div>
                 <ul className="flex flex-col gap-4 bg-zinc-900 ">
                 {games.map((game) => (

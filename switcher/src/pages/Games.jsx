@@ -9,17 +9,16 @@ const Games = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
-
-  const fetchGames = useCallback(async (page) => {
-    setLoading(true);
-    //Mock API or WebSocket response
-    const gamesRes = await getGames();
-    if (gamesRes) {
-      setGames(gamesRes.games);
-      setTotalPages(gamesRes.totalPages);
+  const fetchGames = async () => {
+    try {
+      const data = await getGames(); // Call the function from service.js
+      setGames(data); // Update the games state with fetched data
+    } catch (error) {
+      console.error("Couldn't fetch games")
+    } finally {
+      setLoading(false); // Set loading to false after the fetch completes
     }
-    setLoading(false);
-});
+  };
 
   // games socket connection
   useGameSocket(fetchGames);

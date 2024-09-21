@@ -1,10 +1,9 @@
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
-import { Button } from "./button";
+import React from "react";
 import Slider from '@mui/material/Slider';
-
+import { Button } from "./button";
 
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
@@ -13,7 +12,7 @@ const formSchema = z.object({
   name: z.string().min(1, "El nombre de la partida es obligatorio"),
   password: z.string()
     .optional()
-    .refine(val => val === undefined || val =='' || (val.length >= 8 && val.length <= 16), {
+    .refine(val => val === undefined || val === '' || (val.length >= 8 && val.length <= 16), {
       message: "La contraseña debe tener entre 8 y 16 caracteres.",
     }),
   playersRange: z.array(z.number()).length(2).refine(([min, max]) => min >= MIN_PLAYERS && max <= MAX_PLAYERS, {
@@ -26,15 +25,23 @@ function FormSlider({ value, onChange }) {
     <Slider
       data-testid="players-slider"
       value={value}
-      //onChange={(event, newValue) => onChange(newValue)}
-      onChange={(event, newValue) => {
-        console.log("Nuevo valor del slider:", newValue); 
-        onChange(newValue);
-      }}
+      onChange={(event, newValue) => onChange(newValue)}
       valueLabelDisplay='auto'
       min={MIN_PLAYERS}
       max={MAX_PLAYERS}
-      sx={{ width: 150 }}
+      sx={{
+        width: 200,
+        color: '#3b82f6', // Tailwind blue-500 color
+        '& .MuiSlider-thumb': {
+          backgroundColor: '#2563eb', // Tailwind blue-600 color
+        },
+        '& .MuiSlider-track': {
+          backgroundColor: '#3b82f6', // Tailwind blue-500 color
+        },
+        '& .MuiSlider-rail': {
+          backgroundColor: '#93c5fd', // Tailwind blue-300 color
+        },
+      }}
     />
   );
 }
@@ -45,32 +52,34 @@ export default function CreateGameForm() {
     defaultValues: {
       name: '',
       password: '',
-      playersRange: [MIN_PLAYERS, MAX_PLAYERS],  // valor inicial del slider
+      playersRange: [MIN_PLAYERS, MAX_PLAYERS],
     },
   });
 
   const onSubmit = (data) => {
     console.log('Datos del formulario: ', data);
-    form.reset()
+    form.reset();
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-900 text-white">
-      <form data-testid='formComponent' onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-slate-400 p-6 rounded shadow-md">
-        <div>
-          <label>Nombre de la partida</label>
-          <br />
-          <input 
-            placeholder="Ingrese el nombre de la partida" 
-            {...form.register('name')} 
-            className="p-2 rounded bg-white text-black"
-          />
-          {form.formState.errors.name && <p className="text-red-500">{form.formState.errors.name.message}</p>}
-        </div>
+    <form 
+      data-testid="formComponent" 
+      onSubmit={form.handleSubmit(onSubmit)} 
+      className="space-y-8 bg-zinc-700 p-6 rounded-lg shadow-lg"
+    >
+      <div className="mb-4"> {/* Added vertical spacing */}
+        <label className="block text-lg mb-2">Nombre de la partida</label>
+        <input 
+          placeholder="Ingrese el nombre de la partida" 
+          {...form.register('name')} 
+          className="p-2 w-full rounded bg-white text-black"
+        />
+        {form.formState.errors.name && <p className="text-red-500">{form.formState.errors.name.message}</p>}
+      </div>
 
-        <div>
-          <label>Rango de jugadores</label>
-          <br />
+      <div className="mb-4"> {/* Added vertical spacing */}
+        <label className="block text-lg mb-2">Rango de jugadores</label>
+        <div className="flex justify-center">
           <Controller
             name="playersRange"
             control={form.control}
@@ -78,22 +87,24 @@ export default function CreateGameForm() {
               <FormSlider value={field.value} onChange={field.onChange} />
             )}
           />
-          {form.formState.errors.playersRange && <p className="text-red-500">{form.formState.errors.playersRange.message}</p>}
         </div>
+        {form.formState.errors.playersRange && <p className="text-red-500 text-center">{form.formState.errors.playersRange.message}</p>}
+      </div>
 
-        <div>
-          <label>Contraseña</label>
-          <br />
-          <input 
-            placeholder="Ingrese una contraseña (opcional)" 
-            {...form.register('password')} 
-            className="p-2 rounded bg-white text-black"
-          />
-          {form.formState.errors.password && <p className="text-red-500">{form.formState.errors.password.message}</p>}
-        </div>
+      <div className="mb-4"> {/* Added vertical spacing */}
+        <label className="block text-lg mb-2">Contraseña (opcional)</label>
+        <input 
+          placeholder="Ingrese una contraseña (opcional)" 
+          {...form.register('password')} 
+          className="p-2 w-full rounded bg-white text-black"
+        />
+        {form.formState.errors.password && <p className="text-red-500">{form.formState.errors.password.message}</p>}
+      </div>
 
-        <Button type='submit' className="bg-white text-black">Crear</Button>
-      </form>
-    </div>
+      {/* Centered button */}
+      <div className="flex justify-center">
+        <Button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded w-1/3">Crear</Button>
+      </div>
+    </form>
   );
 }

@@ -7,7 +7,8 @@ import { SocketProvider } from './context/SocketContext';
 
 const Home = lazy(() => import('./pages/Home'));
 const Games = lazy(() => import('./pages/Games'));
-const CreateGame = lazy(() => import('./components/ui/CreateGameForm'));
+const CreateGame = lazy(() => import('./pages/CreateGame'));
+
 
 
 const Loader = () => <div>Loading...</div>;

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import Slider from '@mui/material/Slider';
-import { ChevronsUp } from "lucide-react";
 
 
 const MAX_PLAYERS = 4;
@@ -57,7 +56,7 @@ export default function CreateGameForm() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-900 text-white">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-slate-400 p-6 rounded shadow-md">
+      <form data-testid='formComponent' onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-slate-400 p-6 rounded shadow-md">
         <div>
           <label>Nombre de la partida</label>
           <br />

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import CreateGameForm from '../components/form/CreateGameForm'; 
+import CreateGameForm from '../components/ui/CreateGameForm'; 
 import { expect, it, describe } from 'vitest';
 
 describe('Create Game Form', () => { 

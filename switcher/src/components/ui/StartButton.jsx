@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'shadcn';
+import {Button} from './button';
 
 async function onStart(gameId) {
   try {

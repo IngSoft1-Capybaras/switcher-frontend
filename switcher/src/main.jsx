@@ -8,6 +8,7 @@ import { SocketProvider } from './context/SocketContext';
 const Home = lazy(() => import('./pages/Home'));
 const Games = lazy(() => import('./pages/Games'));
 const CreateGame = lazy(() => import('./pages/CreateGame'));
+const Lobby = lazy(() => import('./pages/Lobby'));
 
 
 

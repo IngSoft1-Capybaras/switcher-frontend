@@ -1,6 +1,6 @@
 import React from "react";
 
-const Board = ({ boxes }) => {
+const GameBoard = ({ boxes }) => {
 
   const getColorClass = (color) => {
     switch (color) {
@@ -18,14 +18,14 @@ const Board = ({ boxes }) => {
   };
 
   return (
-    <div className="grid grid-cols-6 grid-rows-6 gap-2 w-96 h-96">
+    <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
       {boxes.length > 0 &&
         boxes.map((row, rowIndex) => (
           row.map((box, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
               data-testid={`box-${box.posX}-${box.posY}`}
-              className={`w-full h-full ${getColorClass(box.color)}`}
+              className={`rounded w-full h-full ${getColorClass(box.color)}`}
               style={{ gridColumn: box.posX + 1, gridRow: box.posY + 1 }}
             >
             </div>
@@ -36,4 +36,4 @@ const Board = ({ boxes }) => {
   );
 };
 
-export default Board;
+export default GameBoard;

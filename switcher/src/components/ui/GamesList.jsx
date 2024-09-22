@@ -8,24 +8,13 @@ export default function GamesList({games, currentPage, setCurrentPage, totalPage
         navigate(`/games/${gameId}`);
     };
 
-    const handleCreateGame = () => {
-        navigate('/games/create');
-    };
-
     return(
         <>
-            <button
-            onClick={handleCreateGame}
-            className="bg-yellow-500 text-white py-2 px-4 rounded mb-6"
-            >
-            Crear partida
-            </button>
-
             {loading ? (
             <div className="text-center"> Loading...</div>
-            ) : ( (games.length===0) ? <div className="text-center"> No hay partidas en creadas aun.</div> : 
+            ) : ( (games.length===0) ? <div className="h-1/2 text-center justify-center flex flex-col gap-4 bg-zinc-950"> No hay partidas en creadas aun.</div> : 
             <div>
-                <ul className="flex flex-col gap-4 bg-zinc-900 ">
+                <ul className="flex flex-col gap-4 bg-zinc-950 ">
                 {games.map((game) => (
                     <li
                     key={game.id}
@@ -62,7 +51,10 @@ export default function GamesList({games, currentPage, setCurrentPage, totalPage
                 ))}
                 </ul>
 
-                <div className="flex justify-between items-center mt-6">
+                
+            </div>
+            )}
+            <div className="flex justify-between items-center mt-6">
                 <button
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -81,8 +73,6 @@ export default function GamesList({games, currentPage, setCurrentPage, totalPage
                     Siguiente
                 </button>
                 </div>
-            </div>
-            )}
         </>
     );
 }

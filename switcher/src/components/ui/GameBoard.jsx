@@ -24,6 +24,7 @@ const Board = ({ boxes }) => {
           row.map((box, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
+              data-testid={`box-${box.posX}-${box.posY}`}
               className={`w-full h-full ${getColorClass(box.color)}`}
               style={{ gridColumn: box.posX + 1, gridRow: box.posY + 1 }}
             >

@@ -1,10 +1,11 @@
-import React from 'react';
-import PlayersList from '../components/PlayersList';
+import React, { useState } from 'react';
+import PlayersList from '../components/ui/PlayersList';
 import { useParams } from 'react-router-dom';
-import StartButton from '../components/StartButton';
+import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
-    const { gameId } = useParams();
+    // const { gameId } = useParams();
+    const gameId = '123';
     const [minPlayers, setMinPlayers] = useState(0);
     const [players, setPlayers] = useState([]);
 
@@ -13,12 +14,18 @@ export default function Lobby() {
         setMinPlayers(gameInfo.minPlayers);
     };
 
+    
+    console.log('players:', players);
+    console.log('minPlayers:', minPlayers);
     return (
         <div>
             <h1>Lobby</h1>
             <PlayersList gameId={gameId} onUpdate={updatePlayersInfo} />
-            {players.length >= minPlayers && <StartButton gameId={gameId} />}
+            {players.length >= minPlayers && (
+                <StartButton gameId={gameId} />
+            )}
         </div>
     );
 }
+
 

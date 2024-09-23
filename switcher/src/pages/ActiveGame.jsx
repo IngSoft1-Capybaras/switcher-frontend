@@ -1,29 +1,20 @@
 import React from 'react';
+import { useGameContext } from '@/context/GameContext';
 import CardsFigure from '../components/ui/cardsFigure';
 import CardsMoviment from '../components/ui/cardsMoviment';
 import Board from '../components/ui/board';
 import PlayerPanel from '@/components/ui/playerPanel';
-import dorso from '../assets/images/dorso.jpeg';
 
 const ActiveGame = () => {
-  const players2 = [{ name: "Jugador 2", cartas: [{ image: dorso, isBlocked: false }, { image: dorso, isBlocked: false }, { image: dorso, isBlocked: false }] }];
-  const players3 = [{ name: "Jugador 3", cartas: [{ image: dorso, isBlocked: false }, { image: dorso, isBlocked: false }, { image: dorso, isBlocked: false }] }];
-  const players4 = [{ name: "Jugador 4", cartas: [{ image: dorso, isBlocked: false }, { image: dorso, isBlocked: false }, { image: dorso, isBlocked: false }] }];
+  // Obtener los jugadores desde el contexto
+  const { players, currentPlayerID } = useGameContext();
 
-  const figureCards = [
-    { id: 1, image: dorso, isBlocked: false },
-    { id: 2, image: dorso, isBlocked: false },
-    { id: 3, image: dorso, isBlocked: false },
-  ];
-
-  const movimentCards = [
-    { id: 1, image: dorso, isVisible: true },
-    { id: 2, image: dorso, isVisible: true },
-    { id: 3, image: dorso, isVisible: true },
-  ];
+  // Cartas de figura y de movimiento del jugador de turno
+  const figureCards = Array(3).fill({ type:"analisis", isBlocked: false });
+  const movimentCards = Array(3).fill({ type:"aterrador", isVisible: true });
 
   return (
-    <div className="p-4 flex flex-col justify-start min-h-screen">
+    <div className="p-4 flex flex-col justify-start min-h-screen bg-black">
       <div className="flex flex-row justify-start space-x-20">
         {/* Tablero */}
         <div className="">
@@ -31,28 +22,25 @@ const ActiveGame = () => {
         </div>
 
         {/* Panel de jugadores */}
-        <div className="flex flex-col space-y- ml-4">
-          {players2.map((player, index) => (
-            <PlayerPanel key={index} playerName={player.name} cartas={player.cartas} />
-          ))}
-          {players3.map((player, index) => (
-            <PlayerPanel key={index} playerName={player.name} cartas={player.cartas} />
-          ))}
-          {players4.map((player, index) => (
-            <PlayerPanel key={index} playerName={player.name} cartas={player.cartas} />
+        <div className="flex flex-col space-y- ml-4 h-1/3 text-white">
+          {players
+          .filter(player => !player.isCurrent)
+          .map((player, index) => (
+            <PlayerPanel key={index} playerName={player.name} 
+                         cartas={figureCards.slice(0, players.length)}  />
           ))}
         </div>
       </div>
 
-      {/* Cartas del jugador de turno (debajo del tablero) */}
-      <div className="Jugador_de_turno mt-4">
+      {/* Cartas del jugador de  turno (debajo del tablero) */}
+      <div className="Jugador_de_turno mt-1 text-white">
         <div className="flex space-x-8">
           {/* Cartas de movimiento */}
           <div className="flex flex-col items-center">
-            <h3 className="font-bold mb-2">Cartas de Movimientos</h3>
+            <h3 className="font-bold mb-2 ">Cartas de Movimientos</h3>
             <div className="flex space-x-4">
-              {movimentCards.map((card) => (
-                <CardsMoviment key={card.id} image={card.image} isVisible={card.isVisible} />
+              {movimentCards.map((card, index) => (
+                <CardsMoviment key={index} type={card.type} isVisible={card.isVisible}/>
               ))}
             </div>
           </div>
@@ -60,20 +48,12 @@ const ActiveGame = () => {
           <div className="flex flex-col items-center">
             <h3 className="font-bold mb-2">Cartas de Figuras</h3>
             <div className="flex space-x-4">
-              {figureCards.map((card) => (
-                <CardsFigure key={card.id} image={card.image} isBlocked={card.isBlocked} />
+              {figureCards.map((card, index) => (
+                <CardsFigure key={index} type={card.type} isBlocked={card.isBlocked} />
               ))}
             </div>
           </div>
         </div>
-        {/* <div className="flex space-x-4">
-          {movimentCards.map((card) => (
-            <CardsMoviment key={card.id} image={card.image} isVisible={card.isVisible} />
-          ))}
-          {figureCards.map((card) => (
-            <CardsFigure key={card.id} image={card.image} isBlocked={card.isBlocked} />
-          ))}
-        </div> */}
       </div>
     </div>
   );

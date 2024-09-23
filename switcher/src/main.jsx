@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './index.css';
-import { GameProvider } from './contexts/GameContext';
+import { GameProvider } from './context/GameContext';
 
 // const Home = lazy(() => import('./pages/Home'));
 // const Games = lazy(() => import('./Games'));

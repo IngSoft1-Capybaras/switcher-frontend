@@ -4,25 +4,25 @@ import userEvent from '@testing-library/user-event';
 import { GameProvider } from '../context/GameContext';
 import LeaveButton from '../components/botonAbandonar/LeaveButton';
 import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom'; // Importamos el Router original
+import { Router } from 'react-router-dom'; 
 
 const mockNavigate = vi.fn();
 
-// Mock Router
+
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    useNavigate: () => mockNavigate, // Mockeamos el `useNavigate`
+    useNavigate: () => mockNavigate, 
   };
 });
 
-// Mock Game Context
+
 vi.mock('../context/GameContext', async (importOriginal) => {
     const actual = await importOriginal();
     return {
       ...actual,
-      GameProvider: ({ children }) => <div>{children}</div>, // Mockeamos el GameProvider
+      GameProvider: ({ children }) => <div>{children}</div>, 
       useGameContext: () => ({
         activeGameId: '123', 
         playerId: '456', 

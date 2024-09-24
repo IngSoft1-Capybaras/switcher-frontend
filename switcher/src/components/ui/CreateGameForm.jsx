@@ -4,20 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, {useState} from "react";
 import Slider from '@mui/material/Slider';
 import { Button } from "./button";
-<<<<<<< Updated upstream
-import { useNavigate } from "react-router-dom";
-
-=======
 import { useGameContext } from "@/context/GameContext";
 import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
->>>>>>> Stashed changes
 
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
 
-const apiUrl = import.meta.env.VITE_API_URL;
+
 
 
 const formSchema = z.object({
@@ -61,11 +56,8 @@ function FormSlider({ value, onChange }) {
 
 
 export default function CreateGameForm() {
-<<<<<<< Updated upstream
-  
-=======
+  const [errorMessage, setErrorMessage] = useState('');
   const { username } = useGameContext();
->>>>>>> Stashed changes
   const navigate = useNavigate();
 
   const form = useForm({
@@ -77,40 +69,8 @@ export default function CreateGameForm() {
     },
   });
 
-<<<<<<< Updated upstream
 
-const [errorMessage, setErrorMessage] = useState('');
 
-const onSubmit = async (data) => {
-  try {
-    const response = await fetch(`${apiUrl}/games`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      const { id: gameId } = await response.json();
-      console.log('Partida creada');
-      navigate(`/games/lobby/${gameId}`);
-    } 
-    else {
-      const errorData = await response.json();
-      setErrorMessage(errorData.message || 'Error al crear la partida.');
-      console.log(errorMessage);
-    }
-  } 
-  
-  catch (error) {
-    setErrorMessage('Error al crear la partida.');
-    console.log('Error al crear la partida.', error);
-  } 
-  
-  finally {
-    form.reset();
-  }
-};
-=======
   const onSubmit = async (data) => {
     // console.log('Datos del formulario: ', data);
 
@@ -140,6 +100,7 @@ const onSubmit = async (data) => {
     .then(response => {
       if (!response.ok) {
         return response.json().then(errorData => {
+          setErrorMessage('Error al crear la partida.');
           throw new Error(errorData.message || 'An error occurred');
         });
       }
@@ -155,7 +116,6 @@ const onSubmit = async (data) => {
     });
     // form.reset();
   };
->>>>>>> Stashed changes
 
   return (
     <form 

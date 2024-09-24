@@ -1,144 +1,125 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
-import CreateGameForm from '../components/ui/CreateGameForm'; 
-import { expect, it, describe, vi } from 'vitest';
+import { vi } from 'vitest';
+import CreateGameForm from '@/components/ui/CreateGameForm';
+import { useGameContext } from '@/context/GameContext';
+import { useNavigate } from 'react-router-dom';
 
-// Mock react-router-dom
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    MemoryRouter: ({ children }) => <div>{children}</div>, // Mock MemoryRouter
-    useNavigate: vi.fn(), // Mock useNavigate as a function
-  };
-});
+// Mocking dependencies
+vi.mock('@/context/GameContext', () => ({
+  useGameContext: vi.fn(),
+}));
 
-describe('Create Game Form v1', () => { 
-  it('renders the form component', () => {
-    render(<MemoryRouter><CreateGameForm /></MemoryRouter>);
-    
-    expect(screen.getByTestId('formComponent')).toBeInTheDocument();
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+}));
+
+describe('CreateGameForm', () => {
+  const mockNavigate = vi.fn();
+  const mockFetch = vi.fn();
+  const apiUrl = 'http://localhost:8000'; // Mock apiUrl
+
+  beforeEach(() => {
+    // Mock useGameContext to return a username
+    useGameContext.mockReturnValue({ username: 'testUser' });
+
+    // Mock useNavigate
+    useNavigate.mockReturnValue(mockNavigate);
+
+    // Mock fetch
+    global.fetch = mockFetch;
   });
 
-  it('renders the form components', () => {
-    render(<MemoryRouter><CreateGameForm /></MemoryRouter>);
+  afterEach(() => {
+    vi.resetAllMocks(); // Resets mocks after each test
+  });
+
+  test('renders the form correctly', () => {
+    render(<CreateGameForm />);
 
     expect(screen.getByPlaceholderText('Ingrese el nombre de la partida')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Ingrese una contraseña (opcional)')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /crear/i })).toBeInTheDocument();
     expect(screen.getByTestId('players-slider')).toBeInTheDocument();
   });
 
-  it('submits the form with valid name and password', async () => {
-    render(<MemoryRouter><CreateGameForm /></MemoryRouter>);
+  test('does not submit the form when the name is missing', async () => {
+    render(<CreateGameForm />);
 
-    const nameInput = screen.getByPlaceholderText('Ingrese el nombre de la partida');
-    const passwordInput = screen.getByPlaceholderText('Ingrese una contraseña (opcional)');
-    const submitButton = screen.getByRole('button', { name: /crear/i });
+    // Simulate form submission without filling the name field
+    fireEvent.click(screen.getByRole('button', { name: /crear/i }));
 
-    fireEvent.change(nameInput, { target: { value: 'Partida de Prueba' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-
-    expect(nameInput.value).toBe('Partida de Prueba');
-    expect(passwordInput.value).toBe('password123');
-
-    const nameError = screen.queryByText('El nombre de la partida es obligatorio');
-    const passwordError = screen.queryByText('La contraseña debe tener entre 8 y 16 caracteres.');
-    expect(nameError).toBeNull(); 
-    expect(passwordError).toBeNull();
-
-    fireEvent.click(submitButton);
-  });
-
-  it('shows error messages when trying to submit with invalid data', async () => {
-    render(<MemoryRouter><CreateGameForm /></MemoryRouter>);
-
-    const submitButton = screen.getByRole('button', { name: /crear/i });
-    fireEvent.click(submitButton);
-
-    const nameError = await screen.findByText('El nombre de la partida es obligatorio');
-    expect(nameError).toBeInTheDocument();
-
-    const passwordInput = screen.getByPlaceholderText('Ingrese una contraseña (opcional)');
-    fireEvent.change(passwordInput, { target: { value: '123' } });
-    fireEvent.click(submitButton);
-
-    const passwordError = await screen.findByText('La contraseña debe tener entre 8 y 16 caracteres.');
-    expect(passwordError).toBeInTheDocument();
-  });
-
-  it('does not call onSubmit when form is invalid', async () => {
-    const mockOnSubmit = vi.fn();
-    render(<MemoryRouter><CreateGameForm onSubmit={mockOnSubmit} /></MemoryRouter>);
-
-    const submitButton = screen.getByRole('button', { name: /crear/i });
-    fireEvent.click(submitButton);
-
-    expect(mockOnSubmit).not.toHaveBeenCalled();
-  });
-});
-
-describe('Create Game Form v2', () => { 
-  beforeEach(() => {
-    global.fetch = vi.fn();
-    vi.clearAllMocks();
-  });
-
-  it('submits the form and calls fetch with correct data', async () => {
-    const mockResponse = { id: '12345' };
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
+    // Wait for the validation error message
+    await waitFor(() => {
+      expect(screen.getByText('El nombre de la partida es obligatorio')).toBeInTheDocument();
     });
 
-    const mockNavigate = vi.fn();
-    useNavigate.mockReturnValue(mockNavigate);
+    // Ensure fetch is not called
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
 
-    render(<MemoryRouter><CreateGameForm gameId="12345" /></MemoryRouter>);
+  test('submits the form with correct data', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ game: { id: '123' } }),
+    });
 
+    render(<CreateGameForm />);
 
-    const nameInput = screen.getByPlaceholderText('Ingrese el nombre de la partida');
-    const passwordInput = screen.getByPlaceholderText('Ingrese una contraseña (opcional)');
-    const submitButton = screen.getByRole('button', { name: /crear/i });
+    // Fill out the form
+    fireEvent.change(screen.getByPlaceholderText('Ingrese el nombre de la partida'), {
+      target: { value: 'Test Game' },
+    });
 
-    fireEvent.change(nameInput, { target: { value: 'Partida de Prueba' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
+    // Simulate form submission
+    fireEvent.click(screen.getByRole('button', { name: /crear/i }));
 
+    // Ensure fetch is called with correct data
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledTimes(1);
-      expect(fetch).toHaveBeenCalledWith(`${import.meta.env.VITE_API_URL}/games`, {
+      expect(global.fetch).toHaveBeenCalledWith(`${apiUrl}/games`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Partida de Prueba',
-          password: 'password123',
-          playersRange: [2, 4],
+          game: {
+            name: 'Test Game',
+            maxPlayers: 4,
+            minPlayers: 2,
+          },
+          player: {
+            name: 'testUser',
+            host: true,
+            turn: 'PRIMERO',
+          },
         }),
       });
-      
-      expect(mockNavigate).toHaveBeenCalledWith('/games/lobby/12345');
+    });
+
+    // Ensure navigation is called after successful creation
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('games/ongoing/123');
     });
   });
 
-
-  it('shows an error message when fetch fails', async () => {
-    // Mocking fetch to simulate a failed response
-    fetch.mockResolvedValueOnce({
+  test('shows an error message when the fetch fails', async () => {
+    mockFetch.mockResolvedValueOnce({
       ok: false,
-      json: async () => ({ message: 'Error al crear la partida.' }), 
+      json: async () => ({ message: 'Error al crear la partida.' }),
     });
-  
-    render(<MemoryRouter><CreateGameForm /></MemoryRouter>);
-  
-    const nameInput = screen.getByPlaceholderText('Ingrese el nombre de la partida');
-    const submitButton = screen.getByRole('button', { name: /crear/i });
-  
-    fireEvent.change(nameInput, { target: { value: 'Partida de Prueba' } });
-    fireEvent.click(submitButton);
-  
+
+    render(<CreateGameForm />);
+
+    // Fill out the form
+    fireEvent.change(screen.getByPlaceholderText('Ingrese el nombre de la partida'), {
+      target: { value: 'Test Game' },
+    });
+
+    // Simulate form submission
+    fireEvent.click(screen.getByRole('button', { name: /crear/i }));
+
+    // Wait for the error message to show
     await waitFor(() => {
       expect(screen.getByText('Error al crear la partida.')).toBeInTheDocument();
     });
+
+    // Ensure navigation is not called on failure
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

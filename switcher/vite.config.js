@@ -22,4 +22,7 @@ export default defineConfig({
     globals: true,
     setupFiles: './setupTests.js',
   },
+  define: {
+    'process.env': process.env
+  }
 })

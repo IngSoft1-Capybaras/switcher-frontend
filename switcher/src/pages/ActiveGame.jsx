@@ -1,62 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { useGameContext } from '@/context/GameContext';
 import CardsFigure from '../components/ui/cardsFigure';
 import CardsMoviment from '../components/ui/cardsMoviment';
 import Board from '../components/ui/board';
 import PlayerPanel from '@/components/ui/playerPanel';
+import { getPlayers, getDeckMovement, getDeckFigure } from '@/services/services';
+import { mockPlayers } from '@/lib/mockGameState';
 
 const ActiveGame = () => {
-  const { gameId, playerId, setGameState } = useGameContext(); // Asegúrate de tener estos valores en tu contexto
+  const { gameState, setGameStatus } = useGameContext(); // Asegúrate de tener estos valores en tu contexto
   const [loading, setLoading] = useState(true);
   const [players, setPlayers] = useState([]);
   const [movementCards, setMovementCards] = useState([]);
   const [figureCards, setFigureCards] = useState([]);
+  const {gameId} = useParams();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Obtener jugadores
-        const playersResponse = await axios.get(`/players/${gameId}`);
-        setPlayers(playersResponse.data);
+    const player = getPlayers(gameId);
+    setPlayers(players)
+    players.map(async(player, index) => {
 
-        // Obtener cartas de movimiento y figura para cada jugador
-        const movementPromises = playersResponse.data.map(async (player) => {
-          const movementResponse = await axios.get(`/deck/movement/${gameId}/${player.id}`);
-          return { ...player, movementCards: movementResponse.data };
-        });
+      const movCards = getDeckMovement(gameId, player);
+      setMovementCards([...movementCards, movCards]);
+      
+      const figCards = getDeckFigure(gameId, player)
+      setFigureCards([...figureCards, figCards]);
+      
+    } )
 
-        const figurePromises = playersResponse.data.map(async (player) => {
-          const figureResponse = await axios.get(`/deck/figure/${gameId}/${player.id}`);
-          return { ...player, figureCards: figureResponse.data };
-        });
+    setLoading(false);  // Cambiar a false cuando se carguen los datos
 
-        const playersWithMovementCards = await Promise.all(movementPromises);
-        const playersWithFigureCards = await Promise.all(figurePromises);
-
-        // Combina los datos
-        const updatedPlayers = playersWithMovementCards.map((player, index) => ({
-          ...player,
-          figureCards: playersWithFigureCards[index].figureCards,
-        }));
-
-        setPlayers(updatedPlayers);
-        setLoading(false);
-
-        // Establecer el estado del juego en el contexto
-        const currentPlayer = updatedPlayers.find(player => player.turn);
-        setGameState({
-          players: updatedPlayers,
-          currentTurn: currentPlayer,
-        });
-
-      } catch (error) {
-        console.error("Error fetching game data:", error);
-      }
-    };
-
-    fetchData();
-  }, [gameId, setGameState]);
+  }, [figureCards, gameId, movementCards, players]);
 
   // Renderizar si está cargando
   if (loading) {
@@ -92,7 +67,7 @@ const ActiveGame = () => {
                 <CardsMoviment 
                   key={index} 
                   type={card.type} 
-                  isVisible={card.isVisible} />
+                  used={card.used} />
               ))}
             </div>
           </div>

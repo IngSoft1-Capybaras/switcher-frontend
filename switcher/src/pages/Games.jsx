@@ -18,8 +18,8 @@ const Games = () => {
   const fetchGames = async () => {
     try {
       const data = await getGames(); // Call the function from service.js
-      setGames(data.games); // Update the games state with fetched data
-      setTotalPages(data.totalPages);
+      setGames(data); // Update the games state with fetched data
+      // setTotalPages(data);
     } catch (error) {
       console.error("Couldn't fetch games")
     } finally {
@@ -32,7 +32,7 @@ const Games = () => {
     
   // initial fetch
   useEffect(() => {
-      fetchGames(currentPage);
+    fetchGames(currentPage);
   }, []);
 
   return (

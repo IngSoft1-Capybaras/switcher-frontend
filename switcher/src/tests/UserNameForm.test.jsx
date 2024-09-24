@@ -27,7 +27,7 @@ describe("NameForm", () => {
     );
 
     const usernameInput = screen.getByPlaceholderText("Nombre de usuario");
-    const submitButton = screen.getByText("Ingresar");
+    const submitButton = screen.getByText("Siguiente");
 
     fireEvent.change(usernameInput, { target: { value: "ab" } });
     fireEvent.click(submitButton);
@@ -52,7 +52,7 @@ describe("NameForm", () => {
     );
 
     const usernameInput = screen.getByPlaceholderText("Nombre de usuario");
-    const submitButton = screen.getByText("Ingresar");
+    const submitButton = screen.getByText("Siguiente");
 
     fireEvent.change(usernameInput, { target: { value: "validuser" } });
     fireEvent.click(submitButton);

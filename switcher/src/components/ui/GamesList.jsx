@@ -5,7 +5,7 @@ export default function GamesList({games, currentPage, setCurrentPage, totalPage
     const navigate = useNavigate();
     
     const handleGameSelect = (gameId) => {
-        navigate(`/games/${gameId}`);
+        navigate(`/games/lobby/${gameId}`);
     };
 
     return(

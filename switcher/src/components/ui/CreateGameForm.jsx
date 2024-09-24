@@ -4,8 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, {useState} from "react";
 import Slider from '@mui/material/Slider';
 import { Button } from "./button";
+<<<<<<< Updated upstream
 import { useNavigate } from "react-router-dom";
 
+=======
+import { useGameContext } from "@/context/GameContext";
+import { useNavigate } from "react-router-dom";
+
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+>>>>>>> Stashed changes
 
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
@@ -54,7 +61,11 @@ function FormSlider({ value, onChange }) {
 
 
 export default function CreateGameForm() {
+<<<<<<< Updated upstream
   
+=======
+  const { username } = useGameContext();
+>>>>>>> Stashed changes
   const navigate = useNavigate();
 
   const form = useForm({
@@ -66,6 +77,7 @@ export default function CreateGameForm() {
     },
   });
 
+<<<<<<< Updated upstream
 
 const [errorMessage, setErrorMessage] = useState('');
 
@@ -98,6 +110,52 @@ const onSubmit = async (data) => {
     form.reset();
   }
 };
+=======
+  const onSubmit = async (data) => {
+    // console.log('Datos del formulario: ', data);
+
+    const body = {
+      game: {
+        name: data.name,
+        maxPlayers: data.playersRange[1],
+        minPlayers: data.playersRange[0],
+      },
+      player: {
+        name: username,
+        host: true,
+        turn: "PRIMERO"
+      }
+    }
+
+    // le pego a la api
+    fetch(`${apiUrl}/games`, {
+      method: 'POST', // HTTP method
+      headers: {
+        'Content-Type': 'application/json', // Ensures the body is sent as JSON
+        // Other headers like Authorization can be added here
+      },
+      body: JSON.stringify(body), // Converts your data to a JSON string
+    })
+
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          throw new Error(errorData.message || 'An error occurred');
+        });
+      }
+      return response.json(); // Parses the JSON response
+    })
+    .then(data => {
+      console.log('Success:', data); // Handle success
+      navigate(`games/ongoing/${data.game.id}`);
+      // Perform navigation or other success actions here
+    })
+    .catch(error => {
+      console.error('Error:', error.message); // Handle error
+    });
+    // form.reset();
+  };
+>>>>>>> Stashed changes
 
   return (
     <form 

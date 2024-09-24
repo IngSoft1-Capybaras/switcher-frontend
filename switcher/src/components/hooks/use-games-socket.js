@@ -2,17 +2,25 @@ import { useSocketContext } from '@/context/SocketContext';
 import { useEffect } from 'react';
 
 export function useGameSocket(fetchGames) {
-  const {socket} = useSocketContext();
+  const { socket } = useSocketContext();  // Get WebSocket instance
 
   useEffect(() => {
-    // subscribe to socket events
-    socket.on("GAMES_LIST_UPDATE", fetchGames);
+    if (!socket) return;
+
+    // Define a function to handle incoming messages
+    const handleGamesListUpdate = (event) => {
+      const data = JSON.parse(event.data);  // Assuming server sends JSON data
+      if (data.type === "GAMES_LIST_UPDATE") {
+        fetchGames(data.payload);  // Use the fetched games payload
+      }
+    };
+
+    // Subscribe to WebSocket message events
+    socket.addEventListener("message", handleGamesListUpdate);
 
     return () => {
-      // before the component is destroyed
-      // unbind all event handlers used in this component
-      socket.off("GAMES_LIST_UPDATE", () => {console.log("Bye bye!")});
+      // Unsubscribe from WebSocket message events on cleanup
+      socket.removeEventListener("message", handleGamesListUpdate);
     };
-  }, [socket, fetchGames]);
-  
+  }, [socket, fetchGames]);  // Dependency array includes socket and fetchGames
 }

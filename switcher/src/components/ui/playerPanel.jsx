@@ -9,7 +9,11 @@ const PlayerPanel = ({ playerName, cartas }) => {
         <h2>{playerName}</h2>
         <div className="flex space-x-2">
           {cartas.map((carta, index) => (
-            <CardsFigure key={index} type={carta.type} isBlocked={carta.isBlocked} />
+            <CardsFigure 
+              key={index} 
+              type={carta.type} 
+              show={carta.show} 
+              difficulty={carta.difficulty} />
           ))}
         </div>
       </div>

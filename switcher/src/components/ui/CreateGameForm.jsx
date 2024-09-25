@@ -36,15 +36,15 @@ function FormSlider({ value, onChange }) {
       max={MAX_PLAYERS}
       sx={{
         width: 200,
-        color: '#3b82f6', // Tailwind blue-500 color
+        color: '#eab308', // Tailwind blue-500 color
         '& .MuiSlider-thumb': {
-          backgroundColor: '#2563eb', // Tailwind blue-600 color
+          backgroundColor: '#eab308', // Tailwind blue-600 color
         },
         '& .MuiSlider-track': {
-          backgroundColor: '#3b82f6', // Tailwind blue-500 color
+          backgroundColor: '#eab308', // Tailwind blue-500 color
         },
         '& .MuiSlider-rail': {
-          backgroundColor: '#93c5fd', // Tailwind blue-300 color
+          backgroundColor: '#eab308', // Tailwind blue-300 color
         },
       }}
     />
@@ -103,7 +103,7 @@ const onSubmit = async (data) => {
     <form 
       data-testid="formComponent" 
       onSubmit={form.handleSubmit(onSubmit)} 
-      className="space-y-8 bg-zinc-700 p-6 rounded-lg shadow-lg"
+      className="space-y-8 bg-zinc-950 p-6 rounded-lg"
     >
       <div className="mb-4"> 
         <label className="block text-lg mb-2">Nombre de la partida</label>
@@ -141,7 +141,7 @@ const onSubmit = async (data) => {
 
       {/* Centered button */}
       <div className="flex justify-center">
-        <Button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded w-1/3">Crear</Button>
+        <Button type="submit" className="bg-yellow-500 text-white py-2 px-4 rounded mb-6 w-1/3">Crear</Button>
       </div>
 
       {errorMessage && <p>{errorMessage}</p>}

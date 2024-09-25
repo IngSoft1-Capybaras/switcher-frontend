@@ -27,7 +27,7 @@ const CardsMoviment = ({ gameId, playerId }) => {
     
     fetchMovementCards();
   }, [gameId, playerId]); // Dependencias para volver a ejecutar el efecto si cambian
-  // }, []);
+
   // renderizado condicional según el estado de carga y errores
   if (loading) return <div>Cargando cartas de movimiento...</div>; // Mensaje de carga
   if (error) return <div>{error}</div>; // Muestra error si hay

@@ -6,15 +6,17 @@ export async function getGames(currentPage, totalPages) {
     try {
         const response = await fetch(url);
 
-    const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
 
-    if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        const data = await response.json();
+        
+        return data;
+    } catch (error) {
+        
+        throw error;
     }
-
-    const data = await response.json();
-    
-    return data;
 }
 
 // Obtener jugadores

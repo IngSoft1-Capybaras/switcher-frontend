@@ -53,13 +53,13 @@ export default function InputForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-10">
-        <div className="space-y-10"> {/* Add space between form items */}
+        <div className="space-y-10"> 
           <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
-              <FormItem className="space-y-5">
-                <FormLabel className="text-white text-3xl">Ingrese su nombre de usuario</FormLabel>
+              <FormItem className="space-y-6">
+                <FormLabel className="text-white text-4xl">Ingrese su nombre de usuario</FormLabel>
                 <FormControl>
                   <Input className="text-lg w-2/3" placeholder="Nombre de usuario" {...field} />
                 </FormControl>
@@ -71,7 +71,7 @@ export default function InputForm() {
             )}
           />
         </div>
-        <Button className="bg-green-500 text-xl" type="submit">Ingresar</Button>
+        <Button className="w-1/4 h-1/6 bg-green-500 text-xl" type="submit">Siguiente</Button>
       </form>
     </Form>
   )

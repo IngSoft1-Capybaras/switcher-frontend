@@ -1,6 +1,6 @@
 import React from 'react';
 import NameForm from '../components/ui/NameForm';
-import logo from '../../public/logo_switcher.png';
+import logo from '../assets/logo_switcher.png';
 
 const Home = () => {
   return (

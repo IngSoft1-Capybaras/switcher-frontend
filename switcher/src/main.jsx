@@ -8,6 +8,7 @@ import { SocketProvider } from './context/SocketContext';
 const Home = lazy(() => import('./pages/Home'));
 const Games = lazy(() => import('./pages/Games'));
 const CreateGame = lazy(() => import('./pages/CreateGame'));
+const Lobby = lazy(() => import('./pages/Lobby'));
 
 
 
@@ -22,7 +23,7 @@ const Main = () => (
             <Route path="/" element={<Home />} />
             <Route path="/games" element={<Games />} />
             <Route path="/games/create" element={<CreateGame />} />
-            {/* <Route path="/games/lobby/:gameId" element={<Lobby />} /> */}
+            <Route path="/games/lobby/:gameId" element={<Lobby />} />
             {/* <Route path="/games/ongoing/:gameId" element={<ActiveGame />} /> */}
             {/* <Route path="/winner" element={<Winner />} /> */}
           </Routes>

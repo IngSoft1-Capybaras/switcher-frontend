@@ -13,8 +13,6 @@ const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
 
 
-
-
 const formSchema = z.object({
   name: z.string().min(1, "El nombre de la partida es obligatorio"),
   password: z.string()
@@ -68,8 +66,6 @@ export default function CreateGameForm() {
       playersRange: [MIN_PLAYERS, MAX_PLAYERS],
     },
   });
-
-
 
   const onSubmit = async (data) => {
     // console.log('Datos del formulario: ', data);

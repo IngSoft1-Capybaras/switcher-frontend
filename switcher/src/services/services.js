@@ -117,7 +117,7 @@ export async function joinGame(gameId, playerName) {
         'Content-Type': 'application/json',
         },
         body: {
-            'playerName': playerName
+            'player_name': playerName
         }
     });
 

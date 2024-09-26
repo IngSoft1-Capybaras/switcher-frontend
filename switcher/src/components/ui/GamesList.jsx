@@ -10,10 +10,10 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
     joinGame(gameId, userName)
     .then((res)=> {
       setPlayerId(res.playerId);
+      navigate(`/games/lobby/${gameId}`);
     })
     .catch((err) => console.error("Error entrando al juego"));
 
-    navigate(`/games/lobby/${gameId}`);
   };
 
   return (

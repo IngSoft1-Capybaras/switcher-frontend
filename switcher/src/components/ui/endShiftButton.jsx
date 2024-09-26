@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button.jsx";
 import { useGameContext } from "@/context/GameContext"; // Si tienes un GameContext
 import { useSocketContext } from "@/context/SocketContext"; // Para obtener el socket
 import { pathEndTurn } from "@/services/services"; // Supongo que tienes este servicio de API
+import { Result } from "postcss";
 
 const EndTurnButton = () => {
   const [isButtonActive, setIsButtonActive] = useState(false);
@@ -37,6 +38,8 @@ const EndTurnButton = () => {
     setLoading(true);
     try {
       await pathEndTurn(activeGameId); // Llama al endpoint para finalizar el turno
+      const result = await pathEndTurn(activeGameId);
+      console.log("Turno finalizado", result);
       setIsButtonActive(false); // Desactiva el botón después de terminar el turno
     } catch (error) {
       console.error("Error al terminar el turno", error);

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import {joinGame} from '../../services/services';
 
 export default function GamesList({ games, currentPage, setCurrentPage, totalPages, loading }) {
-  const {setPlayerId, userName} = useGameContext();
+  const {setPlayerId, username} = useGameContext();
   const navigate = useNavigate();
 
   const handleGameSelect = (gameId) => {
-    joinGame(gameId, userName)
+    joinGame(gameId, username)
     .then((res)=> {
       setPlayerId(res.playerId);
       navigate(`/games/lobby/${gameId}`);

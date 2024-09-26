@@ -1,4 +1,3 @@
-// src/contexts/GameContext.js
 import React, { createContext, useState, useContext } from 'react';
 
 const GameContext = createContext();

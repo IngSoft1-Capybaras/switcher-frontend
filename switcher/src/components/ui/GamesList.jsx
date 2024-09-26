@@ -5,14 +5,14 @@ export default function GamesList({games, currentPage, setCurrentPage, totalPage
     const navigate = useNavigate();
     
     const handleGameSelect = (gameId) => {
-        navigate(`/games/${gameId}`);
+        navigate(`/games/lobby/${gameId}`);
     };
 
     return(
         <>
             {loading ? (
             <div className="text-center"> Loading...</div>
-            ) : ( (games.length===0) ? <div className="h-1/2 text-center justify-center flex flex-col gap-4 bg-zinc-950"> No hay partidas en creadas aun.</div> : 
+            ) : ( (games && games.length===0) ? <div className="h-1/2 text-center justify-center flex flex-col gap-4 bg-zinc-950"> No hay partidas en creadas aun.</div> : 
             <div>
                 <ul className="flex flex-col gap-4 bg-zinc-950 ">
                 {games.map((game) => (

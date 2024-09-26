@@ -4,17 +4,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, {useState} from "react";
 import Slider from '@mui/material/Slider';
 import { Button } from "./button";
+import { useGameContext } from "@/context/GameContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "../hooks/use-toast";
 
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
 
 const formSchema = z.object({
-  name: z.string().min(1, "El nombre de la partida es obligatorio"),
+  name: z.string().min(1, "El nombre de la partida es obligatorio")
+  .max(15, {
+    message: "El nombre de la partida debe tener como máximo 15 caracteres.",
+  }),
   password: z.string()
     .optional()
     .refine(val => val === undefined || val === '' || (val.length >= 8 && val.length <= 16), {
@@ -54,7 +58,8 @@ function FormSlider({ value, onChange }) {
 
 
 export default function CreateGameForm() {
-  
+  const [errorMessage, setErrorMessage] = useState('');
+  const { username } = useGameContext();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -66,38 +71,59 @@ export default function CreateGameForm() {
     },
   });
 
-
-const [errorMessage, setErrorMessage] = useState('');
-
-const onSubmit = async (data) => {
-  try {
-    const response = await fetch(`${apiUrl}/games`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+  const onSubmit = async (data) => {
+    // console.log('Datos del formulario: ', data);
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
     });
 
-    if (response.ok) {
-      const { id: gameId } = await response.json();
-      console.log('Partida creada');
-      navigate(`/games/lobby/${gameId}`);
-    } 
-    else {
-      const errorData = await response.json();
-      setErrorMessage(errorData.message || 'Error al crear la partida.');
-      console.log(errorMessage);
+    const body = {
+      game: {
+        name: data.name,
+        maxPlayers: data.playersRange[1],
+        minPlayers: data.playersRange[0],
+      },
+      player: {
+        name: username,
+        host: true,
+        turn: "PRIMERO"
+      }
     }
-  } 
-  
-  catch (error) {
-    setErrorMessage('Error al crear la partida.');
-    console.log('Error al crear la partida.', error);
-  } 
-  
-  finally {
-    form.reset();
-  }
-};
+
+    // le pego a la api
+    fetch(`${apiUrl}/games`, {
+      method: 'POST', // HTTP method
+      headers: {
+        'Content-Type': 'application/json', // Ensures the body is sent as JSON
+        // Other headers like Authorization can be added here
+      },
+      body: JSON.stringify(body), // Converts your data to a JSON string
+    })
+
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          setErrorMessage('Error al crear la partida.');
+          throw new Error(errorData.message || 'An error occurred');
+        });
+      }
+      return response.json(); // Parses the JSON response
+    })
+    .then(data => {
+      console.log('Success:', data); // Handle success
+      navigate(`games/ongoing/${data.game.id}`);
+      // Perform navigation or other success actions here
+    })
+    .catch(error => {
+      console.error('Error:', error.message); // Handle error
+    });
+    // form.reset();
+  };
 
   return (
     <form 
@@ -144,7 +170,7 @@ const onSubmit = async (data) => {
         <Button type="submit" className="bg-yellow-500 text-white py-2 px-4 rounded mb-6 w-1/3">Crear</Button>
       </div>
 
-      {errorMessage && <p>{errorMessage}</p>}
+      {errorMessage && <p data-testid="form-error">{errorMessage}</p>}
     </form>
   );
 }

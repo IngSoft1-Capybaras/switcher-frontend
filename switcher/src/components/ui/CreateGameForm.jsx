@@ -116,7 +116,7 @@ export default function CreateGameForm() {
     })
     .then(data => {
       console.log('Success:', data); // Handle success
-      navigate(`games/ongoing/${data.game.id}`);
+      navigate(`games/ongoing/${data.id}`);
       // Perform navigation or other success actions here
     })
     .catch(error => {

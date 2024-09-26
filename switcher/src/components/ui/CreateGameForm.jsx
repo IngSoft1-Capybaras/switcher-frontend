@@ -6,6 +6,7 @@ import Slider from '@mui/material/Slider';
 import { Button } from "./button";
 import { useGameContext } from "@/context/GameContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "../hooks/use-toast";
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -14,7 +15,10 @@ const MIN_PLAYERS = 2;
 
 
 const formSchema = z.object({
-  name: z.string().min(1, "El nombre de la partida es obligatorio"),
+  name: z.string().min(1, "El nombre de la partida es obligatorio")
+  .max(15, {
+    message: "El nombre de la partida debe tener como máximo 15 caracteres.",
+  }),
   password: z.string()
     .optional()
     .refine(val => val === undefined || val === '' || (val.length >= 8 && val.length <= 16), {
@@ -69,6 +73,14 @@ export default function CreateGameForm() {
 
   const onSubmit = async (data) => {
     // console.log('Datos del formulario: ', data);
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
 
     const body = {
       game: {
@@ -158,7 +170,7 @@ export default function CreateGameForm() {
         <Button type="submit" className="bg-yellow-500 text-white py-2 px-4 rounded mb-6 w-1/3">Crear</Button>
       </div>
 
-      {errorMessage && <p>{errorMessage}</p>}
+      {errorMessage && <p data-testid="form-error">{errorMessage}</p>}
     </form>
   );
 }

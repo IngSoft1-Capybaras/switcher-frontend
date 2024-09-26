@@ -106,3 +106,26 @@ export async function startGame(gameId) {
     
     return data;
 }
+
+
+export async function joinGame(gameId, playerName) {
+    const url = `${apiUrl}/players/join/${gameId}`;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: {
+            'playerName': playerName
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return data;
+}

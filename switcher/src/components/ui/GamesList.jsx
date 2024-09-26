@@ -1,9 +1,18 @@
+import { useGameContext } from '@/context/GameContext';
 import { useNavigate } from 'react-router-dom';
+import {joinGame} from '../../services/services';
 
 export default function GamesList({ games, currentPage, setCurrentPage, totalPages, loading }) {
+  const {setPlayerId, userName} = useGameContext();
   const navigate = useNavigate();
 
   const handleGameSelect = (gameId) => {
+    joinGame(gameId, userName)
+    .then((res)=> {
+      setPlayerId(res.playerId);
+    })
+    .catch((err) => console.error("Error entrando al juego"));
+
     navigate(`/games/lobby/${gameId}`);
   };
 

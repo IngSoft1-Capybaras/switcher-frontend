@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.jsx";
-import { useGameContext } from "@/context/GameContext"; // Si tienes un GameContext
-import { useSocketContext } from "@/context/SocketContext"; // Para obtener el socket
-import { pathEndTurn } from "@/services/services"; // Supongo que tienes este servicio de API
+import { useGameContext } from "@/context/GameContext"; 
+import { useSocketContext } from "@/context/SocketContext"; 
+import { pathEndTurn } from "@/services/services";
 import { Result } from "postcss";
 
 const EndTurnButton = () => {

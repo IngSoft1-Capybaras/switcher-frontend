@@ -14,9 +14,9 @@ const CardsMoviment = ({ gameId, playerId }) => {
   useEffect(() => {
     const fetchMovementCards = async () => {
       try {
-        // const cards = await getDeckMovement(gameId, playerId); // Obtiene las cartas de movimiento getDeckMovement(gameId, playerId)
-        // setMovementCards(cards); // Actualiza el estado con las cartas
-        setMovementCards(mockMovementCards); // Actualiza el estado con las cartas
+        const cards = await getDeckMovement(gameId, playerId); // Obtiene las cartas de movimiento getDeckMovement(gameId, playerId)
+        setMovementCards(cards); // Actualiza el estado con las cartas
+        // setMovementCards(mockMovementCards); // Actualiza el estado con las cartas
       } catch (error) {
         setError("Error al obtener las cartas de movimiento");
         console.error(error); // Loguea el error

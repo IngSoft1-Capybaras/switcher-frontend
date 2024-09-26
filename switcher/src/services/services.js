@@ -11,10 +11,10 @@ export async function getGames(currentPage, totalPages) {
         const data = await response.json();
         
         return data;
-    } catch (error) {
+    // } catch (error) {
         
-        throw error;
-    }
+    //     throw error;
+    // }
 }
 
 // Obtener jugadores

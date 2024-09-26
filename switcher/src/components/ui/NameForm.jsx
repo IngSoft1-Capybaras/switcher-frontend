@@ -52,16 +52,16 @@ export default function InputForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-10">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 max-w-lg mx-auto">
         <div className="space-y-10"> 
           <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
-              <FormItem className="space-y-6">
-                <FormLabel className="text-white text-4xl">Ingrese su nombre de usuario</FormLabel>
+              <FormItem className="space-y-6 ">
+                <FormLabel className="block text-lg text-white mb-2">Nombre de usuario</FormLabel>
                 <FormControl>
-                  <Input className="text-lg w-2/3" placeholder="Nombre de usuario" {...field} />
+                  <Input className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2" placeholder="Ingrese su nombre de usuario" {...field} />
                 </FormControl>
                 <FormDescription className="text-base">
                   Este nombre será visible para el resto de jugadores.
@@ -71,7 +71,7 @@ export default function InputForm() {
             )}
           />
         </div>
-        <Button className="w-1/4 h-1/6 bg-green-500 text-xl" type="submit">Siguiente</Button>
+        <Button className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition-all duration-200 w-1/3" type="submit">Siguiente</Button>
       </form>
     </Form>
   )

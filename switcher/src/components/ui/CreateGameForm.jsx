@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Slider from '@mui/material/Slider';
 import { Button } from "./button";
 import { useGameContext } from "@/context/GameContext";
@@ -13,12 +13,11 @@ const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
 
-
 const formSchema = z.object({
   name: z.string().min(1, "El nombre de la partida es obligatorio")
-  .max(15, {
-    message: "El nombre de la partida debe tener como máximo 15 caracteres.",
-  }),
+    .max(15, {
+      message: "El nombre de la partida debe tener como máximo 15 caracteres.",
+    }),
   password: z.string()
     .optional()
     .refine(val => val === undefined || val === '' || (val.length >= 8 && val.length <= 16), {
@@ -39,23 +38,21 @@ function FormSlider({ value, onChange }) {
       min={MIN_PLAYERS}
       max={MAX_PLAYERS}
       sx={{
-        width: 200,
-        color: '#eab308', // Tailwind blue-500 color
+        width: 250,
+        color: '#eab308',
         '& .MuiSlider-thumb': {
-          backgroundColor: '#eab308', // Tailwind blue-600 color
+          backgroundColor: '#eab308',
         },
         '& .MuiSlider-track': {
-          backgroundColor: '#eab308', // Tailwind blue-500 color
+          backgroundColor: '#eab308',
         },
         '& .MuiSlider-rail': {
-          backgroundColor: '#eab308', // Tailwind blue-300 color
+          backgroundColor: '#eab308',
         },
       }}
     />
   );
 }
-
-
 
 export default function CreateGameForm() {
   const [errorMessage, setErrorMessage] = useState('');
@@ -72,7 +69,6 @@ export default function CreateGameForm() {
   });
 
   const onSubmit = async (data) => {
-    // console.log('Datos del formulario: ', data);
     toast({
       title: "You submitted the following values:",
       description: (
@@ -93,56 +89,51 @@ export default function CreateGameForm() {
         host: true,
         turn: "PRIMERO"
       }
-    }
+    };
 
-    // le pego a la api
     fetch(`${apiUrl}/games`, {
-      method: 'POST', // HTTP method
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/json', // Ensures the body is sent as JSON
-        // Other headers like Authorization can be added here
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body), // Converts your data to a JSON string
+      body: JSON.stringify(body),
     })
-
-    .then(response => {
-      if (!response.ok) {
-        return response.json().then(errorData => {
-          setErrorMessage('Error al crear la partida.');
-          throw new Error(errorData.message || 'An error occurred');
-        });
-      }
-      return response.json(); // Parses the JSON response
-    })
-    .then(data => {
-      console.log('Success:', data); // Handle success
-      navigate(`games/ongoing/${data.id}`);
-      // Perform navigation or other success actions here
-    })
-    .catch(error => {
-      console.error('Error:', error.message); // Handle error
-    });
-    // form.reset();
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(errorData => {
+            setErrorMessage('Error al crear la partida.');
+            throw new Error(errorData.message || 'An error occurred');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        navigate(`games/ongoing/${data.id}`);
+      })
+      .catch(error => {
+        console.error('Error:', error.message);
+      });
   };
 
   return (
     <form 
       data-testid="formComponent" 
       onSubmit={form.handleSubmit(onSubmit)} 
-      className="space-y-8 bg-zinc-950 p-6 rounded-lg"
+      className="space-y-8 bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 max-w-lg mx-auto"
     >
-      <div className="mb-4"> 
-        <label className="block text-lg mb-2">Nombre de la partida</label>
+
+      <div className="mb-6"> 
+        <label className="block text-lg text-white mb-2">Nombre de la partida</label>
         <input 
           placeholder="Ingrese el nombre de la partida" 
           {...form.register('name')} 
-          className="p-2 w-full rounded bg-white text-black"
+          className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2"
         />
-        {form.formState.errors.name && <p className="text-red-500">{form.formState.errors.name.message}</p>}
+        {form.formState.errors.name && <p className="text-red-500 mt-1">{form.formState.errors.name.message}</p>}
       </div>
 
-      <div className="mb-4"> 
-        <label className="block text-lg mb-2">Rango de jugadores</label>
+      <div className="mb-6"> 
+        <label className="block text-lg text-white mb-2">Rango de jugadores</label>
         <div className="flex justify-center">
           <Controller
             name="playersRange"
@@ -152,25 +143,27 @@ export default function CreateGameForm() {
             )}
           />
         </div>
-        {form.formState.errors.playersRange && <p className="text-red-500 text-center">{form.formState.errors.playersRange.message}</p>}
+        {form.formState.errors.playersRange && <p className="text-red-500 text-center mt-1">{form.formState.errors.playersRange.message}</p>}
       </div>
 
-      <div className="mb-4">
-        <label className="block text-lg mb-2">Contraseña (opcional)</label>
+      <div className="mb-6">
+        <label className="block text-lg text-white mb-2">Contraseña (opcional)</label>
         <input 
-          placeholder="Ingrese una contraseña (opcional)" 
+          placeholder="Ingrese una contraseña" 
           {...form.register('password')} 
-          className="p-2 w-full rounded bg-white text-black"
+          className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2"
         />
-        {form.formState.errors.password && <p className="text-red-500">{form.formState.errors.password.message}</p>}
+        {form.formState.errors.password && <p className="text-red-500 mt-1">{form.formState.errors.password.message}</p>}
       </div>
 
       {/* Centered button */}
       <div className="flex justify-center">
-        <Button type="submit" className="bg-yellow-500 text-white py-2 px-4 rounded mb-6 w-1/3">Crear</Button>
+        <Button type="submit" className="bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-200 w-1/3">
+          Crear
+        </Button>
       </div>
 
-      {errorMessage && <p data-testid="form-error">{errorMessage}</p>}
+      {errorMessage && <p className="text-red-500 mt-4 text-center">{errorMessage}</p>}
     </form>
   );
 }

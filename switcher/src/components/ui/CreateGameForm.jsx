@@ -81,8 +81,8 @@ export default function CreateGameForm() {
     const body = {
       game: {
         name: data.name,
-        maxPlayers: data.playersRange[1],
-        minPlayers: data.playersRange[0],
+        max_players: data.playersRange[1],
+        min_players: data.playersRange[0],
       },
       player: {
         name: username,

@@ -35,8 +35,8 @@ export default function Lobby() {
 
   useEffect(() => {
     getGameInfo(gameId).then((res) => {
-      setMaxPlayers(res.maxPlayers);
-      setMinPlayers(res.minPlayers);
+      setMaxPlayers(res.max_players);
+      setMinPlayers(res.min_players);
     }).catch((err) =>
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );

@@ -3,7 +3,8 @@ import React from "react";
 export default function GamesList({ games, currentPage, setCurrentPage, totalPages, loading, selectedGame, setSelectedGame,  }) {
 
   const handleGameSelect = (game) => {
-    if (game.currentPlayers < game.maxPlayers) { 
+    if (game.playersCount < game.maxPlayers) { 
+      console.log("set")
       setSelectedGame(game); // Select the game if it's not full
     }
   };
@@ -35,12 +36,12 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
                   <li
                     key={game.id}
                     onClick={() => handleGameSelect(game)}
-                    className={`group rounded-lg p-6 shadow border border-zinc-800 relative transition-all duration-300 cursor-pointer ${
+                    className={`group rounded-lg p-6 shadow border  relative transition-all duration-300 cursor-pointer ${
                       isFull
                         ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed opacity-50'
                         : isSelected
                         ? ' border-blue-500'
-                        : ''
+                        : 'border-zinc-800'
                     }`}
                   >
                     {/* Game details spread out with space-between */}
@@ -51,7 +52,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
 
                       
                         <span className="text-zinc-300">
-                          {game.currentPlayers} de {game.maxPlayers} jugadores
+                          {game.playersCount} de {game.maxPlayers} jugadores
                         </span>
                         <span className="text-zinc-300">
                           {game.isPrivate ? 'Privada' : 'Pública'}

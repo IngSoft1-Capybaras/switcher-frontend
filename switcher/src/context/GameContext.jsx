@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext } from 'react';
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [username, setUsername] = useState(''); // nombre de usuario
+  const [username, setUsername] = useState(`guest${Math.floor(Math.random() * (10000000000 - 1 + 1)) + 1}`); // nombre de usuario
   const [activeGameId, setActiveGameId] = useState(null); // id de la partida
   const [playerId, setPlayerId] = useState(null); // id del jugador
   const [players, setPlayers] = useState([]);

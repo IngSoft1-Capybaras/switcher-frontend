@@ -108,7 +108,8 @@ export default function CreateGameForm() {
         return response.json();
       })
       .then(data => {
-        navigate(`games/ongoing/${data.id}`);
+        console.log(data);
+        navigate(`/games/lobby/${data.game.id}`);
       })
       .catch(error => {
         console.error('Error:', error.message);

@@ -10,6 +10,7 @@ const Games = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null); // Store selected game
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -58,17 +59,17 @@ const Games = () => {
         <div className="flex justify-between mb-4">
           <button
             onClick={handleCreateGame}
-            className="bg-blue-500 text-white py-2 px-4 rounded mb-6 hover:bg-blue-600 transition-all duration-200"
+            className="bg-blue-600 text-white py-2 px-4 rounded mb-6 hover:bg-blue-500 transition-all duration-200"
           >
             Crear partida
           </button>
           <button
                 onClick={handleJoinGame}
                 disabled={!selectedGame || selectedGame.currentPlayers >= selectedGame.maxPlayers}
-                className={`bg-green-500 text-white py-3 px-8 rounded mb-6 transition-all duration-200 ${
+                className={`text-white py-3 px-8 rounded mb-6 transition-all duration-200 ${
                   selectedGame
                     ? selectedGame.currentPlayers >= selectedGame.maxPlayers
-                      ? 'bg-gray-600 cursor-not-allowed'
+                      ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-500'
                     : 'bg-gray-400 cursor-not-allowed'
                 }`}

@@ -4,15 +4,17 @@ console.log(import.meta.env);
 export async function getGames(currentPage, totalPages) {
     const url = `${apiUrl}/games`; // TODO: coordinar con back
 
-    const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
 
-    if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    return data;
+        const data = await response.json();
+        
+        return data;
+    // } catch (error) {
+        
+    //     throw error;
+    // }
 }
 
 // Obtener jugadores

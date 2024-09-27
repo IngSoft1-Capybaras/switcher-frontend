@@ -41,7 +41,7 @@ export default function Lobby() {
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );
 
-    getPlayer(gameId, 1).then((res) => {
+    getPlayer(gameId, playerId).then((res) => {
       setHost(res.host);
     }).catch((err) =>
       console.error(`Error: Unable to retrieve player data. ${err}`)

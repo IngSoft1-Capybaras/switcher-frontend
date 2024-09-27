@@ -12,7 +12,7 @@ const Games = () => {
   const [selectedGame, setSelectedGame] = useState(null); // Store selected game
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(10);
   const [loading, setLoading] = useState(true);
   const { setPlayerId, username } = useGameContext();
 
@@ -20,9 +20,9 @@ const Games = () => {
     navigate('/games/create');
   };
 
-  const fetchGames = async () => {
+  const fetchGames = async (page) => {
     try {
-      const data = await getGames();
+      const data = await getGames(page);
       setGames(data);
       // Update total pages logic as necessary
     } catch (error) {
@@ -36,6 +36,7 @@ const Games = () => {
     if (selectedGame) {
       joinGame(selectedGame.id, username)
         .then((res) => {
+          console.log(res)
           setPlayerId(res.playerId);
           navigate(`/games/lobby/${selectedGame.id}`);
         })

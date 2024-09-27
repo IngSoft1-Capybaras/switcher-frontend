@@ -1,8 +1,8 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 
 console.log(import.meta.env);
-export async function getGames(currentPage, totalPages) {
-    const url = `${apiUrl}/games`; // TODO: coordinar con back
+export async function getGames(currentPage) {
+    const url = `${apiUrl}/games?page=${currentPage}&limit=5`; // TODO: coordinar con back
 
     const response = await fetch(url);
 
@@ -74,8 +74,8 @@ export async function getGameInfo(gameId) {
     return data;
 }
 
-export async function getPlayer(gameId, player) {
-    const url = `${apiUrl}/players/${gameId}/${player.id}`;
+export async function getPlayer(gameId, playerId) {
+    const url = `${apiUrl}/players/${gameId}/${playerId}`;
 
     const response = await fetch(url);
 

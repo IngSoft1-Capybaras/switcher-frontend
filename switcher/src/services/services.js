@@ -3,18 +3,19 @@ const apiUrl = import.meta.env.VITE_API_URL;
 console.log(import.meta.env);
 export async function getGames(currentPage) {
     const url = `${apiUrl}/games?page=${currentPage}&limit=5`; // TODO: coordinar con back
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+    }
 
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        return data;
+    const data = await response.json();
+    
+    return data;
     // } catch (error) {
         
     //     throw error;
     // }
+    return response;
 }
 
 // Obtener jugadores

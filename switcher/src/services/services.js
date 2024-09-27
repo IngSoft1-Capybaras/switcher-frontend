@@ -4,15 +4,17 @@ console.log(import.meta.env);
 export async function getGames(currentPage) {
     const url = `${apiUrl}/games?page=${currentPage}&limit=5`; // TODO: coordinar con back
 
-    const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
 
-    if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    return data;
+        const data = await response.json();
+        
+        return data;
+    // } catch (error) {
+        
+    //     throw error;
+    // }
 }
 
 // Obtener jugadores
@@ -45,6 +47,7 @@ export async function getDeckMovement(gameId, player) {
     return data;
 }
 
+// Obtener cartas de figura para cada jugador
 export async function getDeckFigure(gameId, player) {
     const url = `${apiUrl}/deck/figure/${gameId}/${player.id}`; // TODO: coordinar con back
 
@@ -129,3 +132,24 @@ export async function joinGame(gameId, playerName) {
     
     return data;
 }
+// Finalizar turno
+export async function pathEndTurn(gameId) {
+    try {
+      const response = await fetch(`/game_status/${gameId}/finish_turn`, {
+        method: 'PATCH',  // Método PATCH para actualizar el turno
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al finalizar el turno');
+      }
+  
+      return await response.json(); // Asumiendo que devuelve algún JSON como respuesta
+    } catch (error) {
+      console.error('Error al llamar al endpoint de finalizar turno:', error);
+      throw error; // Propaga el error para manejarlo en el componente
+    }
+  }
+  

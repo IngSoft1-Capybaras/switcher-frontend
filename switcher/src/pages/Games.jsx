@@ -45,7 +45,7 @@ const Games = () => {
   };
 
   // games socket connection
-  useGameSocket(fetchGames);
+  useGameSocket(fetchGames, currentPage);
 
   // initial fetch
   useEffect(() => {

@@ -74,8 +74,8 @@ export async function getGameInfo(gameId) {
     return data;
 }
 
-export async function getPlayer(gameId, playerId) {
-    const url = `${apiUrl}/players/${gameId}/${playerId}`;
+export async function getPlayer(gameId, player) {
+    const url = `${apiUrl}/players/${gameId}/${player.id}`;
 
     const response = await fetch(url);
 
@@ -112,13 +112,13 @@ export async function joinGame(gameId, playerName) {
     const url = `${apiUrl}/players/join/${gameId}`;
 
     const response = await fetch(url, {
-        method: 'POST',
+        method: 'POST', 
         headers: {
         'Content-Type': 'application/json',
         },
-        body: {
+        body: JSON.stringify({
             'player_name': playerName
-        }
+        })
     });
 
     if (!response.ok) {

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
+import { useGameContext } from "@/context/GameContext"
 
 const FormSchema = z.object({
   username: z
@@ -29,6 +30,7 @@ const FormSchema = z.object({
 
 export default function InputForm() {
   const navigate = useNavigate();
+  const {setUsername } = useGameContext();
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -46,6 +48,10 @@ export default function InputForm() {
         </pre>
       ),
     })
+
+    // seteo el estado global 'username'
+    setUsername(data.username);
+
     // redirigir
     navigate('/games');
   }

@@ -26,7 +26,7 @@ describe("NameForm", () => {
       </MemoryRouter>
     );
 
-    const usernameInput = screen.getByPlaceholderText("Nombre de usuario");
+    const usernameInput = screen.getByPlaceholderText("Ingrese su nombre de usuario");
     const submitButton = screen.getByText("Siguiente");
 
     fireEvent.change(usernameInput, { target: { value: "ab" } });
@@ -51,7 +51,7 @@ describe("NameForm", () => {
       </MemoryRouter>
     );
 
-    const usernameInput = screen.getByPlaceholderText("Nombre de usuario");
+    const usernameInput = screen.getByPlaceholderText("Ingrese su nombre de usuario");
     const submitButton = screen.getByText("Siguiente");
 
     fireEvent.change(usernameInput, { target: { value: "validuser" } });

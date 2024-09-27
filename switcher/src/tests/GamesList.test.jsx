@@ -4,9 +4,9 @@ import { MemoryRouter } from "react-router-dom"; // Import MemoryRouter
 
 // testeo lo que renderiza el componente
 describe('Listado de partidas', ()=> {
-    it('Deberia mostrar "No hay partidas aun" cuando llega un arreglo vacio y loading esta en false', ()=> {
+    it('Deberia mostrar "No hay partidas creadas aun" cuando llega un arreglo vacio y loading esta en false', ()=> {
         render(<MemoryRouter><GamesList games={[]}  setCurrentPage={1} totalPages={1} loading={false}/></MemoryRouter>);
-        const noGamesMsg = screen.getByText(/No hay partidas en creadas aun./i);
+        const noGamesMsg = screen.getByText(/No hay partidas creadas aun./i);
         expect(noGamesMsg).toBeInTheDocument();
     })
 

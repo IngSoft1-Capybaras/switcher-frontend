@@ -3,13 +3,17 @@ import { useGameSocket } from '../components/hooks/use-games-socket';
 import { getGames } from '../services/services';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGameContext } from '@/context/GameContext';
+import { joinGame } from '../services/services';
 
 const Games = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
+  const [selectedGame, setSelectedGame] = useState(null); // Store selected game
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const { setPlayerId, username } = useGameContext();
 
   const handleCreateGame = () => {
     navigate('/games/create');
@@ -27,6 +31,17 @@ const Games = () => {
     }
   };
 
+  const handleJoinGame = () => {
+    if (selectedGame) {
+      joinGame(selectedGame.id, username)
+        .then((res) => {
+          setPlayerId(res.playerId);
+          navigate(`/games/lobby/${selectedGame.id}`);
+        })
+        .catch((err) => console.error("Error entrando al juego"));
+    }
+  };
+
   // games socket connection
   useGameSocket(fetchGames);
 
@@ -40,19 +55,35 @@ const Games = () => {
       <h1 className="text-5xl font-bold text-white mb-6">Lista de partidas</h1>
 
       <div className="w-1/3">
-        <button
-          onClick={handleCreateGame}
-          className="bg-blue-500 text-white py-2 px-4 rounded mb-6 hover:bg-blue-600 transition-all duration-200"
-        >
-          Crear partida
-        </button>
-
+        <div className="flex justify-between mb-4">
+          <button
+            onClick={handleCreateGame}
+            className="bg-blue-500 text-white py-2 px-4 rounded mb-6 hover:bg-blue-600 transition-all duration-200"
+          >
+            Crear partida
+          </button>
+          <button
+                onClick={handleJoinGame}
+                disabled={!selectedGame || selectedGame.currentPlayers >= selectedGame.maxPlayers}
+                className={`bg-green-500 text-white py-3 px-8 rounded mb-6 transition-all duration-200 ${
+                  selectedGame
+                    ? selectedGame.currentPlayers >= selectedGame.maxPlayers
+                      ? 'bg-gray-600 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-500'
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Jugar
+          </button>
+        </div>
         <GamesList
           games={games}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}
           loading={loading}
+          selectedGame={selectedGame}
+          setSelectedGame={setSelectedGame}
         />
       </div>
     </div>

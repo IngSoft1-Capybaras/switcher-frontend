@@ -1,75 +1,77 @@
-import { useGameContext } from '@/context/GameContext';
-import { useNavigate } from 'react-router-dom';
-import {joinGame} from '../../services/services';
+import React from "react";
 
-export default function GamesList({ games, currentPage, setCurrentPage, totalPages, loading }) {
-  const {setPlayerId, username} = useGameContext();
-  const navigate = useNavigate();
+export default function GamesList({ games, currentPage, setCurrentPage, totalPages, loading, selectedGame, setSelectedGame,  }) {
 
-  const handleGameSelect = (gameId) => {
-    joinGame(gameId, username)
-    .then((res)=> {
-      setPlayerId(res.playerId);
-      navigate(`/games/lobby/${gameId}`);
-    })
-    .catch((err) => console.error("Error entrando al juego"));
-
+  const handleGameSelect = (game) => {
+    if (game.currentPlayers < game.maxPlayers) { 
+      setSelectedGame(game); // Select the game if it's not full
+    }
   };
 
   return (
     <>
       {loading ? (
         <div className="text-center text-zinc-200">Loading...</div>
+      ) : games && games.length === 0 ? (
+        <div className="bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900">
+          <div className="h-1/2 text-center justify-center flex flex-col gap-4 bg-zinc-950 text-zinc-300">
+            No hay partidas creadas aun.
+          </div>
+        </div>
       ) : (
-        (games && games.length === 0) ? (
-            <div className='bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900'>
-                <div className="h-1/2 text-center justify-center flex flex-col gap-4 bg-zinc-950 text-zinc-300">
-                    No hay partidas creadas aun.
-                </div>
+        <div className="relative">
+          
+          
 
-            </div>
-        ) : (
           <div className="bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900">
             <ul className="flex flex-col gap-4">
-              {games.map((game) => (
-                <li
-                  key={game.id}
-                  className="group rounded-lg p-6 shadow bg-zinc-900 border border-zinc-800 hover:bg-zinc-700 relative flex items-center justify-between transition-all duration-300"
-                >
-                  {/* Game details displayed horizontally */}
-                  <div className="flex gap-8 w-full">
-                    {/* Game Name */}
-                    <div className="flex flex-col">
-                      <span className="text-xl font-semibold text-zinc-100">{game.name}</span>
-                    </div>
+              {games.map((game) => {
+                console.log(game);
+                console.log(selectedGame);
+                const isFull = game.currentPlayers >= game.maxPlayers;
+                const isSelected = selectedGame?.id === game.id;
 
-                    {/* Number of Players */}
-                    <div className="flex flex-col">
-                      <span className="text-zinc-300">
-                        {game.currentPlayers} de {game.maxPlayers} jugadores
-                      </span>
-                    </div>
-
-                    {/* Game Status: Public or Private */}
-                    <div className="flex flex-col">
-                      <span className="text-zinc-300">
-                        {game.isPrivate ? 'Privada' : 'Pública'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Button that shows on hover */}
-                  <button
-                    onClick={() => handleGameSelect(game.id)}
-                    className="bg-green-600 text-white py-1 px-4 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                return (
+                  <li
+                    key={game.id}
+                    onClick={() => handleGameSelect(game)}
+                    className={`group rounded-lg p-6 shadow border border-zinc-800 relative transition-all duration-300 cursor-pointer ${
+                      isFull
+                        ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed opacity-50'
+                        : isSelected
+                        ? ' border-blue-500'
+                        : ''
+                    }`}
                   >
-                    Jugar
-                  </button>
-                </li>
-              ))}
+                    {/* Game details spread out with space-between */}
+                    <div className="flex justify-between w-full">
+                      <div className="flex flex-col">
+                        <span className="text-xl font-semibold text-zinc-100">{game.name}</span>
+                      </div>
+
+                      
+                        <span className="text-zinc-300">
+                          {game.currentPlayers} de {game.maxPlayers} jugadores
+                        </span>
+                        <span className="text-zinc-300">
+                          {game.isPrivate ? 'Privada' : 'Pública'}
+                        </span>
+                      
+                    </div>
+
+                    {/* Full game indicator: Dimmed card and icon */}
+                    {isFull && (
+                      <div className="absolute top-2 right-2 text-red-600">
+                        <i className="fas fa-ban"></i> {/* Optional: FontAwesome icon */}
+                        <span className="ml-1 text-xs">Juego lleno</span>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
-        )
+        </div>
       )}
 
       {/* Pagination Controls */}

@@ -3,18 +3,13 @@ import CardsFigure from './cardsFigure';
 
 /* Funcion que representa la informacion de un jugador en el juego,
   mostrando su nombre y las cartas que posee */
-const PlayerPanel = ({ playerName, cartas }) => {
+const PlayerPanel = ({ game, player }) => {
     return (
       <div className="flex flex-col items-center">
-        <h2>{playerName}</h2>
+        <h2>{player}</h2>
+        {/* muestra el nombre del jugador */}
         <div className="flex space-x-2">
-          {cartas.map((carta, index) => (
-            <CardsFigure 
-              key={index} 
-              type={carta.type} 
-              show={carta.show} 
-              difficulty={carta.difficulty} />
-          ))}
+          <CardsFigure gameId={game} playerId={player} />
         </div>
       </div>
     );

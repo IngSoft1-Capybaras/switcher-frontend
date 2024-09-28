@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { cardImg } from '../utils/getCardImg';
 import { getDeckMovement } from '@/services/services'; 
+import { useParams } from 'react-router-dom';
 
 // Componente que representa las cartas de movimiento 
-const CardsMovement = ({ gameId, playerId }) => {
+const CardsMovement = ({gameId, playerId}) => {
   const [movementCards, setMovementCards] = useState([]); // Estado para las cartas de movimiento
   const [loading, setLoading] = useState(true); // Estado para la carga
   const [error, setError] = useState(null); // Estado para errores
+  // console.log("gameId: ", gameId);
+  // console.log("cardsMovplayerId: ", playerId);
 
   // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
   useEffect(() => {

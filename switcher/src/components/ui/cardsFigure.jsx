@@ -3,9 +3,10 @@ import { cn } from "@/lib/utils"; // Asegúrate de que "cn" esté en utils
 import { cardImg } from '../utils/getCardImg';
 import { getDeckFigure } from '@/services/services'; // Asegúrate de importar tu función para obtener las cartas
 import { mockFigureCards } from '@/lib/mockGameState';
+import { useParams } from 'react-router-dom';
 
 /* Componente que representa las cartas de figura */
-const CardsFigure = ({ gameId, playerId }) => {
+const CardsFigure = ({gameId, playerId}) => {
   const [figureCards, setFigureCards] = useState([]); // Estado para las cartas de figura
   const [loading, setLoading] = useState(true); // Estado para la carga
   const [error, setError] = useState(null); // Estado para errores

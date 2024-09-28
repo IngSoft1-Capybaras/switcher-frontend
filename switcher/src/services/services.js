@@ -15,42 +15,44 @@ export async function getGames(currentPage) {
         
     //     throw error;
     // }
-    return response;
+    // return response;
 }
 
 // Obtener jugadores
 export async function getPlayers(gameId) {
     const url = `${apiUrl}/players/${gameId}`; // TODO: coordinar con back
-
+    
     const response = await fetch(url);
-
+    
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
     }
 
     const data = await response.json();
-    
+
     return data;
 }
 
 // Obtener cartas de movimiento y figura para cada jugador
 export async function getDeckMovement(gameId, player) {
-    const url = `${apiUrl}/deck/movement/${gameId}/${player.id}`; // TODO: coordinar con back
+    console.log("gameID: ", gameId);
+    console.log("player: ", player);
+    const url = `${apiUrl}/deck/movement/${gameId}/${player}`; // TODO: coordinar con back
 
     const response = await fetch(url);
-
+    console.log(response);
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
     }
 
     const data = await response.json();
-    
+    console.log("cardsMOV: ", data);
     return data;
 }
 
 // Obtener cartas de figura para cada jugador
 export async function getDeckFigure(gameId, player) {
-    const url = `${apiUrl}/deck/figure/${gameId}/${player.id}`; // TODO: coordinar con back
+    const url = `${apiUrl}/deck/figure/${gameId}/${player}`; // TODO: coordinar con back
 
     const response = await fetch(url);
 
@@ -59,7 +61,7 @@ export async function getDeckFigure(gameId, player) {
     }
 
     const data = await response.json();
-    
+    console.log("cardsFIG: ", data);
     return data;
 }
 

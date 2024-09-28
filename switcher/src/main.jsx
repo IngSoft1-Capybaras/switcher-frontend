@@ -11,7 +11,7 @@ const Games = lazy(() => import('./pages/Games'));
 const CreateGame = lazy(() => import('./pages/CreateGame'));
 const Lobby = lazy(() => import('./pages/Lobby'));
 const ActiveGame = lazy(() => import('./pages/ActiveGame'));
-
+const Winner = lazy(() => import('./pages/Winner'));
 
 
 const Loader = () => <div>Loading...</div>;
@@ -27,7 +27,7 @@ const Main = () => (
             <Route path="/games/create" element={<CreateGame />} />
             <Route path="/games/lobby/:gameId" element={<Lobby />} />
             <Route path="/games/ongoing/:gameId" element={<ActiveGame />} />
-            {/* <Route path="/winner" element={<Winner />} /> */}
+            <Route path="/winner" element={<Winner />} />
           </Routes>
         </Suspense>
       </Router>

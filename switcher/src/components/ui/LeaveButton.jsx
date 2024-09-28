@@ -3,18 +3,20 @@ import { useGameContext } from '../../context/GameContext'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 
-export default function LeaveButton() {
-  const { activeGameId, playerId } = useGameContext();
+export default function LeaveButton({gameId}) {
+  const { playerId } = useGameContext();
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
   const onAbandon = async () => {
     try {
+      console.log(playerId);
+      console.log(gameId);
       // recordatorio, cambiar localhost:8000 por variable de entorno.
-      const response = await fetch(`http://localhost:8000/players/${playerId}/leave`, {
+      const response = await fetch(`http://localhost:8000/players/${playerId}/leave?game_id=${gameId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId: activeGameId })
+        // body: JSON.stringify({ gameId: gameId })
       });
 
       if (response.ok) {

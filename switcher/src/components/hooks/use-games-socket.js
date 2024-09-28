@@ -1,7 +1,7 @@
 import { useSocketContext } from '@/context/SocketContext';
 import { useEffect } from 'react';
 
-export function useGameSocket(fetchGames) {
+export function useGameSocket(fetchGames, page) {
   const { socket } = useSocketContext();  // Get WebSocket instance
 
   useEffect(() => {
@@ -11,7 +11,7 @@ export function useGameSocket(fetchGames) {
     const handleGamesListUpdate = (event) => {
       const data = JSON.parse(event.data);  // Assuming server sends JSON data
       if (data.type === "GAMES_LIST_UPDATE") {
-        fetchGames(data.payload);  // Use the fetched games payload
+        fetchGames(page);  // Use the fetched games payload
       }
     };
 

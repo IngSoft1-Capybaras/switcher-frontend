@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GameProvider } from '../context/GameContext';
-import LeaveButton from '../components/botonAbandonar/LeaveButton';
+import LeaveButton from '../components/ui/LeaveButton';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom'; 
 

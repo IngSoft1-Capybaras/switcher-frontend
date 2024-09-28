@@ -5,19 +5,21 @@ import StartButton from '../components/ui/activeButton';
 import { useGameContext } from '@/context/GameContext';
 import { getPlayers, getGameInfo, getPlayer, startGame } from '../services/services';
 import { useLobbySocket } from '@/components/hooks/use-lobby-socket';
+import BotonAbandonar from '@/components/ui/LeaveButton';
 
 // The improved lobby component
 export default function Lobby() {
   const { gameId } = useParams();
-  const { players, setPlayers, playerId } = useGameContext();
+  const { players, setPlayers, playerId, gameName, setGameName } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
+  
   const [host, setHost] = useState(false);
 
   const navigate = useNavigate();
 
-  const fetchGameInfo = async () => {
+  const fetchPlayersInfo = async () => {
     getPlayers(gameId).then((fetchedPlayers) => {
       setPlayers(fetchedPlayers);
     }).catch((err) => {
@@ -37,6 +39,7 @@ export default function Lobby() {
     getGameInfo(gameId).then((res) => {
       setMaxPlayers(res.max_players);
       setMinPlayers(res.min_players);
+      setGameName(res.name);
     }).catch((err) =>
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );
@@ -47,7 +50,7 @@ export default function Lobby() {
       console.error(`Error: Unable to retrieve player data. ${err}`)
     );
 
-    fetchGameInfo(); // Initial fetch
+    fetchPlayersInfo(); // Initial fetch
   }, []);
 
   useEffect(() => {
@@ -60,11 +63,11 @@ export default function Lobby() {
   }, [players, host, minPlayers]); // Run this effect whenever players, host, or minPlayers changes
 
 
-  useLobbySocket(gameId, fetchGameInfo); // Subscribe to events for dynamic updates
+  useLobbySocket(gameId, fetchPlayersInfo); // Subscribe to events for dynamic updates
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-  <h1 className="text-5xl font-extrabold text-center mb-8 text-white">Lobby</h1>
+  <h1 className="text-5xl font-extrabold text-center mb-8 text-white">Lobby: {gameName}</h1>
 
   {/* Outer Container for status, player list, and chat */}
   <div className="max-w-4xl w-full bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
@@ -105,8 +108,9 @@ export default function Lobby() {
   
 
   {/* Start Button */}
+  <div className="flex justify-center mt-8">
+  <BotonAbandonar gameId={gameId} />
   {host && (
-    <div className="flex justify-center mt-8">
       <StartButton
         isActive={iniciateActive}
         onClick={onStartClick}
@@ -118,8 +122,8 @@ export default function Lobby() {
       >
         Comenzar partida
       </StartButton>
-    </div>
   )}
+  </div>
 </div>
 
   );

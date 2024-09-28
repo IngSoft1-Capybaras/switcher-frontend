@@ -37,7 +37,7 @@ const Games = () => {
       joinGame(selectedGame.id, username)
         .then((res) => {
           console.log(res)
-          setPlayerId(res.playerId);
+          setPlayerId(res.player_id);
           navigate(`/games/lobby/${selectedGame.id}`);
         })
         .catch((err) => console.error("Error entrando al juego"));

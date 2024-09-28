@@ -27,9 +27,8 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
           <div className="bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900">
             <ul className="flex flex-col gap-4">
               {games.map((game) => {
-                console.log(game);
-                console.log(selectedGame);
-                const isFull = game.currentPlayers >= game.maxPlayers;
+               
+                const isFull = game.players_count >= game.max_players;
                 const isSelected = selectedGame?.id === game.id;
 
                 return (
@@ -51,22 +50,15 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
                       </div>
 
                       
-                        <span className="text-zinc-300">
-                          {game.playersCount} de {game.maxPlayers} jugadores
+                        <span className={`${isFull ? 'text-red-500' : 'text-zinc-300'}`}>
+                          {game.players_count} de {game.max_players} jugadores
                         </span>
                         <span className="text-zinc-300">
-                          {game.isPrivate ? 'Privada' : 'Pública'}
+                          {game.is_private ? 'Privada' : 'Pública'}
                         </span>
                       
                     </div>
-
-                    {/* Full game indicator: Dimmed card and icon */}
-                    {isFull && (
-                      <div className="absolute top-2 right-2 text-red-600">
-                        <i className="fas fa-ban"></i> {/* Optional: FontAwesome icon */}
-                        <span className="ml-1 text-xs">Juego lleno</span>
-                      </div>
-                    )}
+                    
                   </li>
                 );
               })}

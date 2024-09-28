@@ -66,10 +66,10 @@ const Games = () => {
           </button>
           <button
                 onClick={handleJoinGame}
-                disabled={!selectedGame || selectedGame.currentPlayers >= selectedGame.maxPlayers}
+                disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
                 className={`text-white py-3 px-8 rounded mb-6 transition-all duration-200 ${
                   selectedGame
-                    ? selectedGame.currentPlayers >= selectedGame.maxPlayers
+                    ? selectedGame.players_count >= selectedGame.max_players
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-500'
                     : 'bg-gray-400 cursor-not-allowed'

@@ -17,6 +17,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
+const gameId = 123;
 
 vi.mock('../context/GameContext', async (importOriginal) => {
     const actual = await importOriginal();
@@ -24,7 +25,6 @@ vi.mock('../context/GameContext', async (importOriginal) => {
       ...actual,
       GameProvider: ({ children }) => <div>{children}</div>, 
       useGameContext: () => ({
-        activeGameId: '123', 
         playerId: '456', 
       }),
     };
@@ -43,7 +43,7 @@ describe('Leave Button', () => {
     render(
       <GameProvider>
         <Router location={history.location} navigator={history}>
-          <LeaveButton />
+          <LeaveButton gameId={gameId}/>
         </Router>
       </GameProvider>
     );
@@ -60,11 +60,10 @@ describe('Leave Button', () => {
 
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/players/456/leave'), 
+      expect.stringContaining('/players/456/leave?game_id=123'), 
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId: '123' }),
       })
     ));
 

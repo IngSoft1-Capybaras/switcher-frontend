@@ -153,4 +153,23 @@ export async function pathEndTurn(gameId) {
       throw error; // Propaga el error para manejarlo en el componente
     }
   }
+
+  // Obtener el estado del juego
+export async function getGameStatus(gameId) {
+    const url = `${apiUrl}/game_status/${gameId}/status`;
+  
+    try {
+      const response = await fetch(url);
+  
+      if (!response.ok) {
+        throw new Error(`Error al obtener el estado del juego: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data.state; // Suponiendo que la respuesta contiene { state: "FINISHED" | "PLAYING" | "WAITING" }
+    } catch (error) {
+      console.error('Error en la llamada a getGameStatus:', error);
+      throw error;
+    }
+  }
   

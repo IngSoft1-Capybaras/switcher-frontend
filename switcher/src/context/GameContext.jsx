@@ -8,9 +8,11 @@ export const GameProvider = ({ children }) => {
   const [playerId, setPlayerId] = useState(null); // id del jugador
   const [players, setPlayers] = useState([]);
   const [gameName, setGameName] = useState(`game${Math.floor(Math.random() * (100000)) + 1}`);
+  const [currentTurn, setCurrentTurn] = useState(null);
+
 
   return (
-    <GameContext.Provider value={{ username, setUsername, activeGameId, setActiveGameId, playerId, setPlayerId, players, setPlayers, gameName, setGameName }}>
+    <GameContext.Provider value={{ username, setUsername, activeGameId, setActiveGameId, playerId, setPlayerId, players, setPlayers, gameName, setGameName, currentTurn, setCurrentTurn }}>
       {children}
     </GameContext.Provider>
   );

@@ -9,7 +9,7 @@ import diagonalContiguo from '../assets/images/cruceDiagonalContiguo.png';
 import Lizquierda from '../assets/images/cruceEnLIzquierda.png';
 
 const Winner = () => {
-  const { activeGameId, playerId } = useGameContext(); // Obtener gameId y playerId del contexto
+  const { winnerName, playerName } = useGameContext(); // Obtener gameId y playerId del contexto
   const navigate = useNavigate();
 
   const handleGoToGames = () => {
@@ -36,8 +36,8 @@ const Winner = () => {
         <div className="p-8 bg-gray-800 rounded-lg text-center">
           <h1 className="text-6xl font-bold mb-20">Winner</h1>
           <div className="mb-20">
-            <h2 className="text-6xl">Partida: {"Capybaras"}</h2>
-            <h2 className="text-6xl">Ganador: {"Armand"}</h2>
+            <h2 className="text-6xl">Partida: {winnerName}</h2>
+            <h2 className="text-6xl">Ganador: {playerName}</h2>
           </div>
           <Button onClick={handleGoToGames} className="mt-4">
             Volver al inicio

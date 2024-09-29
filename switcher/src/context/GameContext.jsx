@@ -8,7 +8,8 @@ export const GameProvider = ({ children }) => {
   const [playerId, setPlayerId] = useState(null); // id del jugador
   const [players, setPlayers] = useState([]);
   const [gameName, setGameName] = useState(`game${Math.floor(Math.random() * (100000)) + 1}`);
-  const [gameState, setGameState] = useState('WAITING');
+  const [winnerName, setWinnerName] = useState("");
+  const [playerName, setPlayerName] = useState("");
 
   return (
     <GameContext.Provider value={{ username, setUsername, 
@@ -16,7 +17,8 @@ export const GameProvider = ({ children }) => {
                                   playerId, setPlayerId, 
                                   players, setPlayers, 
                                   gameName, setGameName, 
-                                  gameState, setGameState 
+                                  winnerName, setWinnerName,
+                                  playerName, setPlayerName
                                 }}>
       {children}
     </GameContext.Provider>

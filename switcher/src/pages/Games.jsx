@@ -23,8 +23,8 @@ const Games = () => {
   const fetchGames = async (page) => {
     try {
       const data = await getGames(page);
-      setGames(data);
-      // Update total pages logic as necessary
+      setGames(data.games);
+      setTotalPages(data.total_pages);
     } catch (error) {
       console.error("Couldn't fetch games");
     } finally {

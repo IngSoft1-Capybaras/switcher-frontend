@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useGameContext } from "@/context/GameContext"; 
 import { useSocketContext } from "@/context/SocketContext"; 
 
-export default async function TurnInformation() {
-    const { playerId, activeGameId, currentTurn, setCurrentTurn } = useGameContext();
+export default function TurnInformation() {
+    const { playerId, players, activeGameId, currentTurn, setCurrentTurn } = useGameContext();
     const [turnData, setTurnData] = useState(null);
     const {socket} = useSocketContext();
 
@@ -29,7 +29,7 @@ export default async function TurnInformation() {
 
 
     useEffect(() => {
-        if (!socket) return;
+        if (!socket || !activeGameId) return;
 
         const handleNextTurnEvent = async (event) => {
             const data = JSON.parse(event.data);
@@ -52,29 +52,15 @@ export default async function TurnInformation() {
         return () => {
           socket.removeEventListener("message", handleNextTurnEvent);
         };
-      }, [socket, playerId]);
+      }, [socket, activeGameId, setCurrentTurn]);
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    return 
+    return (
+        <div className="turn-info">
+            <h2>Información del Turno</h2>
+            <p>Cantidad de jugadores en la partida: {players.length}</p>
+            <p>Es el turno del jugador: {currentTurn}</p>
+            {/*siguiente turno*/}
+            {/*color bloqueado*/}
+        </div>
+    )
 };

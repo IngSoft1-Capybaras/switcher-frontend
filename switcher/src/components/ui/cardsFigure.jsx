@@ -13,7 +13,6 @@ const CardsFigure = ({gameId, playerId}) => {
   console.log("gameId: ", gameId);
   console.log("cardsFIGplayerId: ", playerId);
 
-
   // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
   useEffect(() => {
     const fetchFigureCards = async () => {

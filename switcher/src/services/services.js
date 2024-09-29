@@ -35,8 +35,8 @@ export async function getPlayers(gameId) {
 
 // Obtener cartas de movimiento y figura para cada jugador
 export async function getDeckMovement(gameId, player) {
-    console.log("gameID: ", gameId);
-    console.log("player: ", player);
+    console.log("gameIDMov: ", gameId);
+    console.log("playerMov: ", player);
     const url = `${apiUrl}/deck/movement/${gameId}/${player}`; // TODO: coordinar con back
 
     const response = await fetch(url);
@@ -52,6 +52,8 @@ export async function getDeckMovement(gameId, player) {
 
 // Obtener cartas de figura para cada jugador
 export async function getDeckFigure(gameId, player) {
+    console.log("gameIDFig: ", gameId);
+    console.log("playerFig: ", player);
     const url = `${apiUrl}/deck/figure/${gameId}/${player}`; // TODO: coordinar con back
 
     const response = await fetch(url);

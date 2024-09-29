@@ -9,7 +9,7 @@ const PlayerPanel = ({ game, player, name }) => {
         <h2>{name}</h2>
         {/* muestra el nombre del jugador */}
         <div className="flex space-x-2">
-          <CardsFigure gameId={game} playerId={player.id} />
+          <CardsFigure gameId={game} playerId={player} />
         </div>
       </div>
     );

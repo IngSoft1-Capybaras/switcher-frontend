@@ -5,7 +5,7 @@ import { useSocketContext } from "@/context/SocketContext";
 import { pathEndTurn } from "@/services/services";
 import { Result } from "postcss";
 
-const EndTurnButton = () => {
+const EndTurnButton = ({gameId}) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId, activeGameId } = useGameContext(); // Obtener el ID del jugador actual

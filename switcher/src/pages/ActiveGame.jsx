@@ -59,57 +59,44 @@ const ActiveGame = () => {
       {/* Cartas de jugador de turno */}
       <div className="Jugador_de_turno mt-1 text-white">
         <div className="flex space-x-8">
-          {players.map((player) => (
-            player.turn === currentPlayerId && (  // Verifica si el jugador es el actual
-              <div key={player.id} className="flex flex-col items-center">
-                <h3 className="font-bold mb-2">Cartas de Movimientos</h3>
-                <div className="flex space-x-4">
-                  <CardsMovement gameId={gameId} playerId={player.id} />
-                </div>
-                <h3 className="font-bold mb-2">Tarjetas de Figuras</h3>
-                <div className="flex space-x-4">
-                  <CardsFigure game={gameId} playerId={player.id} />
-                </div>
-                {/* Botón de terminar turno, solo visible para el jugador de turno */}
-                <EndTurnButton isCurrentPlayer={player.turn === currentPlayerId} />
-              </div>
-            )
-          ))}
+          {/* cartas de movimiento */}
+          <div className="flex flex-col items-center">
+            <h3 className="font-bold mb-2">Cartas de Movimientos</h3>
+            <div className="flex space-x-4">
+              {players.map((player) => (
+                player.turn === currentPlayerId && (
+                  <CardsMovement key={player.id} gameId={gameId} playerId={player.id} />
+                )
+              ))}
+            </div>
+          </div>
+          {/* cartas de figuras */}
+          <div className="flex flex-col items-center">
+            <h3 className="font-bold mb-2">Tarjetas de Figuras</h3>
+            <div className="flex space-x-4">
+              {players.map((player) => (
+                player.turn === currentPlayerId && (
+                  <CardsFigure key={player.id} gameId={gameId} playerId={player.id} />
+                )
+              ))}
+            </div>
+          </div>
         </div>
+      </div>
+      {/* Botones de fin de turno y abandonar partida */}
+      <div className="absolute bottom-4 right-4 space-y-2">
+        {players.some(player => player.turn === currentPlayerId) && (
+          <EndTurnButton gameId={gameId} isCurrentPlayer={false} />
+        )}
+        <LeaveGameButton gameId={gameId}/>
+      </div>
+      {/* informacion de turno */}
+      <div className="absolute top-20 right-40 text-white">
+        <h3 className="font-bold text-3xl">Turno de:</h3>
+        <p className="text-3xl">{players.find(player => player.turn === currentPlayerId).name}</p>
       </div>
     </div>
   );
 };
+
 export default ActiveGame;
-
-  // return (
-  //   <div>
-  //     <h1>Juego Activo</h1>
-      
-  //     {/* Muestra las cartas de cada jugador */}
-  //     <div className="flex flex-col space-y-8">
-  //       {players.map((player) => (
-  //         <div key={player.id} className="space-y-4">
-  //           <h2>Jugador: {player.name}</h2>
-
-  //           {/* Renderiza las cartas de movimiento del jugador */}
-  //           <div className="flex space-x-4">
-  //             <h3>Cartas de Movimiento</h3>
-  //             <CardsMovement gameId={gameId} playerId={player.id} />
-  //           </div>
-
-  //           {/* Renderiza las cartas de figura del jugador */}
-  //           <div className="flex space-x-4">
-  //             <h3>Cartas de Figura</h3>
-  //             <CardsFigure gameId={gameId} playerId={player.id} />
-  //           </div>
-  //         </div>
-  //       ))}
-  //     </div>
-  //   </div>
-  // );
-  
-
-// };
-
-// export default ActiveGame;

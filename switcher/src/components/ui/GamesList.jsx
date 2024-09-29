@@ -81,7 +81,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
 
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages}
           className="bg-zinc-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-zinc-500 transition-all duration-200"
         >
           Siguiente

@@ -3,14 +3,14 @@ import { useGameContext } from "@/context/GameContext";
 import { useSocketContext } from "@/context/SocketContext"; 
 
 export default function TurnInformation() {
-    const { playerId, players, activeGameId, currentTurn, setCurrentTurn } = useGameContext();
+    const { players, activeGameId, currentTurn, setCurrentTurn } = useGameContext();
     const [turnData, setTurnData] = useState(null);
     const {socket} = useSocketContext();
 
     const fetchTurnInfo = async (activeGameId) => {
         try {
             const response = await fetch(`http://localhost:8000/game_state/${activeGameId}/current_turn`, {
-                method: 'POST',
+                method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
     

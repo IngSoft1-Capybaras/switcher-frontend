@@ -15,33 +15,28 @@ import { fetchTurnInfo } from '@/services/services';
 const ActiveGame = () => {
   const { gameId } = useParams();
   const [boxes, setBoxes] = useState();
-  const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext(); // Assuming playerId is for the current player
+  const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [loading, setLoading] = useState(false);
 
   const getTurnInfo = useCallback(async () => {
     try {
-        const newTurnData = await fetchTurnInfo(gameId);
-                
-        if (newTurnData.current_player_id) {
-            setCurrentTurn(newTurnData.current_player_id);
-        } 
-        else {
-            console.error("Received an undefined player ID.");
-        }
+      const newTurnData = await fetchTurnInfo(gameId);
+      if (newTurnData.current_player_id) {
+        setCurrentTurn(newTurnData.current_player_id);
+      } else {
+        console.error("Received an undefined player ID.");
+      }
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
-    catch  (err) {
-        console.log(err);
-        throw err;
-    }
-
   }, [setCurrentTurn, gameId]);
 
-  
   const fetchPlayers = useCallback(async () => {
     try {
       setLoading(true);
       const fetchedPlayers = await getPlayers(gameId);
-      setPlayers(fetchedPlayers); 
+      setPlayers(fetchedPlayers);
     } catch (err) {
       console.error("Error fetching players:", err);
     } finally {
@@ -53,7 +48,6 @@ const ActiveGame = () => {
     try {
       const res = await getBoard(gameId);
       setBoxes(res.boxes);
-      console.log(res);
     } catch (err) {
       console.error("Error fetching board:", err);
     }
@@ -65,39 +59,57 @@ const ActiveGame = () => {
     getTurnInfo();
   }, []);
 
-  useActiveGameSocket(gameId, fetchPlayers); // Re-fetch players when a socket event occurs
+  useActiveGameSocket(gameId, fetchPlayers);
 
   if (loading) return <div>Loading game...</div>;
 
-  // Separate current player from other players
   const otherPlayers = players.filter(p => p.id !== playerId);
 
   return (
-    <div className="flex h-screen space-x-4 p-4">
+    <div className="flex h-screen bg-zinc-950 text-white space-x-4 p-4">
       {/* Left section: Board and current player's cards */}
-      <div className="flex flex-col space-y-4 w-2/3">
-        {/* Game board */}
-        {boxes ?<div style={{ height: '40rem', width: '40rem' }}className='h-96 w-96'> <Board boxes={boxes}/> </div>: <div> Loading ...</div> }
-        
-        {/* Current player's cards */}
-          <h3 className='text-center '>Mis cartas</h3>
-        <div className="flex justify-center space-x-4">
-          <CardsMovement gameId={gameId} playerId={playerId} />
-          <CardsFigure gameId={gameId} playerId={playerId} />
-        </div>
+      <div className="w-3/5 flex flex-col">
+        <div className="flex-grow m-auto">
 
-        {/* Buttons for current player */}
-        <div className="flex justify-between">
-          <LeaveGameButton gameId={gameId} />
-          <EndTurnButton gameId={gameId} currentTurn={currentTurn} />
-        </div>
+          {/* Game board */}
+          {boxes ? (
+            <div
+              className="h-96 w-96 sm:h-[30rem] sm:w-[30rem] md:h-[35rem] md:w-[35rem] lg:h-[40rem] lg:w-[40rem]"
+            >
+              <Board boxes={boxes} />
+            </div>
+            ) : (
+              <div>Loading...</div>
+            )}
+          </div>
+
+          {/* Current player's cards */}
+          <div className="p-4 h-full flex items-center justify-center">
+            <div className="flex justify-center items-center space-x-4">
+              <CardsMovement gameId={gameId} playerId={playerId} />
+              <CardsFigure gameId={gameId} playerId={playerId} />
+            </div>
+          </div>
       </div>
-      < TurnInfo players={players} activeGameId={gameId} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn}/>
-      {/* Right section: Other players' cards */}
-      <div className="flex flex-col w-1/3 space-y-4">
-        {otherPlayers.map((player) => (
-          <PlayerPanel key={player.id} game={gameId} player={player.id} name={player.name} />
-        ))}
+
+      <div className="w-2/5 flex flex-col">
+
+        {/* Turn Info */}
+        <div className="text-center p-4">
+
+          <TurnInfo players={players} activeGameId={gameId} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn} />
+        </div>
+          <div className="flex justify-around mt-4">
+            <EndTurnButton gameId={gameId} currentTurn={currentTurn} className="bg-green-500 text-white px-4 py-2 rounded" />
+            <LeaveGameButton gameId={gameId} className="bg-red-500 text-white px-4 py-2 rounded" />
+          </div>
+        {/* Right section: Other players' cards */}
+        <div className="flex-grow p-4 overflow-y-auto">
+          {otherPlayers.map((player) => (
+            <PlayerPanel key={player.id} game={gameId} player={player.id} name={player.name} />
+          ))}
+        </div>
+          {/* Buttons for current player */}
       </div>
     </div>
   );

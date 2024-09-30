@@ -43,7 +43,7 @@ const CardsFigure = ({gameId, playerId}) => {
         
         return (
           <div key={card.id} className={cn(
-            "relative w-35 h-48 border rounded",
+            "relative w-full h-full aspect-[3/3] border rounded overflow-hidden",
             !card.show ? "opacity-50" : "", // Si no se muestra (show es false), aplicar opacidad
             difficultyStyle // Agregar estilo basado en dificultad
           )}>

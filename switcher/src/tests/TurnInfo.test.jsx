@@ -37,9 +37,9 @@ beforeEach(() => {
   it('should render player count and current player name', () => {
       render(<TurnInformation players={players} activeGameId="123" currentTurn={1} setCurrentTurn={mockSetCurrentTurn} />);
 
-      expect(screen.getByText(/Cantidad de jugadores en la partida:/)).toBeInTheDocument();
+      expect(screen.getByText(/Jugadores en la partida:/)).toBeInTheDocument();
       expect(screen.getByText(/2/)).toBeInTheDocument();
-      expect(screen.getByText(/Es el turno de:/)).toBeInTheDocument();
+      expect(screen.getByText(/Turno de:/)).toBeInTheDocument();
       expect(screen.getByText(/Jugador 1/)).toBeInTheDocument();
   });
 
@@ -47,8 +47,8 @@ beforeEach(() => {
     render(<TurnInformation players={players} activeGameId="123" currentTurn={null} setCurrentTurn={mockSetCurrentTurn} />);
 
     expect(screen.getByText((content, element) => {
-        return content.includes('Es el turno de:') &&
-               element.textContent.includes('Cargando turno...');
+      return content.includes('Turno de:') &&
+             element.textContent.includes('Cargando...');
     })).toBeInTheDocument();
 });
 

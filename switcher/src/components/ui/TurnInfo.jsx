@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useGameContext } from "@/context/GameContext"; 
 import { useSocketContext } from "@/context/SocketContext"; 
 
-export default function TurnInformation() {
-    const { players, activeGameId, currentTurn, setCurrentTurn } = useGameContext();
-    const [turnData, setTurnData] = useState(null);
-    const {socket} = useSocketContext();
+export default function TurnInformation({ players, activeGameId }) {
+    const { currentTurn, setCurrentTurn } = useGameContext();
+    const { socket } = useSocketContext();
 
     const fetchTurnInfo = async (activeGameId) => {
         try {
@@ -22,45 +21,51 @@ export default function TurnInformation() {
             return data;
         } 
         catch (error) {
-            console.error("Error al obtener información del turno:", error);
             throw new Error("Error al obtener información del turno");
         }
     }
 
-
     useEffect(() => {
-        if (!socket || !activeGameId) return;
+        if (!socket) return;
 
         const handleNextTurnEvent = async (event) => {
             const data = JSON.parse(event.data);
 
-            if (data.type === "NEXT_TURN") {
+            if (data.type === `${activeGameId}:NEXT_TURN`) {
                 
-                // seteamos nuevo turno en GameContext
-                setCurrentTurn(data.nextPlayerId);
-                
-                // Get de la informacion del nuevo turno
                 const newTurnData = await fetchTurnInfo(activeGameId);
                 
-                // Actualizamos el turno actual
-                setTurnData(newTurnData); 
+                if (newTurnData.current_player_id) {
+                    setCurrentTurn(newTurnData.current_player_id);
+                } 
+                else {
+                    console.error("Received an undefined player ID.");
+                }
             }
         };
 
         socket.addEventListener("message", handleNextTurnEvent);
 
         return () => {
-          socket.removeEventListener("message", handleNextTurnEvent);
+            socket.removeEventListener("message", handleNextTurnEvent);
         };
-      }, [socket, activeGameId, setCurrentTurn]);
-    
+    }, [socket, activeGameId, setCurrentTurn]);
+
+
+    const currentPlayer = players.length > 0 ? players.find(player => player.id === currentTurn) : null;
+
     return (
-        <div className="turn-info">
-            <h2>Información del Turno</h2>
-            <p>Cantidad de jugadores en la partida: {players.length}</p>
-            <p>Es el turno del jugador: {currentTurn}</p>
-            {/*siguiente turno*/}
-            {/*color bloqueado*/}
+        <div className="bg-zinc-900 text-white p-4 rounded-lg shadow-lg">
+            <h2 className="text-3xl font-bold mb-4">Información del Turno</h2>
+            <p className="text-lg mb-2">
+                Cantidad de jugadores en la partida: <span className="font-semibold">{players.length}</span>
+            </p>
+            <p className="text-lg">
+                Es el turno de:  
+                <span className="font-semibold">
+                    {currentPlayer ? currentPlayer.name : "Cargando turno..."}
+                </span>
+            </p>
         </div>
-    )
-};
+    );
+}

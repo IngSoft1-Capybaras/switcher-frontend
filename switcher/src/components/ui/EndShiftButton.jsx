@@ -3,13 +3,23 @@ import { Button } from "@/components/ui/button.jsx";
 import { useGameContext } from "@/context/GameContext"; 
 import { useSocketContext } from "@/context/SocketContext"; 
 import { pathEndTurn } from "@/services/services";
-import { Result } from "postcss";
 
-const EndTurnButton = ({gameId}) => {
+
+const EndTurnButton = ({gameId, currentTurn}) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { playerId, activeGameId } = useGameContext(); // Obtener el ID del jugador actual
+  const { playerId } = useGameContext(); // Obtener el ID del jugador actual
   const { socket } = useSocketContext(); // Obtener el socket del contexto
+
+  useEffect(() => {
+    console.log("HOLAAAAAA");
+    console.log(currentTurn);
+    console.log(playerId);
+
+    if (currentTurn==playerId) {
+      setIsButtonActive(true);
+    }
+  }, [currentTurn]);
 
   // Escuchar el evento "siguiente-turno" a través del WebSocket
   useEffect(() => {
@@ -18,7 +28,7 @@ const EndTurnButton = ({gameId}) => {
     const handleNextTurnEvent = (event) => {
       const data = JSON.parse(event.data);
 
-      if (data.type === "NEXT_TURN" && data.nextPlayerId === playerId) {
+      if (data.type === `${gameId}:NEXT_TURN` && data.nextPlayerId === playerId) {
         setIsButtonActive(true);
       } else {
         setIsButtonActive(false);
@@ -37,9 +47,11 @@ const EndTurnButton = ({gameId}) => {
   const handleEndTurn = async () => {
     setLoading(true);
     try {
-      await pathEndTurn(activeGameId); // Llama al endpoint para finalizar el turno
-      const result = await pathEndTurn(activeGameId);
-      console.log("Turno finalizado", result);
+      const res = await pathEndTurn(gameId); // Llama al endpoint para finalizar el turno
+      if (!res) {
+        console.error("Error actualizando el turno");
+      }
+      console.log("Turno finalizado", res);
       setIsButtonActive(false); // Desactiva el botón después de terminar el turno
     } catch (error) {
       console.error("Error al terminar el turno", error);

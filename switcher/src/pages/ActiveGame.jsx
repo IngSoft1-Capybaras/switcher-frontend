@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useGameContext } from '../context/GameContext'; 
 import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
@@ -9,12 +9,33 @@ import Board from '../components/ui/GameBoard';
 import EndTurnButton from '../components/ui/EndShiftButton';
 import LeaveGameButton from '../components/ui/LeaveButton';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
+import TurnInfo from '@/components/ui/TurnInfo'
+import { fetchTurnInfo } from '@/services/services';
 
 const ActiveGame = () => {
   const { gameId } = useParams();
   const [boxes, setBoxes] = useState();
-  const { players, setPlayers, playerId } = useGameContext(); // Assuming playerId is for the current player
+  const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext(); // Assuming playerId is for the current player
   const [loading, setLoading] = useState(false);
+
+  const getTurnInfo = useCallback(async () => {
+    try {
+        const newTurnData = await fetchTurnInfo(gameId);
+                
+        if (newTurnData.current_player_id) {
+            setCurrentTurn(newTurnData.current_player_id);
+        } 
+        else {
+            console.error("Received an undefined player ID.");
+        }
+    }
+    catch  (err) {
+        console.log(err);
+        throw err;
+    }
+
+  }, [setCurrentTurn, gameId]);
+
   
   const fetchPlayers = useCallback(async () => {
     try {
@@ -41,7 +62,8 @@ const ActiveGame = () => {
   useEffect(() => {
     fetchPlayers();
     fetchBoard();
-  }, [fetchPlayers]);
+    getTurnInfo();
+  }, []);
 
   useActiveGameSocket(gameId, fetchPlayers); // Re-fetch players when a socket event occurs
 
@@ -68,10 +90,10 @@ const ActiveGame = () => {
         {/* Buttons for current player */}
         <div className="flex justify-between">
           <LeaveGameButton gameId={gameId} />
-          <EndTurnButton gameId={gameId} playerId={playerId} />
+          <EndTurnButton gameId={gameId} currentTurn={currentTurn} />
         </div>
       </div>
-
+      < TurnInfo players={players} activeGameId={gameId} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn}/>
       {/* Right section: Other players' cards */}
       <div className="flex flex-col w-1/3 space-y-4">
         {otherPlayers.map((player) => (

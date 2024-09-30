@@ -140,7 +140,7 @@ export async function joinGame(gameId, playerName) {
 // Finalizar turno
 export async function pathEndTurn(gameId) {
     try {
-      const response = await fetch(`/game_status/${gameId}/finish_turn`, {
+      const response = await fetch(`${apiUrl}/game_state/${gameId}/finish_turn`, {
         method: 'PATCH',  // Método PATCH para actualizar el turno
         headers: {
           'Content-Type': 'application/json',
@@ -176,3 +176,21 @@ export async function pathEndTurn(gameId) {
     }
   }
   
+export const fetchTurnInfo = async (activeGameId) => {
+    try {
+        const response = await fetch(`${apiUrl}/game_state/${activeGameId}/current_turn`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } 
+    catch (error) {
+        throw new Error("Error al obtener información del turno");
+    }
+}

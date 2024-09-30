@@ -14,9 +14,7 @@ export default function TurnInformation({ players, activeGameId, currentTurn, se
             if (data.type === `${activeGameId}:NEXT_TURN`) {
                 
                 const newTurnData = await fetchTurnInfo(activeGameId);
-                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                console.log(newTurnData);
-                
+ 
                 if (newTurnData.current_player_id) {
                     setCurrentTurn(newTurnData.current_player_id);
                 } 

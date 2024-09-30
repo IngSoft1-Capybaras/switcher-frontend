@@ -12,9 +12,9 @@ describe('CardsMovement Component', () => {
   const mockGameId = '1';
   const mockPlayer = { id: '1', name: 'Player 1' }; // Mock del jugador para la prueba
   const mockCards = [
-    { id: '1', type: 'linealContiguo', used: false },
-    { id: '2', type: 'diagonalContiguo', used: false },
-    { id: '3', type: 'cruceEnLDerecha', used: true }, // Carta marcada como usada
+    { id: '1', type: 'LINEAL_CONT', used: false },
+    { id: '2', type: 'DIAGONAL_CONT', used: false },
+    { id: '3', type: 'EN_L_DERECHA', used: true }, // Carta marcada como usada
   ];
 
   // Test para verificar el estado de carga inicial

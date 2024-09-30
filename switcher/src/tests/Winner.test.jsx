@@ -1,26 +1,28 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, beforeEach, expect } from 'vitest';
 import Winner from '../pages/Winner';
-import { useSocketContext } from '@/context/SocketContext'; // Importar el hook
-import { useGameContext } from '../context/GameContext'; // Importar el hook
-import { MemoryRouter, useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useGameContext } from '../context/GameContext';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 
 // Mock de imágenes
 vi.mock('@/assets/logo_switcher.png', () => ({
   default: 'mocked-logo.png',
 }));
 
-vi.mock('../assets/images/analisis.png', () => ({
-  default: 'mocked-analisis.png',
+vi.mock('../assets/images/fige01.svg', () => ({
+  default: 'mocked-fige01.png',
 }));
 
-vi.mock('../assets/images/aterrador.png', () => ({
-  default: 'mocked-aterrador.png',
+vi.mock('../assets/images/fige04.svg', () => ({
+  default: 'mocked-fige04.png',
 }));
 
-// Mockear el hook useSocketContext
-vi.mock('@/context/SocketContext', () => ({
-  useSocketContext: vi.fn(),
+vi.mock('../assets/images/cruceDiagonalContiguo.svg', () => ({
+  default: 'mocked-cruceDiagonalContiguo.svg',
+}));
+
+vi.mock('../assets/images/cruceEnLIzquierda.svg', () => ({
+  default: 'mocked-cruceEnLIzquierda.svg',
 }));
 
 // Mockear el hook useGameContext
@@ -39,15 +41,8 @@ vi.mock('react-router-dom', async (importOriginal) => {
 
 describe('Winner Component', () => {
   const mockGameContext = {
-    winnerName: 'Game 1',
-    playerName: 'Jugador 2',
-  };
-
-  const mockSocketContext = {
-    socket: {
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    },
+    gameName: 'Game 1', // Corregir a gameName según el código
+    winnerName: 'Jugador 2', // Corregir a winnerName según el código
   };
 
   beforeEach(() => {
@@ -56,7 +51,6 @@ describe('Winner Component', () => {
 
     // Simular el uso de los hooks
     useGameContext.mockReturnValue(mockGameContext);
-    useSocketContext.mockReturnValue(mockSocketContext);
   });
 
   it('should render winner component correctly', () => {
@@ -70,6 +64,12 @@ describe('Winner Component', () => {
     expect(screen.getByText(/Winner/i)).toBeInTheDocument();
     expect(screen.getByText(/Partida: Game 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Ganador: Jugador 2/i)).toBeInTheDocument();
+
+    // Verifica que las imágenes se renderizan correctamente
+    expect(screen.getByAltText('TYPE_1')).toBeInTheDocument();
+    expect(screen.getByAltText('Lizquierda')).toBeInTheDocument();
+    expect(screen.getByAltText('digonalContiguo')).toBeInTheDocument();
+    expect(screen.getByAltText('TYPE_4')).toBeInTheDocument();
   });
 
   it('should navigate to /games when button is clicked', () => {

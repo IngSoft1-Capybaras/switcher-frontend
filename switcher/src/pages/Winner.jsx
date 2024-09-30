@@ -3,13 +3,13 @@ import { useGameContext } from '../context/GameContext';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo_switcher.png';
-import analisis from '../assets/images/analisis.png';
-import aterrador from '../assets/images/aterrador.png';
-import diagonalContiguo from '../assets/images/cruceDiagonalContiguo.png';
-import Lizquierda from '../assets/images/cruceEnLIzquierda.png';
+import TYPE_1 from '../assets/images/fige01.svg';
+import TYPE_4 from '../assets/images/fige04.svg';
+import diagonalContiguo from '../assets/images/cruceDiagonalContiguo.svg';
+import Lizquierda from '../assets/images/cruceEnLIzquierda.svg';
 
 const Winner = () => {
-  const { winnerName, playerName } = useGameContext(); // Obtener gameId y playerId del contexto
+  const { gameName, winnerName } = useGameContext(); // Obtener gameId y playerId del contexto
   const navigate = useNavigate();
 
   const handleGoToGames = () => {
@@ -27,7 +27,7 @@ const Winner = () => {
       <div className="flex flex-col items-center mx-8 space-y-10">
         {/* Imágenes al lado del logo */}
         <div className="flex items-center space-x-4 mb-4">
-          <img className="h-32 w-auto" src={analisis} alt="Análisis" />
+          <img className="h-32 w-auto" src={TYPE_1} alt="TYPE_1" />
           <img className="h-32 w-auto" src={logo} alt="Logo" />
           <img className="h-32 w-auto" src={Lizquierda} alt="Lizquierda" />
         </div>
@@ -36,8 +36,8 @@ const Winner = () => {
         <div className="p-8 bg-gray-800 rounded-lg text-center">
           <h1 className="text-6xl font-bold mb-20">Winner</h1>
           <div className="mb-20">
-            <h2 className="text-6xl">Partida: {winnerName}</h2>
-            <h2 className="text-6xl">Ganador: {playerName}</h2>
+            <h2 className="text-6xl">Partida: {gameName}</h2>
+            <h2 className="text-6xl">Ganador: {winnerName}</h2>
           </div>
           <Button onClick={handleGoToGames} className="mt-4">
             Volver al inicio
@@ -45,9 +45,9 @@ const Winner = () => {
         </div>
 
         <div className="flex items-center space-x-4 mb-4">
-          <img className="h-32 w-auto" src={diagonalContiguo} alt="Análisis" />
+          <img className="h-32 w-auto" src={diagonalContiguo} alt="digonalContiguo" />
           <img className="h-32 w-auto" src={logo} alt="Logo" />
-          <img className="h-32 w-auto" src={aterrador} alt="Lizquierda" />
+          <img className="h-32 w-auto" src={TYPE_4} alt="TYPE_4" />
         </div>
       </div>
 

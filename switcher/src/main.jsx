@@ -27,7 +27,7 @@ const Main = () => (
             <Route path="/games/create" element={<CreateGame />} />
             <Route path="/games/lobby/:gameId" element={<Lobby />} />
             <Route path="/games/ongoing/:gameId" element={<ActiveGame />} />
-            <Route path="/winner" element={<Winner />} />
+            <Route path="/games/winner" element={<Winner />} />
           </Routes>
         </Suspense>
       </Router>

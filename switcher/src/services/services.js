@@ -158,3 +158,21 @@ export async function pathEndTurn(gameId) {
     }
   }
   
+  export async function getBoard(gameId) {
+    const url = `${apiUrl}/games/${gameId}/board`;
+
+    try {
+      const response = await fetch(url);
+      
+  
+      if (!response.ok) {
+        throw new Error('Error al obtener tablero');
+      }
+  
+      return await response.json(); // Asumiendo que devuelve algún JSON como respuesta
+    } catch (error) {
+      console.error('Error al obtener turno:', error);
+      throw error; // Propaga el error para manejarlo en el componente
+    }
+  }
+  

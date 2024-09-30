@@ -1,99 +1,82 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useGameContext } from '../context/GameContext'; 
 import CardsMovement from '../components/ui/CardsMovement';
-import CardsFigure from '../components/ui/cardsFigure';
+import CardsFigure from '../components/ui/CardsFigure';
 import { useParams } from 'react-router-dom';
-import { getPlayers } from '@/services/services';  // Importa la función que obtiene los jugadores
-import PlayerPanel from '../components/ui/playerPanel';
-import Board from '../components/ui/board';
-import EndTurnButton from '../components/ui/endShiftButton';
+import { getPlayers, getBoard } from '@/services/services';
+import PlayerPanel from '../components/ui/PlayerPanel';
+import Board from '../components/ui/GameBoard';
+import EndTurnButton from '../components/ui/EndShiftButton';
 import LeaveGameButton from '../components/ui/LeaveButton';
+import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 
 const ActiveGame = () => {
-  const { gameId } = useParams();  // Obtén el ID del juego desde la URL
-  const { players, setPlayers } = useGameContext(); // Usa el contexto para la lista de jugadores
-  const [loading, setLoading] = useState(false); // Estado para controlar la carga
-  const currentPlayerId ="PRIMERO"
-
-  // Efecto para obtener los jugadores al montar el componente
-  useEffect(() => {
-    console.log("ActiveGamegameId: ", gameId);
-    console.log("ActiveGamePlayers: ", players);
-    if (gameId && players.length === 0) {  // Si aún no tienes jugadores, haz la petición
-      getPlayers(gameId)
-        .then((fetchedPlayers) => {
-          setPlayers(fetchedPlayers);  // Guarda los jugadores en el contexto
-        })
-        .catch((err) => {
-          console.error("Error al obtener jugadores:", err);
-        })
-        .finally(() => {
-          setLoading(false);  // Finaliza el estado de carga
-        });
-    } else {
-      setLoading(false);  // Si ya tienes los jugadores, termina la carga
+  const { gameId } = useParams();
+  const [boxes, setBoxes] = useState();
+  const { players, setPlayers, playerId } = useGameContext(); // Assuming playerId is for the current player
+  const [loading, setLoading] = useState(false);
+  
+  const fetchPlayers = useCallback(async () => {
+    try {
+      setLoading(true);
+      const fetchedPlayers = await getPlayers(gameId);
+      setPlayers(fetchedPlayers); 
+    } catch (err) {
+      console.error("Error fetching players:", err);
+    } finally {
+      setLoading(false);
     }
-  }, [gameId, players, setPlayers]);
+  }, [gameId, setPlayers]);
 
-  // Renderiza mientras carga los datos
-  if (loading) return <div>Cargando datos de los jugadores...</div>;
+  const fetchBoard = useCallback(async () => {
+    try {
+      const res = await getBoard(gameId);
+      setBoxes(res.boxes);
+      console.log(res);
+    } catch (err) {
+      console.error("Error fetching board:", err);
+    }
+  }, [gameId, setBoxes]);
+
+  useEffect(() => {
+    fetchPlayers();
+    fetchBoard();
+  }, [fetchPlayers]);
+
+  useActiveGameSocket(gameId, fetchPlayers); // Re-fetch players when a socket event occurs
+
+  if (loading) return <div>Loading game...</div>;
+
+  // Separate current player from other players
+  const otherPlayers = players.filter(p => p.id !== playerId);
+
 
   return (
-    <div className="p-4 flex flex-col justify-start min-h-screen bg-black">
-      <div className="flex flex-row justify-start space-x-20">
-        <div>
-          <Board />
+    <div className="flex h-screen space-x-4 p-4">
+      {/* Left section: Board and current player's cards */}
+      <div className="flex flex-col space-y-4 w-2/3">
+        {/* Game board */}
+        {boxes ?<div style={{ height: '40rem', width: '40rem' }}className='h-96 w-96'> <Board boxes={boxes}/> </div>: <div> Loading ...</div> }
+        
+        {/* Current player's cards */}
+          <h3 className='text-center '>Mis cartas</h3>
+        <div className="flex justify-center space-x-4">
+          <CardsMovement gameId={gameId} playerId={playerId} />
+          <CardsFigure gameId={gameId} playerId={playerId} />
         </div>
-        {/* Panel de Jugadores */}
-        <div className="flex flex-col space-y-1 ml-4 h-1/3 text-white">
-          {players.map((player) => (
-            // Muestra los jugadores que no son de turno
-            player.turn !== currentPlayerId && (
-              <div key={player.id}>
-                <PlayerPanel game={gameId} player={player.id} name={player.name}/>
-              </div>
-            )
-          ))}
-        </div>
-      </div>
-      {/* Cartas de jugador de turno */}
-      <div className="Jugador_de_turno mt-1 text-white">
-        <div className="flex space-x-8">
-          {/* cartas de movimiento */}
-          <div className="flex flex-col items-center">
-            <h3 className="font-bold mb-2">Cartas de Movimientos</h3>
-            <div className="flex space-x-4">
-              {players.map((player) => (
-                player.turn === currentPlayerId && (
-                  <CardsMovement key={player.id} gameId={gameId} playerId={player.id} />
-                )
-              ))}
-            </div>
-          </div>
-          {/* cartas de figuras */}
-          <div className="flex flex-col items-center">
-            <h3 className="font-bold mb-2">Tarjetas de Figuras</h3>
-            <div className="flex space-x-4">
-              {players.map((player) => (
-                player.turn === currentPlayerId && (
-                  <CardsFigure key={player.id} gameId={gameId} playerId={player.id} />
-                )
-              ))}
-            </div>
-          </div>
+
+        {/* Buttons for current player */}
+        <div className="flex justify-between">
+          <LeaveGameButton gameId={gameId} />
+          <EndTurnButton gameId={gameId} playerId={playerId} />
         </div>
       </div>
-      {/* Botones de fin de turno y abandonar partida */}
-      <div className="absolute bottom-4 right-4 space-y-2">
-        {players.some(player => player.turn === currentPlayerId) && (
-          <EndTurnButton gameId={gameId} isCurrentPlayer={false} />
-        )}
-        <LeaveGameButton gameId={gameId}/>
-      </div>
-      {/* informacion de turno */}
-      <div className="absolute top-20 right-40 text-white">
-        <h3 className="font-bold text-3xl">Turno de:</h3>
-        <p className="text-3xl">{players.find(player => player.turn === currentPlayerId).name}</p>
+
+      {/* Right section: Other players' cards */}
+      <div className="flex flex-col w-1/3 space-y-4">
+        {otherPlayers.map((player) => (
+          <PlayerPanel key={player.id} game={gameId} player={player.id} name={player.name} />
+        ))}
       </div>
     </div>
   );

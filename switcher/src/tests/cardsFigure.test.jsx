@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { vi, describe, test, afterEach, expect } from 'vitest';
-import CardsFigure from '../components/ui/cardsFigure'; // Ajusta la ruta según tu estructura
+import CardsFigure from '../components/ui/CardsFigure'; // Ajusta la ruta según tu estructura
 import { getDeckFigure } from '@/services/services';
 
 // Mock de la función getDeckFigure

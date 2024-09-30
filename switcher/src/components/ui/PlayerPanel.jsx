@@ -1,5 +1,5 @@
 import React from 'react';
-import CardsFigure from './cardsFigure';
+import CardsFigure from './CardsFigure';
 
 /* Funcion que representa la informacion de un jugador en el juego,
   mostrando su nombre y las cartas que posee */

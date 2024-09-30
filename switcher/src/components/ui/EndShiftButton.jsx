@@ -62,7 +62,7 @@ const EndTurnButton = ({gameId, currentTurn}) => {
 
   return (
     <Button
-      variant="default"
+      className="bg-green-500 hover:bg-green-600"
       disabled={!isButtonActive || loading} // Deshabilitar si no es el turno del jugador o está cargando
       onClick={handleEndTurn}
     >

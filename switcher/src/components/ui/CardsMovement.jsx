@@ -35,19 +35,19 @@ const CardsMovement = ({gameId, playerId}) => {
   if (error) return <div>{error}</div>; // Muestra error si hay
 
   return (
-    <div className="flex space-x-4"> {/* Cambia esto para el layout según tu diseño */}
-      {movementCards.map((card) => (
-        <div key={card.id} className={cn("relative w-35 h-48 border rounded", card.used ? "opacity-50" : "")}>
-          {card.used ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-white">Carta Usada</span>
-            </div>
-          ) : (
-            <img src={cardImg(card.type)} alt="Carta de movimiento" className="object-cover w-full h-full" />
-          )}
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
+    {movementCards.map((card) => (
+        <div key={card.id} className="relative w-full h-full aspect-[2/3] border rounded">
+            {card.used ? (
+                <div className="flex items-center justify-center w-full h-full">
+                    <span className="text-white">Carta Usada</span>
+                </div>
+            ) : (
+                <img src={cardImg(card.type)} alt="Carta de movimiento" className="object-cover w-full h-full" />
+            )}
         </div>
-      ))}
-    </div>
+    ))}
+  </div>
   );
 };
 

@@ -59,7 +59,7 @@ export default function InputForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 max-w-lg mx-auto">
-        <div className="space-y-10"> 
+        <div className=""> 
           <FormField
             control={form.control}
             name="username"

@@ -4,13 +4,13 @@ const GameBoard = ({ boxes }) => {
 
   const getColorClass = (color) => {
     switch (color) {
-      case 'Green':
+      case 'GREEN':
         return 'bg-green-500';
-      case 'Blue':
+      case 'BLUE':
         return 'bg-blue-500';
-      case 'Red':
+      case 'RED':
         return 'bg-red-500';
-      case 'Yellow':
+      case 'YELLOW':
         return 'bg-yellow-500';
       default:
         return 'bg-gray-500';
@@ -24,9 +24,9 @@ const GameBoard = ({ boxes }) => {
           row.map((box, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
-              data-testid={`box-${box.posX}-${box.posY}`}
+              data-testid={`box-${box.pos_x}-${box.pos_y}`}
               className={`rounded w-full h-full ${getColorClass(box.color)}`}
-              style={{ gridColumn: box.posX + 1, gridRow: box.posY + 1 }}
+              style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
             >
             </div>
           ))

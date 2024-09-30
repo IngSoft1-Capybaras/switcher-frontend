@@ -1,39 +1,21 @@
 import React, { useEffect } from 'react';
-import { useGameContext } from "@/context/GameContext"; 
 import { useSocketContext } from "@/context/SocketContext"; 
+import { fetchTurnInfo } from "../../services/services";
 
-export default function TurnInformation({ players, activeGameId }) {
-    const { currentTurn, setCurrentTurn } = useGameContext();
+export default function TurnInformation({ players, activeGameId, currentTurn, setCurrentTurn}) {
     const { socket } = useSocketContext();
-
-    const fetchTurnInfo = async (activeGameId) => {
-        try {
-            const response = await fetch(`http://localhost:8000/game_state/${activeGameId}/current_turn`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-    
-            const data = await response.json();
-            return data;
-        } 
-        catch (error) {
-            throw new Error("Error al obtener información del turno");
-        }
-    }
 
     useEffect(() => {
         if (!socket) return;
 
         const handleNextTurnEvent = async (event) => {
             const data = JSON.parse(event.data);
-
+            
             if (data.type === `${activeGameId}:NEXT_TURN`) {
                 
                 const newTurnData = await fetchTurnInfo(activeGameId);
+                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                console.log(newTurnData);
                 
                 if (newTurnData.current_player_id) {
                     setCurrentTurn(newTurnData.current_player_id);

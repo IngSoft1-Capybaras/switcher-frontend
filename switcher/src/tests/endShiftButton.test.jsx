@@ -1,6 +1,6 @@
 import { render, screen, waitFor, act } from "@testing-library/react";
 import { vi, describe, beforeEach, it, expect } from "vitest"; // Asegúrate de tener vi para los mocks
-import EndTurnButton from "@/components/ui/endShiftButton"; // Asegúrate de que la ruta sea correcta
+import EndTurnButton from "@/components/ui/EndShiftButton"; // Asegúrate de que la ruta sea correcta
 import { useGameContext } from "@/context/GameContext";
 import { useSocketContext } from "@/context/SocketContext";
 

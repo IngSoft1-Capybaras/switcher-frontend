@@ -105,6 +105,65 @@ export const mockFigureCards = [
     game_id: 101,
   },
 ];
+// mock para el tablero de 36 celdas con colores Red, Blue, Green, Yellow
+export const mockBoard = [
+  // Fila 1
+  [
+    { color: "Green", posX: 0, posY: 0, game_id: 101, id_box: 1 },
+    { color: "Red", posX: 1, posY: 0, game_id: 101, id_box: 2 },
+    { color: "Blue", posX: 2, posY: 0, game_id: 101, id_box: 3 },
+    { color: "Yellow", posX: 3, posY: 0, game_id: 101, id_box: 4 },
+    { color: "Green", posX: 4, posY: 0, game_id: 101, id_box: 5 },
+    { color: "Red", posX: 5, posY: 0, game_id: 101, id_box: 6 },
+  ],
+  // Fila 2
+  [
+    { color: "Yellow", posX: 0, posY: 1, game_id: 101, id_box: 7 },
+    { color: "Blue", posX: 1, posY: 1, game_id: 101, id_box: 8 },
+    { color: "Red", posX: 2, posY: 1, game_id: 101, id_box: 9 },
+    { color: "Green", posX: 3, posY: 1, game_id: 101, id_box: 10 },
+    { color: "Yellow", posX: 4, posY: 1, game_id: 101, id_box: 11 },
+    { color: "Blue", posX: 5, posY: 1, game_id: 101, id_box: 12 },
+  ],
+  // Fila 3
+  [
+    { color: "Red", posX: 0, posY: 2, game_id: 101, id_box: 13 },
+    { color: "Green", posX: 1, posY: 2, game_id: 101, id_box: 14 },
+    { color: "Yellow", posX: 2, posY: 2, game_id: 101, id_box: 15 },
+    { color: "Blue", posX: 3, posY: 2, game_id: 101, id_box: 16 },
+    { color: "Red", posX: 4, posY: 2, game_id: 101, id_box: 17 },
+    { color: "Green", posX: 5, posY: 2, game_id: 101, id_box: 18 },
+  ],
+  // Fila 4
+  [
+    { color: "Blue", posX: 0, posY: 3, game_id: 101, id_box: 19 },
+    { color: "Yellow", posX: 1, posY: 3, game_id: 101, id_box: 20 },
+    { color: "Green", posX: 2, posY: 3, game_id: 101, id_box: 21 },
+    { color: "Red", posX: 3, posY: 3, game_id: 101, id_box: 22 },
+    { color: "Blue", posX: 4, posY: 3, game_id: 101, id_box: 23 },
+    { color: "Yellow", posX: 5, posY: 3, game_id: 101, id_box: 24 },
+  ],
+  // Fila 5
+  [
+    { color: "Green", posX: 0, posY: 4, game_id: 101, id_box: 25 },
+    { color: "Red", posX: 1, posY: 4, game_id: 101, id_box: 26 },
+    { color: "Blue", posX: 2, posY: 4, game_id: 101, id_box: 27 },
+    { color: "Yellow", posX: 3, posY: 4, game_id: 101, id_box: 28 },
+    { color: "Green", posX: 4, posY: 4, game_id: 101, id_box: 29 },
+    { color: "Red", posX: 5, posY: 4, game_id: 101, id_box: 30 },
+  ],
+  // Fila 6
+  [
+    { color: "Blue", posX: 0, posY: 5, game_id: 101, id_box: 31 },
+    { color: "Yellow", posX: 1, posY: 5, game_id: 101, id_box: 32 },
+    { color: "Green", posX: 2, posY: 5, game_id: 101, id_box: 33 },
+    { color: "Red", posX: 3, posY: 5, game_id: 101, id_box: 34 },
+    { color: "Blue", posX: 4, posY: 5, game_id: 101, id_box: 35 },
+    { color: "Yellow", posX: 5, posY: 5, game_id: 101, id_box: 36 },
+  ],
+];
+
+
 //==========================================
 // [{
 //   id: 1,

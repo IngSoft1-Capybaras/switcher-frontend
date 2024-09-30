@@ -10,8 +10,8 @@ const Board = ({ rows = 6, cols = 6 }) => {
     <div
       className="flex flex-wrap" // Usamos flexbox para manejar la disposición
       style={{
-        width: `${cols * 112}px`, // Ancho total del tablero basado en 96px por celda
-        height: `${rows * 112}px`, // Alto total del tablero basado en 96px por celda
+        width: `${cols * 40}px`, // Ancho total del tablero basado en 96px por celda
+        height: `${rows * 40}px`, // Alto total del tablero basado en 96px por celda
       }}
     >
       {cells.map((_, index) => {
@@ -19,7 +19,7 @@ const Board = ({ rows = 6, cols = 6 }) => {
         return (
           <div
             key={index}
-            className={`w-28 h-28 ${colors[colorIndex]} flex-shrink-0`} // Hacemos que las celdas no se reduzcan
+            className={`w-10 h-10 ${colors[colorIndex]} flex-shrink-0`} // Hacemos que las celdas no se reduzcan
           />
         );
       })}

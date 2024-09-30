@@ -72,7 +72,6 @@ const ActiveGame = () => {
   // Separate current player from other players
   const otherPlayers = players.filter(p => p.id !== playerId);
 
-
   return (
     <div className="flex h-screen space-x-4 p-4">
       {/* Left section: Board and current player's cards */}

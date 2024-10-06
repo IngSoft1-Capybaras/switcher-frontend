@@ -17,7 +17,6 @@ describe(`Undo Button`, () => {
     beforeEach(() => {
         useGameContext.mockReturnValue({ playerId: mockPlayerId });
         global.fetch = vi.fn();
-        render(<UndoButton gameId={mockGameId}/>);
       });
     
     afterEach(() => {
@@ -26,10 +25,12 @@ describe(`Undo Button`, () => {
 
 
     it(`Should render de UndoButton Component`, () => {
+        render(<UndoButton gameId={mockGameId}/>);
         expect(screen.getByText(`Deshacer movimiento`)).toBeInTheDocument();
     });
 
     it(`Should call fetch on Undo Movement when clicking`, async () => {
+        render(<UndoButton gameId={mockGameId}/>);
         const mockUndoButton = screen.getByText(`Deshacer movimiento`);
         fetch.mockResolvedValueOnce({ ok : true, })
 
@@ -47,4 +48,20 @@ describe(`Undo Button`, () => {
             )
         ));
     });
-})
+
+    it(`Should handle null values for gameId and playerId`, async () => {
+
+        useGameContext.mockReturnValue({ playerId: null });
+        const nullGameId = null;
+        
+        render(<UndoButton gameId={nullGameId}/>);
+
+        const undoButton = screen.getByText(`Deshacer movimiento`);
+        await userEvent.click(undoButton);
+
+        await waitFor(() => expect(fetch).not.toHaveBeenCalled());
+
+        expect(await screen.findByText(/Error al deshacer movimiento/)).toBeInTheDocument();
+    });
+
+});

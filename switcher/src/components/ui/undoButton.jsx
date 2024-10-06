@@ -7,6 +7,11 @@ export default function UndoButton({gameId}) {
     const { playerId } = useGameContext();
 
     const onUndoMovement = async () => {
+        if (!gameId || !playerId) {
+            setError(`Error al deshacer movimiento:`);
+        return 
+        }
+
         try {
             const response = await fetch(`http://localhost:8000/deck/movement/undo_move`,
                 {

@@ -244,3 +244,19 @@ export const submitForm = async (data, username) => {
       return response.json();
     });
 }
+
+export const leaveGame = async (playerId, gameId) => {
+  try {
+    const response = await fetch(`${apiUrl}/players/${playerId}/leave?game_id=${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al abandonar la partida: ${errorMessage}`);
+    }
+  } 
+  catch (error) {
+    throw new Error(`Error al abandonar la partida: ${error.message}`);
+  }
+}

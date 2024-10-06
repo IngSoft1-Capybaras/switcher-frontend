@@ -213,3 +213,50 @@ export const fetchTurnInfo = async (activeGameId) => {
         throw new Error("Error al obtener información del turno");
     }
 }
+
+export const submitForm = async (data, username) => {
+  const body = {
+    game: {
+      name: data.name,
+      max_players: data.playersRange[1],
+      min_players: data.playersRange[0],
+    },
+    player: {
+      name: username,
+      host: true,
+      turn: "PRIMERO",
+    },
+  };
+
+  return await fetch(`${apiUrl}/games`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          throw new Error(errorData.message || 'Error al crear la partida.');
+        });
+      }
+      return response.json();
+    });
+}
+
+export const leaveGame = async (playerId, gameId) => {
+  try {
+    const response = await fetch(`${apiUrl}/players/${playerId}/leave?game_id=${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al abandonar la partida: ${errorMessage}`);
+    }
+  } 
+  catch (error) {
+    throw new Error(`Error al abandonar la partida: ${error.message}`);
+  }
+}

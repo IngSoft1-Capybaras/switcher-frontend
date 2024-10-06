@@ -12,6 +12,8 @@ import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import TurnInfo from '@/components/ui/TurnInfo'
 import { fetchTurnInfo } from '@/services/services';
 
+import UndoButton from '@/components/ui/undoButton';
+
 const ActiveGame = () => {
   const { gameId } = useParams();
   const [boxes, setBoxes] = useState();
@@ -110,6 +112,7 @@ const ActiveGame = () => {
           ))}
         </div>
           {/* Buttons for current player */}
+          <UndoButton gameId={gameId}/>
       </div>
     </div>
   );

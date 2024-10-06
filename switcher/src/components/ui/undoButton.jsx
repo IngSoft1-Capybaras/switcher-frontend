@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { Button } from "./button";
 import { useGameContext } from "@/context/GameContext";
+import { UndoMovement } from "@/services/services";
 
 export default function UndoButton({gameId, currentTurn}) {
     const { playerId } = useGameContext();
@@ -23,22 +24,7 @@ export default function UndoButton({gameId, currentTurn}) {
         return 
         }
 
-        try {
-            const response = await fetch(`http://localhost:8000/deck/movement/undo_move`,
-                {
-                    method:`PATCH`,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ gameID: gameId, playerID: playerId })
-                }
-            )
-            if (!response.ok){
-                const errorMessage = await response.text();
-                setError(`Error al deshacer movimiento: ${errorMessage}`);
-            }
-        } 
-        catch (error) {
-            setError(`Error al deshacer movimiento: ${error.message}`);
-        }
+        UndoMovement(gameId, playerId, setError);
     }
 
     return(

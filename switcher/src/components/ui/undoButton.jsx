@@ -1,10 +1,21 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Button } from "./button";
 import { useGameContext } from "@/context/GameContext";
 
-export default function UndoButton({gameId}) {
-    const [error, setError] = useState(null);
+export default function UndoButton({gameId, currentTurn}) {
     const { playerId } = useGameContext();
+
+    const [error, setError] = useState(null);
+    const [isButtonActive, setIsButtonActive] = useState(false);
+
+    useEffect(() => {
+        if (currentTurn == playerId) {
+          setIsButtonActive(true);
+        }
+        else{
+            setIsButtonActive(false);
+        }
+      }, [currentTurn]);
 
     const onUndoMovement = async () => {
         if (!gameId || !playerId) {
@@ -32,7 +43,7 @@ export default function UndoButton({gameId}) {
 
     return(
         <div>
-            <Button onClick={onUndoMovement}>
+            <Button onClick={onUndoMovement} disabled={!isButtonActive}>
                 Deshacer movimiento
             </Button>
             {error && <p>{error}</p>}

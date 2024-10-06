@@ -112,7 +112,7 @@ const ActiveGame = () => {
           ))}
         </div>
           {/* Buttons for current player */}
-          <UndoButton gameId={gameId}/>
+          <UndoButton gameId={gameId} currentTurn={currentTurn}/>
       </div>
     </div>
   );

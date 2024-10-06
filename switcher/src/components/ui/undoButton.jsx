@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { Button } from "./button";
 import { useGameContext } from "@/context/GameContext";
-import { UndoMovement } from "@/services/services";
+import { undoMovement } from "@/services/services";
 
 export default function UndoButton({gameId, currentTurn}) {
     const { playerId } = useGameContext();
@@ -25,7 +25,7 @@ export default function UndoButton({gameId, currentTurn}) {
         }
 
         try {
-            await UndoMovement(gameId, playerId);
+            await undoMovement(gameId, playerId);
         } 
         catch (error) {
             setError(error.message);

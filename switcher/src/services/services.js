@@ -214,7 +214,7 @@ export const fetchTurnInfo = async (activeGameId) => {
     }
 }
 
-export const UndoMovement = async (gameId, playerId, setError) => {
+export const undoMovement = async (gameId, playerId, setError) => {
   try {
       const response = await fetch(`${apiUrl}/deck/movement/undo_move`,
           {

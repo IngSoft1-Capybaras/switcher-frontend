@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.jsx";
 import { useGameContext } from "@/context/GameContext"; 
-import { useSocketContext } from "@/context/SocketContext"; 
 import { pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 
@@ -10,7 +9,7 @@ const EndTurnButton = ({gameId, currentTurn}) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId } = useGameContext();
-  const { socket } = useSocketContext();
+  
 
   useEffect(() => {
     if (currentTurn==playerId) {

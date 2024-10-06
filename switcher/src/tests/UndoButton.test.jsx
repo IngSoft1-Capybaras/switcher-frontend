@@ -24,6 +24,8 @@ describe(`Undo Button`, () => {
     });
 
 
+    // Test para verificar que funcione bien cuando deberia
+
     it(`Should render de UndoButton Component`, () => {
         render(<UndoButton gameId={mockGameId}/>);
         expect(screen.getByText(`Deshacer movimiento`)).toBeInTheDocument();
@@ -49,12 +51,12 @@ describe(`Undo Button`, () => {
         ));
     });
 
-    it(`Should handle null values for gameId and playerId`, async () => {
 
+    // tests para handelear errores
+
+    it(`Should handle null values for gameId and playerId`, async () => {
         useGameContext.mockReturnValue({ playerId: null });
-        const nullGameId = null;
-        
-        render(<UndoButton gameId={nullGameId}/>);
+        render(<UndoButton gameId={null}/>);
 
         const undoButton = screen.getByText(`Deshacer movimiento`);
         await userEvent.click(undoButton);
@@ -64,4 +66,40 @@ describe(`Undo Button`, () => {
         expect(await screen.findByText(/Error al deshacer movimiento/)).toBeInTheDocument();
     });
 
+    it(`Should handle undefined values for gameId and playerId`, async () => {
+        useGameContext.mockReturnValue({ playerId: undefined });
+        render(<UndoButton gameId={undefined}/>);
+
+        const undoButton = screen.getByText(`Deshacer movimiento`);
+        await userEvent.click(undoButton);
+
+        await waitFor(() => expect(fetch).not.toHaveBeenCalled());
+
+        expect(await screen.findByText(/Error al deshacer movimiento/)).toBeInTheDocument();
+    });
+
+    it(`Should show error when response is not ok`, async () => {
+        fetch.mockResolvedValueOnce(
+            { ok : false,
+              text: () => Promise.resolve("Algo salió mal") // supongo mensaje que manda el back 
+            });
+        
+        render(<UndoButton gameId={mockGameId}/>);
+        const mockUndoButton = screen.getByText(`Deshacer movimiento`);
+        
+        await userEvent.click(mockUndoButton);
+        await waitFor(() => expect(fetch).toHaveBeenCalledOnce());
+
+        expect(await screen.findByText(/Error al deshacer movimiento: Algo salió mal/)).toBeInTheDocument();
+    })
+
+    it(`Should show error when fetch throws one`, async () => {
+        fetch.mockRejectedValueOnce(new Error("Network error"));
+
+        render(<UndoButton gameId={mockGameId} />);
+        const undoButton = screen.getByText(`Deshacer movimiento`);
+        await userEvent.click(undoButton);
+
+        expect(await screen.findByText(/Error al deshacer movimiento: Network error/i)).toBeInTheDocument();
+    })
 });

@@ -24,7 +24,14 @@ export default function UndoButton({gameId, currentTurn}) {
         return 
         }
 
-        UndoMovement(gameId, playerId, setError);
+        try {
+            await UndoMovement(gameId, playerId);
+        } 
+        catch (error) {
+            setError(error.message);
+        }
+
+        
     }
 
     return(

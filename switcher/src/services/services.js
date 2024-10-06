@@ -225,10 +225,10 @@ export const UndoMovement = async (gameId, playerId, setError) => {
       )
       if (!response.ok){
           const errorMessage = await response.text();
-          setError(`Error al deshacer movimiento: ${errorMessage}`);
+          throw new Error(`Error al deshacer movimiento: ${errorMessage}`);
       }
   } 
   catch (error) {
-      setError(`Error al deshacer movimiento: ${error.message}`);
+    throw new Error(`Error al deshacer movimiento: ${error.message}`);
   }
 }

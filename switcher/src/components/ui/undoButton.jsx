@@ -31,7 +31,7 @@ export default function UndoButton({gameId, currentTurn}) {
                     body: JSON.stringify({ gameID: gameId, playerID: playerId })
                 }
             )
-            if (!await response.ok){
+            if (!response.ok){
                 const errorMessage = await response.text();
                 setError(`Error al deshacer movimiento: ${errorMessage}`);
             }

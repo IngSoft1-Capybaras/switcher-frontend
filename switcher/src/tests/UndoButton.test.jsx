@@ -8,7 +8,7 @@ describe(`Undo Button`, () => {
 
     const mockGameId = `123`;
     const mockPlayerId = `1`;
-
+    const mockNextPlayerId = `2`;
 
     vi.mock('@/context/GameContext', () => ({
         useGameContext: vi.fn(),
@@ -26,15 +26,25 @@ describe(`Undo Button`, () => {
 
     // Test para verificar que funcione bien cuando deberia
 
-    it(`Should render de UndoButton Component`, () => {
-        render(<UndoButton gameId={mockGameId}/>);
-        expect(screen.getByText(`Deshacer movimiento`)).toBeInTheDocument();
+    it(`Should render de UndoButton Component and be enabled when it is player's turn `, () => {
+        render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
+        const undoButton = screen.getByText(`Deshacer movimiento`);
+        
+        expect(undoButton).toBeInTheDocument();
+        expect(undoButton).not.toBeDisabled();
     });
 
+    it("Should not enable the button when it is not the player's turn", () => {
+        render(<UndoButton gameId={mockGameId} currentTurn={mockNextPlayerId} />);
+        const undoButton = screen.getByText("Deshacer movimiento");
+        expect(undoButton).toBeDisabled();
+      });
+
+
     it(`Should call fetch on Undo Movement when clicking`, async () => {
-        render(<UndoButton gameId={mockGameId}/>);
+        render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
         const mockUndoButton = screen.getByText(`Deshacer movimiento`);
-        fetch.mockResolvedValueOnce({ ok : true, })
+        fetch.mockResolvedValueOnce({ ok : true })
 
         await userEvent.click(mockUndoButton);
 
@@ -51,12 +61,30 @@ describe(`Undo Button`, () => {
         ));
     });
 
+    it("Should handle turn changes correctly", async () => {
+        const { rerender } = render(<UndoButton gameId="123" currentTurn={mockPlayerId} />);
+        
+        let undoButton = screen.getByText("Deshacer movimiento");
+        expect(undoButton).toBeEnabled(); 
+
+        
+        rerender(<UndoButton gameId="123" currentTurn={mockNextPlayerId} />);
+        undoButton = screen.getByText("Deshacer movimiento");
+        expect(undoButton).toBeDisabled();
+
+        
+        rerender(<UndoButton gameId="123" currentTurn={mockPlayerId} />);
+        undoButton = screen.getByText("Deshacer movimiento");
+        expect(undoButton).toBeEnabled();
+    });
+
+
 
     // tests para handelear errores
 
     it(`Should handle null values for gameId and playerId`, async () => {
         useGameContext.mockReturnValue({ playerId: null });
-        render(<UndoButton gameId={null}/>);
+        render(<UndoButton gameId={null} currentTurn={null}/>);
 
         const undoButton = screen.getByText(`Deshacer movimiento`);
         await userEvent.click(undoButton);
@@ -68,7 +96,7 @@ describe(`Undo Button`, () => {
 
     it(`Should handle undefined values for gameId and playerId`, async () => {
         useGameContext.mockReturnValue({ playerId: undefined });
-        render(<UndoButton gameId={undefined}/>);
+        render(<UndoButton gameId={undefined} currentTurn={undefined}/>);
 
         const undoButton = screen.getByText(`Deshacer movimiento`);
         await userEvent.click(undoButton);
@@ -84,7 +112,7 @@ describe(`Undo Button`, () => {
               text: () => Promise.resolve("Algo salió mal") // supongo mensaje que manda el back 
             });
         
-        render(<UndoButton gameId={mockGameId}/>);
+        render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
         const mockUndoButton = screen.getByText(`Deshacer movimiento`);
         
         await userEvent.click(mockUndoButton);
@@ -96,7 +124,7 @@ describe(`Undo Button`, () => {
     it(`Should show error when fetch throws one`, async () => {
         fetch.mockRejectedValueOnce(new Error("Network error"));
 
-        render(<UndoButton gameId={mockGameId} />);
+        render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
         const undoButton = screen.getByText(`Deshacer movimiento`);
         await userEvent.click(undoButton);
 

@@ -213,3 +213,4 @@ export const fetchTurnInfo = async (activeGameId) => {
         throw new Error("Error al obtener información del turno");
     }
 }
+

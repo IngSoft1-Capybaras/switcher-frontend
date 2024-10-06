@@ -3,48 +3,26 @@ import { Button } from "@/components/ui/button.jsx";
 import { useGameContext } from "@/context/GameContext"; 
 import { useSocketContext } from "@/context/SocketContext"; 
 import { pathEndTurn } from "@/services/services";
+import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 
 
 const EndTurnButton = ({gameId, currentTurn}) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { playerId } = useGameContext(); // Obtener el ID del jugador actual
-  const { socket } = useSocketContext(); // Obtener el socket del contexto
+  const { playerId } = useGameContext();
+  const { socket } = useSocketContext();
 
   useEffect(() => {
-    console.log("HOLAAAAAA");
-    console.log(currentTurn);
-    console.log(playerId);
-
     if (currentTurn==playerId) {
       setIsButtonActive(true);
     }
   }, [currentTurn]);
 
-  // Escuchar el evento "siguiente-turno" a través del WebSocket
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleNextTurnEvent = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.type === `${gameId}:NEXT_TURN` && data.nextPlayerId === playerId) {
-        setIsButtonActive(true);
-      } else {
-        setIsButtonActive(false);
-      }
-    };
-
-    // Suscribirse al evento "message" del socket
-    socket.addEventListener("message", handleNextTurnEvent);
-
-    return () => {
-      socket.removeEventListener("message", handleNextTurnEvent); // Limpiar el listener
-    };
-  }, [socket, playerId]);
-
+  // Conexion con socket
+  useEndTurnSocket(gameId, playerId, setIsButtonActive);
+  
   // Manejar la lógica para terminar el turno
-  const handleEndTurn = async () => {
+  const onHandleEndTurn = async () => {
     setLoading(true);
     try {
       const res = await pathEndTurn(gameId); // Llama al endpoint para finalizar el turno
@@ -64,7 +42,7 @@ const EndTurnButton = ({gameId, currentTurn}) => {
     <Button
       className="bg-green-500 hover:bg-green-600"
       disabled={!isButtonActive || loading} // Deshabilitar si no es el turno del jugador o está cargando
-      onClick={handleEndTurn}
+      onClick={onHandleEndTurn}
     >
       {loading ? "Terminando..." : "Terminar Turno"}
     </Button>

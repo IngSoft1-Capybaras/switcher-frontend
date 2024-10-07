@@ -2,7 +2,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 console.log(import.meta.env);
 export async function getGames(currentPage) {
-    const url = `${apiUrl}/games?page=${currentPage}&limit=5`; // TODO: coordinar con back
+    const url = `${apiUrl}/games?page=${currentPage}&limit=5`; 
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
@@ -11,16 +11,11 @@ export async function getGames(currentPage) {
     const data = await response.json();
     
     return data;
-    // } catch (error) {
-        
-    //     throw error;
-    // }
-    // return response;
 }
 
 // Obtener jugadores
 export async function getPlayers(gameId) {
-    const url = `${apiUrl}/players/${gameId}`; // TODO: coordinar con back
+    const url = `${apiUrl}/players/${gameId}`; 
     
     const response = await fetch(url);
     
@@ -37,7 +32,7 @@ export async function getPlayers(gameId) {
 export async function getDeckMovement(gameId, player) {
     console.log("gameIDMov: ", gameId);
     console.log("playerMov: ", player);
-    const url = `${apiUrl}/deck/movement/${gameId}/${player}`; // TODO: coordinar con back
+    const url = `${apiUrl}/deck/movement/${gameId}/${player}`;
 
     const response = await fetch(url);
     console.log(response);
@@ -54,7 +49,7 @@ export async function getDeckMovement(gameId, player) {
 export async function getDeckFigure(gameId, player) {
     console.log("gameIDFig: ", gameId);
     console.log("playerFig: ", player);
-    const url = `${apiUrl}/deck/figure/${gameId}/${player}`; // TODO: coordinar con back
+    const url = `${apiUrl}/deck/figure/${gameId}/${player}`; 
 
     const response = await fetch(url);
 

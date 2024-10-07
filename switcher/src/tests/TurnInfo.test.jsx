@@ -1,16 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import TurnInformation from '@/components/ui/TurnInfo';
-import { useTurnInfoSocket } from '@/components/hooks/use-turn_info-socket';
-
-
 import { useSocketContext } from "@/context/SocketContext"; 
 import { fetchTurnInfo } from "../services/services";
-
-
-// vi.mock('@/components/hooks/use-turn_info-socket', () => ({
-//   useTurnInfoSocket: vi.fn(),
-// }));
 
 vi.mock('@/context/SocketContext', () => ({
   useSocketContext: vi.fn(),

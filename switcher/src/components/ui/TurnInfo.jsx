@@ -1,39 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useSocketContext } from "@/context/SocketContext";
-import { fetchTurnInfo } from "../../services/services";
+import { useTurnInfoSocket } from '../hooks/use-turn_info-socket';
+
 
 const colors = ['text-red-500', 'text-blue-500', 'text-green-500', 'text-yellow-500'];
 
 export default function TurnInformation({ players, activeGameId, currentTurn, setCurrentTurn }) {
-  const { socket } = useSocketContext();
   const [colorClass, setColorClass] = useState('');
 
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleNextTurnEvent = async (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.type === `${activeGameId}:NEXT_TURN`) {
-        const newTurnData = await fetchTurnInfo(activeGameId);
-
-        if (newTurnData.current_player_id) {
-          setCurrentTurn(newTurnData.current_player_id);
-        } else {
-          console.error("Received an undefined player ID.");
-        }
-      }
-    };
-
-    socket.addEventListener("message", handleNextTurnEvent);
-
-    return () => {
-      socket.removeEventListener("message", handleNextTurnEvent);
-    };
-  }, [socket, activeGameId, setCurrentTurn]);
+  useTurnInfoSocket(activeGameId, setCurrentTurn);
 
   useEffect(() => {
-    // Assign a random color to the current player's name whenever currentTurn changes
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
     setColorClass(randomColor);
   }, [currentTurn]);

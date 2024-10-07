@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function useActiveGameSocket(gameId, fetchPlayers) {
-  const { socket } = useSocketContext();  // Get WebSocket instance
+  const { socket } = useSocketContext();  
   const navigate = useNavigate();
   const {setWinnerName} = useGameContext();
 

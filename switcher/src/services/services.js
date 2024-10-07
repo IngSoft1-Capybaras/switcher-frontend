@@ -214,6 +214,25 @@ export const fetchTurnInfo = async (activeGameId) => {
     }
 }
 
+export const undoMovement = async (gameId, playerId) => {
+  try {
+      const response = await fetch(`${apiUrl}/deck/movement/undo_move`,
+          {
+              method:`PATCH`,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ gameID: gameId, playerID: playerId })
+          }
+      )
+      if (!response.ok){
+          const errorMessage = await response.text();
+          throw new Error(`Error al deshacer movimiento: ${errorMessage}`);
+      }
+  } 
+  catch (error) {
+    throw new Error(`Error al deshacer movimiento: ${error.message}`);
+  }
+}
+
 export const submitForm = async (data, username) => {
   const body = {
     game: {

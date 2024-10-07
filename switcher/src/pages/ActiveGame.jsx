@@ -11,6 +11,9 @@ import LeaveGameButton from '../components/ui/LeaveButton';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import TurnInfo from '@/components/ui/TurnInfo'
 import { fetchTurnInfo } from '@/services/services';
+import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
+
+import UndoButton from '@/components/ui/undoButton';
 
 const ActiveGame = () => {
   const { gameId } = useParams();
@@ -60,6 +63,7 @@ const ActiveGame = () => {
   }, []);
 
   useActiveGameSocket(gameId, fetchPlayers);
+  useUpdateBoardSocket(gameId, fetchBoard);
 
   if (loading) return <div>Loading game...</div>;
 
@@ -110,6 +114,7 @@ const ActiveGame = () => {
           ))}
         </div>
           {/* Buttons for current player */}
+          <UndoButton gameId={gameId} currentTurn={currentTurn}/>
       </div>
     </div>
   );

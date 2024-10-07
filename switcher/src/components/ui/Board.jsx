@@ -1,6 +1,9 @@
 import React from 'react';
+import { useState } from 'react';
 
-const Board = ({ rows = 6, cols = 6 }) => {
+const Board = ({ rows = 6, cols = 6, onSelectBox }) => {
+  const [selectedCells, setSelectedCells] = useState([]);
+
   const cells = Array.from({ length: rows * cols });
   
   // Array con los colores usando clases de Tailwind
@@ -16,10 +19,14 @@ const Board = ({ rows = 6, cols = 6 }) => {
     >
       {cells.map((_, index) => {
         const colorIndex = index % colors.length; // Alternar entre los cuatro colores
+        const x = index % cols;
+        const y = Math.floor(index / cols);
         return (
           <div
             key={index}
-            className={`w-10 h-10 ${colors[colorIndex]} flex-shrink-0`} // Hacemos que las celdas no se reduzcan
+            className={`w-10 h-10 ${colors[colorIndex]} flex-shrink-0 cursor-pointer border-2 ${isSelected ? 'border-white' : 'border-transparent'}`} // Cambiar borde si está seleccionada
+            onClick={() => onSelectBox(index)} // Agregar manejador de click
+            // className={`w-10 h-10 ${colors[colorIndex]} flex-shrink-0`} // Hacemos que las celdas no se reduzcan
           />
         );
       })}

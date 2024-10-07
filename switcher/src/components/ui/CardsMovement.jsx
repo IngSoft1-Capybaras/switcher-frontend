@@ -5,12 +5,11 @@ import { getDeckMovement } from '@/services/services';
 import { useParams } from 'react-router-dom';
 
 // Componente que representa las cartas de movimiento 
-const CardsMovement = ({gameId, playerId}) => {
+const CardsMovement = ({gameId, playerId, onSelectCard}) => {
   const [movementCards, setMovementCards] = useState([]); // Estado para las cartas de movimiento
   const [loading, setLoading] = useState(true); // Estado para la carga
   const [error, setError] = useState(null); // Estado para errores
-  // console.log("gameId: ", gameId);
-  // console.log("cardsMovplayerId: ", playerId);
+  const [selectedCardId, setSelectedCardId] = useState(null); // Estado para la carta seleccionada
 
   // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
   useEffect(() => {
@@ -37,7 +36,14 @@ const CardsMovement = ({gameId, playerId}) => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
     {movementCards.map((card) => (
-        <div key={card.id} className="relative w-full h-full aspect-[2/3] border rounded">
+          <div
+            key={card.id}
+            onClick={() => {
+              setSelectedCardId(card.id); // Actualizamos el estado de la carta seleccionada
+              onSelectCard(card); // Pasamos la carta seleccionada a ActiveGame
+            }}
+            className={`relative w-full h-full aspect-[2/3] border rounded cursor-pointer ${selectedCardId === card.id ? 'border-white' : 'border-transparent'}`}
+          >
             {card.used ? (
                 <div className="flex items-center justify-center w-full h-full">
                     <span className="text-white">Carta Usada</span>

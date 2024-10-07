@@ -213,3 +213,29 @@ export const fetchTurnInfo = async (activeGameId) => {
         throw new Error("Error al obtener información del turno");
     }
 }
+
+export const playMovementCard = async (gameId, playerId, cardId, posFrom, posTo) => {
+  try {
+    const response = await fetch(`${apiUrl}/deck/movement/play_card`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        gameID: gameId,
+        playerID: playerId,
+        cardID: cardId,
+        pos_from: posFrom,
+        pos_to: posTo,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to play card');
+    }
+    // Aquí puedes manejar la respuesta, pero la actualización vendrá por WebSocket
+    console.log('Card played successfully!');
+  } catch (err) {
+    console.error('Error playing card:', err);
+  }
+};

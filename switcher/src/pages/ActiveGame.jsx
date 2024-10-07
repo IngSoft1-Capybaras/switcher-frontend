@@ -3,7 +3,7 @@ import { useGameContext } from '../context/GameContext';
 import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
 import { useParams } from 'react-router-dom';
-import { getPlayers, getBoard } from '@/services/services';
+import { getPlayers, getBoard, playMovementCard } from '@/services/services';
 import PlayerPanel from '../components/ui/PlayerPanel';
 import Board from '../components/ui/GameBoard';
 import EndTurnButton from '../components/ui/EndShiftButton';
@@ -17,6 +17,8 @@ const ActiveGame = () => {
   const [boxes, setBoxes] = useState();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [loading, setLoading] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null); // carta seleccionada
+  const [selectedPosition, setSelectedPosition] = useState([]); // celdas seleccionadas
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -61,6 +63,19 @@ const ActiveGame = () => {
 
   useActiveGameSocket(gameId, fetchPlayers);
 
+  const handleSelectCard = (card) => {
+    setSelectedCard(card);
+    setSelectedPosition(null); // Resetea la posición seleccionada
+  };
+
+  const handleSelectBox = (pos) =>{
+    if (!selectedCard) {
+      alert("Debes seleccionar una carta de movimiento");
+      return;
+    }
+    setSelectedPosition(pos);
+  }
+
   if (loading) return <div>Loading game...</div>;
 
   const otherPlayers = players.filter(p => p.id !== playerId);
@@ -76,7 +91,7 @@ const ActiveGame = () => {
             <div
               className="h-96 w-96 sm:h-[30rem] sm:w-[30rem] md:h-[35rem] md:w-[35rem] lg:h-[40rem] lg:w-[40rem]"
             >
-              <Board boxes={boxes} />
+              <Board boxes={boxes} onSelectBox={handleSelectBox}/>
             </div>
             ) : (
               <div>Loading...</div>
@@ -86,7 +101,7 @@ const ActiveGame = () => {
           {/* Current player's cards */}
           <div className="p-4 h-full flex items-center justify-center">
             <div className="flex justify-center items-center space-x-4">
-              <CardsMovement gameId={gameId} playerId={playerId} />
+              <CardsMovement gameId={gameId} playerId={playerId} onSelectCard={handleSelectCard} />
               <CardsFigure gameId={gameId} playerId={playerId} />
             </div>
           </div>
@@ -96,7 +111,6 @@ const ActiveGame = () => {
 
         {/* Turn Info */}
         <div className="text-center p-4">
-
           <TurnInfo players={players} activeGameId={gameId} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn} />
         </div>
           <div className="flex justify-around mt-4">
@@ -109,7 +123,7 @@ const ActiveGame = () => {
             <PlayerPanel key={player.id} game={gameId} player={player.id} name={player.name} />
           ))}
         </div>
-          {/* Buttons for current player */}
+        {/* Buttons for current player */}  
       </div>
     </div>
   );

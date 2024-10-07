@@ -4,16 +4,15 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function useActiveGameSocket(gameId, fetchPlayers) {
-  const { socket } = useSocketContext();  // Get WebSocket instance
+  const { socket } = useSocketContext();  
   const navigate = useNavigate();
   const {setWinnerName} = useGameContext();
 
   useEffect(() => {
     if (!socket) return;
 
-    // Define a function to handle incoming messages
     const handleGameInfoUpdate = (event) => {
-      const data = JSON.parse(event.data);  // Assuming server sends JSON data
+      const data = JSON.parse(event.data);  
       if (data.type === `${gameId}:GAME_INFO_UPDATE`) {
         fetchPlayers();
       }
@@ -31,5 +30,5 @@ export function useActiveGameSocket(gameId, fetchPlayers) {
       // Unsubscribe from WebSocket message events on cleanup
       socket.removeEventListener("message", handleGameInfoUpdate);
     };
-  }, [socket, fetchPlayers]);  // Dependency array includes socket and fetchGames
+  }, [socket, fetchPlayers]); 
 }

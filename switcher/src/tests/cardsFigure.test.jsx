@@ -15,7 +15,7 @@ describe('CardsFigure', () => {
   const mockFigureCards = [
     {
       id: 1,
-      type: "TYPE_1",
+      type: "FIGE01",
       show: false,
       difficulty: "EASY",
       player_id: 1,
@@ -23,7 +23,7 @@ describe('CardsFigure', () => {
     },
     {
       id: 2,
-      type: "TYPE_2",
+      type: "FIGE02",
       show: true,
       difficulty: "HARD",
       player_id: 1,
@@ -31,7 +31,7 @@ describe('CardsFigure', () => {
     },
     {
       id: 3,
-      type: "TYPE_3",
+      type: "FIGE03",
       show: true,
       difficulty: "EASY",
       player_id: 1,
@@ -39,7 +39,7 @@ describe('CardsFigure', () => {
     },
     {
       id: 4,
-      type: "TYPE_4",
+      type: "FIGE04",
       show: true,
       difficulty: "EASY",
       player_id: 1,
@@ -47,7 +47,7 @@ describe('CardsFigure', () => {
     },
     {
       id: 5,
-      type: "TYPE_5",
+      type: "FIGE05",
       show: true,
       difficulty: "EASY",
       player_id: 1,
@@ -55,7 +55,7 @@ describe('CardsFigure', () => {
     },
     {
       id: 6,
-      type: "TYPE_6",
+      type: "FIGE06",
       show: true,
       difficulty: "HARD",
       player_id: 1,

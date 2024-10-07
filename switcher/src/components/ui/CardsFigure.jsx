@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { cn } from "@/lib/utils"; // Asegúrate de que "cn" esté en utils
+import { cn } from "@/lib/utils"; 
 import { cardImg } from '../utils/getCardImg';
-import { getDeckFigure } from '@/services/services'; // Asegúrate de importar tu función para obtener las cartas
-import { mockFigureCards } from '@/lib/mockGameState';
-import { useParams } from 'react-router-dom';
+import { getDeckFigure } from '@/services/services'; 
+
 
 /* Componente que representa las cartas de figura */
 const CardsFigure = ({gameId, playerId}) => {
@@ -19,9 +18,7 @@ const CardsFigure = ({gameId, playerId}) => {
       try {                 
         const cards = await getDeckFigure(gameId, playerId); // Obtiene las cartas de figura getDeckFigure(gameId, playerId)
         setFigureCards(cards); // Actualiza el estado con las cartas
-        // setFigureCards(mockFigureCards); // Actualiza el estado con las cartas
       } catch (error) {
-        // setError("Error al obtener las cartas de figura");
         console.error('Error al obtener las cartas de figura', error); // Loguea el error
       } finally {
         setLoading(false); // Cambia el estado de carga a false
@@ -33,10 +30,10 @@ const CardsFigure = ({gameId, playerId}) => {
   
   // Renderizado condicional según el estado de carga y errores
   if (loading) return <div>Cargando cartas de movimiento...</div>; // Mensaje de carga
-  // if (error) return <div>{error}</div>; // Muestra error si hay
+ 
 
   return (
-    <div className="flex space-x-4"> {/* Cambia esto para el layout según tu diseño */}
+    <div className="flex space-x-4"> 
       {figureCards.slice(0, 3).map((card) => { // Solo toma las primeras 3 cartas
         // Asignar un color o borde según la dificultad
         const difficultyStyle = card.difficulty === "HARD" ? "border-red-500" : "border-green-500";

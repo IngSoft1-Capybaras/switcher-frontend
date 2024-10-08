@@ -7,8 +7,8 @@ import { Button } from "./button";
 import { useGameContext } from "@/context/GameContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "../hooks/use-toast";
+import { submitForm } from "@/services/services";
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const MAX_PLAYERS = 4;
 const MIN_PLAYERS = 2;
@@ -78,43 +78,15 @@ export default function CreateGameForm() {
       ),
     });
 
-    const body = {
-      game: {
-        name: data.name,
-        max_players: data.playersRange[1],
-        min_players: data.playersRange[0],
-      },
-      player: {
-        name: username,
-        host: true,
-        turn: "PRIMERO"
-      }
-    };
+    try {
+      const result = await submitForm(data, username);
+      setPlayerId(result.player.id);
+      navigate(`/games/lobby/${result.game.id}`);
+    } 
+    catch (error) {
+      setErrorMessage(error.message);
 
-    fetch(`${apiUrl}/games`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(errorData => {
-            setErrorMessage('Error al crear la partida.');
-            throw new Error(errorData.message || 'An error occurred');
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-        setPlayerId(data.player.id);
-        navigate(`/games/lobby/${data.game.id}`);
-      })
-      .catch(error => {
-        console.error('Error:', error.message);
-      });
+    }
   };
 
   return (

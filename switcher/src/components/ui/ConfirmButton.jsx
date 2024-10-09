@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./button"; // Asegúrate de que esta importación sea correcta.
 import { playMovementCard } from "@/services/services";
 
-export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn }) {
+export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov }) {
     const [error, setError] = useState(null);
     const [isButtonActive, setIsButtonActive] = useState(false);
 
@@ -31,15 +31,25 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                 pos_to: posTo,
             });
             // Aquí puedes manejar la respuesta de éxito, si es necesario
+            resetMov();
         } catch (error) {
             setError(error.message);
         }
     };
 
+    // Lógica para restablecer el estado de la carta y las casillas a su estado inicial.
+    const onCancelMove = () => {
+        console.log("Cancelando movimiento");
+        resetMov();
+    };
+
     return (
         <div>
             <Button onClick={onConfirmMove} disabled={!isButtonActive}>
-                Confirmar
+                Confirmar movimiento
+            </Button>
+            <Button onClick={onCancelMove} disabled={!isButtonActive} className="bg-red-500 text-white">
+                Cancelar movimiento
             </Button>
             {error && <p>{error}</p>}
         </div>

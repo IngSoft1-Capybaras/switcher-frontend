@@ -20,8 +20,8 @@ const ActiveGame = () => {
   const [boxes, setBoxes] = useState();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [loading, setLoading] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [selectedPositions, setSelectedPositions] = useState([]);
+  const [selectedMovementCard, setSelectedMovementCard] = useState(null);
+  const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -57,6 +57,11 @@ const ActiveGame = () => {
       console.error("Error fetching board:", err);
     }
   }, [gameId, setBoxes]);
+  
+  const resetMovement = () => {
+    setSelectedMovementCard(null);
+    setSelectedMovementPositions([]);
+  };
 
   useEffect(() => {
     fetchPlayers();
@@ -70,7 +75,7 @@ const ActiveGame = () => {
   if (loading) return <div>Loading game...</div>;
 
   const otherPlayers = players.filter(p => p.id !== playerId);
-
+  
   return (
     <div className="flex h-screen bg-zinc-950 text-white space-x-4 p-4">
       {/* Left section: Board and current player's cards */}
@@ -79,10 +84,12 @@ const ActiveGame = () => {
 
           {/* Game board */}
           {boxes ? (
-            <div
-              className="h-96 w-96 sm:h-[30rem] sm:w-[30rem] md:h-[35rem] md:w-[35rem] lg:h-[40rem] lg:w-[40rem]"
-            >
-              <GameBoard boxes={boxes} onSelectPosition={setSelectedPositions} /> 
+            <div className="h-96 w-96 sm:h-[30rem] sm:w-[30rem] md:h-[35rem] md:w-[35rem] lg:h-[40rem] lg:w-[40rem]" >
+              <GameBoard boxes={boxes} 
+                onSelectMovementPosition={setSelectedMovementPositions} 
+                selectMovementCard={selectedMovementCard}
+                selectedMovementPositions={selectedMovementPositions} 
+              />
             </div>
             ) : (
               <div>Loading...</div>
@@ -92,7 +99,10 @@ const ActiveGame = () => {
           {/* Current player's cards */}
           <div className="p-4 h-full flex items-center justify-center">
             <div className="flex justify-center items-center space-x-4">
-              <CardsMovement gameId={gameId} playerId={playerId} onSelectCard={setSelectedCard} />
+              <CardsMovement gameId={gameId} playerId={playerId} 
+                onSelectCard={setSelectedMovementCard}
+                selectMovementCard={selectedMovementCard}
+              />
               <CardsFigure gameId={gameId} playerId={playerId} />
             </div>
           </div>
@@ -119,11 +129,12 @@ const ActiveGame = () => {
           {/* Buttons for current player */}
           <UndoButton gameId={gameId} currentTurn={currentTurn}/>
           <ConfirmButton 
-              gameId={gameId} 
-              selectedCard={selectedCard} 
-              selectedPositions={selectedPositions} 
-              playerId={playerId} 
-              currentTurn={currentTurn} 
+            gameId={gameId} 
+            selectedCard={selectedMovementCard} 
+            selectedPositions={selectedMovementPositions} 
+            playerId={playerId} 
+            currentTurn={currentTurn} 
+            resetMov={resetMovement}
           />
       </div>
     </div>

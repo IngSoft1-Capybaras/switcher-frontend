@@ -1,32 +1,47 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-const Board = ({ rows = 6, cols = 6, onSelectBox }) => {
-  const [selectedCells, setSelectedCells] = useState([]);
-
+const Board = ({ rows = 6, cols = 6, onSelectPosition }) => {
   const cells = Array.from({ length: rows * cols });
+  const [selectedPositions, setSelectedPositions] = useState([]); // Guardar las posiciones seleccionadas
   
-  // Array con los colores usando clases de Tailwind
-  const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500'];
+  // Manejar clics en las celdas
+  const handleCellClick = (index) => {
+    const row = Math.floor(index / cols); // Calcula la fila de la celda
+    const col = index % cols; // Calcula la columna de la celda
+    const position = { x: col, y: row };
+
+    // Si hay dos posiciones seleccionadas, no hacer nada más
+    if (selectedPositions.length >= 2) return;
+
+    const newSelectedPositions = [...selectedPositions, position];
+    setSelectedPositions(newSelectedPositions);
+
+    // Llamar la función `onSelectPosition` pasada como prop para notificar a ActiveGame
+    if (onSelectPosition) {
+      onSelectPosition(newSelectedPositions);
+    }
+  };
 
   return (
     <div
-      className="flex flex-wrap" // Usamos flexbox para manejar la disposición
+      className="flex flex-wrap"
       style={{
-        width: `${cols * 40}px`, // Ancho total del tablero basado en 96px por celda
-        height: `${rows * 40}px`, // Alto total del tablero basado en 96px por celda
+        width: `${cols * 40}px`,
+        height: `${rows * 40}px`,
       }}
     >
       {cells.map((_, index) => {
-        const colorIndex = index % colors.length; // Alternar entre los cuatro colores
-        const x = index % cols;
-        const y = Math.floor(index / cols);
+        const colorIndex = index % 4; // Alternar entre los colores
+        const isSelected = selectedPositions.some(
+          (pos) => pos.x === index % cols && pos.y === Math.floor(index / cols)
+        ); // Verificar si la celda está seleccionada
+        const borderColor = isSelected ? 'border-yellow-500' : '';
+
         return (
           <div
             key={index}
-            className={`w-10 h-10 ${colors[colorIndex]} flex-shrink-0 cursor-pointer border-2 ${isSelected ? 'border-white' : 'border-transparent'}`} // Cambiar borde si está seleccionada
-            onClick={() => onSelectBox(index)} // Agregar manejador de click
-            // className={`w-10 h-10 ${colors[colorIndex]} flex-shrink-0`} // Hacemos que las celdas no se reduzcan
+            className={`w-10 h-10 ${borderColor} border-2 ${colorIndex === 0 ? 'bg-red-500' : colorIndex === 1 ? 'bg-blue-500' : colorIndex === 2 ? 'bg-green-500' : 'bg-yellow-500'} flex-shrink-0`}
+            onClick={() => handleCellClick(index)} // Manejar clic en la celda
           />
         );
       })}

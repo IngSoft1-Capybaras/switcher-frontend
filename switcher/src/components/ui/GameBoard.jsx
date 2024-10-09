@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
-const GameBoard = ({ boxes, onSelectPosition }) => {
-  const [selectedPositions, setSelectedPositions] = useState([]);
-
+const GameBoard = ({ boxes, onSelectMovementPosition, selectMovementCard, selectedMovementPositions }) => {
   const getColorClass = (color) => {
     switch (color) {
       case 'GREEN':
@@ -19,15 +17,20 @@ const GameBoard = ({ boxes, onSelectPosition }) => {
   };
 
   const handleBoxClick = (box) => {
+    if (!selectMovementCard) {
+      console.log("Debes seleccionar una carta de movimiento primero");
+      return;
+    }
+
     const position = { x: box.pos_x, y: box.pos_y };
 
-    if (selectedPositions.length < 2) {
-      const newSelectedPositions = [...selectedPositions, position];
-      setSelectedPositions(newSelectedPositions);
-      console.log("Casillas seleccionadas:", newSelectedPositions);
-      onSelectPosition(newSelectedPositions); // Pasar las posiciones seleccionadas a ActiveGame
+    // Solo permitir agregar si se han seleccionado menos de 2 posiciones
+    if (selectedMovementPositions.length < 2) {
+      const newSelectedMovementPositions = [...selectedMovementPositions, position];
+      console.log("Casillas seleccionadas:", newSelectedMovementPositions);
+      onSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
     } else {
-      console.log("Ya has seleccionado dos posiciones", selectedPositions);
+      console.log("Ya has seleccionado dos posiciones", selectedMovementPositions);
     }
   };
 
@@ -36,16 +39,15 @@ const GameBoard = ({ boxes, onSelectPosition }) => {
       {boxes.length > 0 &&
         boxes.map((row, rowIndex) =>
           row.map((box, colIndex) => {
-            const isSelected = selectedPositions.some(
+            const isSelectedMovement = selectedMovementPositions.some(
               (pos) => pos.x === box.pos_x && pos.y === box.pos_y
             );
-            const borderColor = isSelected ? 'border-yellow-500' : '';
 
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 data-testid={`box-${box.pos_x}-${box.pos_y}`}
-                className={`rounded w-full h-full border-2 ${borderColor} ${getColorClass(box.color)}`}
+                className={`rounded w-full h-full ${getColorClass(box.color)} ${isSelectedMovement ? 'scale-75 brightness-75 animate-pulse' : 'scale-100 brightness-100'} cursor-pointer`}
                 style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
                 onClick={() => handleBoxClick(box)} // Manejar clic en las casillas
               />

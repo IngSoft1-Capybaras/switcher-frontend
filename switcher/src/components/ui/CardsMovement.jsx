@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { cardImg } from '../utils/getCardImg';
 import { getDeckMovement } from '@/services/services'; 
+import { AnimatedGroup } from './animated-group';
 
 
 // Componente que representa las cartas de movimiento 
@@ -32,9 +33,36 @@ const CardsMovement = ({gameId, playerId}) => {
   if (error) return <div>{error}</div>; // Muestra error si hay
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
-    {movementCards.map((card) => (
-        <div key={card.id} className="relative w-full h-full aspect-[2/3] rounded">
+    // <div className="">
+     <AnimatedGroup
+      className='flex flex-row justify-center items-center h-full w-full space-x-6'
+      variants={{
+        container: {
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.05,
+            },
+          },
+        },
+        item: {
+          hidden: { opacity: 0, y: 40, filter: 'blur(4px)' },
+          visible: {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            transition: {
+              duration: 1.2,
+              type: 'spring',
+              bounce: 0.3,
+            },
+          },
+        },
+      }}
+    >
+    {movementCards.map((card,index) => (
+        <div key={card.id} className={`relative h-44 w-auto rounded ${(index==0 && movementCards.length!=1) ? '-rotate-12': (index==movementCards.length-1 && movementCards.length!=1) ? 'rotate-12' : '-translate-y-5'}`}>
             {card.used ? (
                 <div className="flex items-center justify-center w-full h-full">
                     <span className="text-white">Carta Usada</span>
@@ -44,7 +72,9 @@ const CardsMovement = ({gameId, playerId}) => {
             )}
         </div>
     ))}
-  </div>
+  </AnimatedGroup>
+  // </div>
+
   );
 };
 

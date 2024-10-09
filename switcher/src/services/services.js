@@ -173,7 +173,7 @@ export async function getGameStatus(gameId) {
   }
   
   export async function getBoard(gameId) {
-    const url = `${apiUrl}/games/${gameId}/board`;
+    const url = `${apiUrl}/board/${gameId}`;
 
     try {
       const response = await fetch(url);

@@ -24,7 +24,7 @@ const getColorBox = (color) => {
   }
 };
 
-export default function Component() {
+export default function GameBoard() {
   const [activeAnimation, setActiveAnimation] = useState('');
 
   useEffect(() => {
@@ -76,6 +76,7 @@ export default function Component() {
           mockBoxes.map((row, rowIndex) =>
             row.map((box, colIndex) => (
               <div
+                data-testid={`box-${box.pos_x}-${box.pos_y}`}
                 key={`${rowIndex}-${colIndex}`}
                 className={`relative overflow-hidden rounded w-full h-full ${getColorBox(box.color)} ${box.highlighted ? `${activeAnimation}` : ''}`}
                 style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}

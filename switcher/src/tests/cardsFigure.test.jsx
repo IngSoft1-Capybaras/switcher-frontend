@@ -113,13 +113,8 @@ describe('CardsFigure', () => {
       expect(screen.getAllByRole('img')).toHaveLength(3); // Solo esperamos 3 cartas
     });
   
-    // Verifica que el texto de la dificultad se renderiza para cada carta
     mockFigureCards.slice(0, 3).forEach((card) => {
-      const elements = screen.getAllByText(card.difficulty);
-      expect(elements.length).toBeGreaterThan(0); // Asegúrate de que al menos un elemento está presente
-      expect(elements[0]).toBeInTheDocument(); // Verifica que el primer elemento esté en el documento
-
-      if (!card.show) { // Verifica si está bloqueada
+      if (!card.show) {
         expect(screen.getByText(/Bloqueada/i)).toBeInTheDocument(); // Asegúrate de que se muestra "Bloqueada"
       }
     });

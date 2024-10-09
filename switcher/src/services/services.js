@@ -28,7 +28,7 @@ export async function getPlayers(gameId) {
     return data;
 }
 
-// Obtener cartas de movimiento y figura para cada jugador
+// Obtener cartas de movimiento para cada jugador
 export async function getDeckMovement(gameId, player) {
     console.log("gameIDMov: ", gameId);
     console.log("playerMov: ", player);

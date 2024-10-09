@@ -57,7 +57,7 @@ const ActiveGame = () => {
       console.error("Error fetching board:", err);
     }
   }, [gameId, setBoxes]);
-  
+
   const resetMovement = () => {
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);

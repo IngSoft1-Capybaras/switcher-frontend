@@ -1,29 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { cardImg } from '../utils/getCardImg';
 import { getDeckMovement } from '@/services/services'; 
+import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-cards_movement-socket';
 
 
 // Componente que representa las cartas de movimiento 
 const CardsMovement = ({gameId, playerId, onSelectCard, selectedMovementCard}) => {
-  const [movementCards, setMovementCards] = useState([]); // Estado para las cartas de movimiento
+  const [movementCards, setMovementCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // const [selectedCard, setSelectedCard] = useState(null);
 
+  const fetchMovementCards = async () => {
+    try {
+      const cards = await getDeckMovement(gameId, playerId);
+      setMovementCards(cards);
+    } catch (error) {
+      setError("Error al obtener las cartas de movimiento");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
-  useEffect(() => {
-    const fetchMovementCards = async () => {
-      try {
-        const cards = await getDeckMovement(gameId, playerId);
-        setMovementCards(cards);
-      } catch (error) {
-        setError("Error al obtener las cartas de movimiento");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
+  useEffect(() => {    
     fetchMovementCards();
   }, [gameId, playerId]); // Dependencias para volver a ejecutar el efecto si cambian
   
@@ -43,6 +44,7 @@ const CardsMovement = ({gameId, playerId, onSelectCard, selectedMovementCard}) =
     }
   };
   
+  useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards); // Actualiza las cartas de movimiento en tiempo real
 
   // renderizado condicional según el estado de carga y errores
   if (loading) return <div>Cargando cartas de movimiento...</div>;

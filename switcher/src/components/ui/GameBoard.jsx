@@ -24,20 +24,20 @@ const getColorBox = (color) => {
   }
 };
 
-const getBlockedColorBox = (color) => {
-  switch (color) {
-    case 'GREEN':
-      return 'bg-gradient-to-br from-green-900 to-green-700 opacity-70';
-    case 'BLUE':
-      return 'bg-gradient-to-br from-blue-900 to-blue-700 opacity-70';
-    case 'RED':
-      return 'bg-gradient-to-br from-red-900 to-red-700 opacity-70';
-    case 'YELLOW':
-      return 'bg-gradient-to-br from-yellow-900 to-yellow-700 opacity-70';
-    default:
-      return 'bg-gradient-to-br from-gray-900 to-gray-700 opacity-70';
-  }
-};
+// const getBlockedColorBox = (color) => {
+//   switch (color) {
+//     case 'GREEN':
+//       return 'bg-gradient-to-br from-green-900 to-green-700 opacity-70';
+//     case 'BLUE':
+//       return 'bg-gradient-to-br from-blue-900 to-blue-700 opacity-70';
+//     case 'RED':
+//       return 'bg-gradient-to-br from-red-900 to-red-700 opacity-70';
+//     case 'YELLOW':
+//       return 'bg-gradient-to-br from-yellow-900 to-yellow-700 opacity-70';
+//     default:
+//       return 'bg-gradient-to-br from-gray-900 to-gray-700 opacity-70';
+//   }
+// };
 
 
 export default function GameBoard({boxes, blockedColor}) {

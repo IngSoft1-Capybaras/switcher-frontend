@@ -5,7 +5,7 @@ import { pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 
 
-const EndTurnButton = ({gameId, currentTurn}) => {
+const EndTurnButton = ({gameId, currentTurn, getTurnInfo}) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId } = useGameContext();
@@ -15,10 +15,10 @@ const EndTurnButton = ({gameId, currentTurn}) => {
     if (currentTurn==playerId) {
       setIsButtonActive(true);
     }
-  }, [currentTurn]);
+  }, [currentTurn, playerId]);
 
   // Conexion con socket
-  useEndTurnSocket(gameId, playerId, setIsButtonActive);
+  useEndTurnSocket(gameId, playerId, setIsButtonActive, getTurnInfo);
   
   // Manejar la lógica para terminar el turno
   const onHandleEndTurn = async () => {

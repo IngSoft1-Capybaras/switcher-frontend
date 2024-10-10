@@ -1,30 +1,33 @@
-import {useEffect} from "react";
+import { useEffect } from "react";
 import { useSocketContext } from "@/context/SocketContext";
 
+export function useEndTurnSocket(gameId, playerId, setIsButtonActive, getTurnInfo) {
+    const { socket } = useSocketContext();
 
-
-export function useEndTurnSocket(gameId, playerId, setIsButtonActive) {
-    const {socket} = useSocketContext();
-
-    // Escuchar el evento "siguiente-turno" a través del WebSocket
     useEffect(() => {
         if (!socket) return;
 
         const handleNextTurnEvent = (event) => {
-        const data = JSON.parse(event.data);
+            const data = JSON.parse(event.data);
 
-        if (data.type === `${gameId}:NEXT_TURN` && data.nextPlayerId === playerId) {
-            setIsButtonActive(true);
-        } else {
-            setIsButtonActive(false);
-        }
+            
+            if (data.type === `${gameId}:NEXT_TURN`) {
+            
+                // if (data.nextPlayerId === playerId) {
+                //     setIsButtonActive(true);
+                // } else {
+                //     setIsButtonActive(false);
+                // }
+                getTurnInfo();
+            }
         };
 
-        // Suscribirse al evento "message" del socket
+        
         socket.addEventListener("message", handleNextTurnEvent);
 
+        
         return () => {
-        socket.removeEventListener("message", handleNextTurnEvent); // Limpiar el listener
+            socket.removeEventListener("message", handleNextTurnEvent);
         };
-    }, [socket, playerId]);    
+    }, [socket, gameId, playerId, setIsButtonActive]);
 }

@@ -75,9 +75,9 @@ export default function ActiveGame() {
     <div className="flex flex-col h-screen bg-zinc-950">
 
       {/* Other Player Panels */}
-      <div className="flex flex-row w-full text-white p-4 justify-center">
+      <div className="flex flex-row w-full text-white  justify-center">
         {otherPlayers.map((player) => (
-          <div key={player.id} className="relative w-full">
+          <div key={player.id} className="relative w-[600px] m-10">
             <PlayerPanel
               game={gameId}
               player={player.id}
@@ -144,9 +144,9 @@ export default function ActiveGame() {
 
           {/* Buttons */}
           <div className="flex flex-row w-[600px] justify-between space-x-3 mt-10">
-            <EndTurnButton />
-            <UndoButton />
-            <LeaveButton />
+            <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} />
+            <UndoButton gameId={gameId} currentTurn={currentTurn}/>
+            <LeaveButton gameId={gameId}/>
           </div>
         </div>
       </div>

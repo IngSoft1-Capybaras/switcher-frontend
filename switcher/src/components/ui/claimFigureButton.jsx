@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useGameContext } from "@/context/GameContext";
 import { claimFigure } from "@/services/services";
 import { FiCheckSquare } from 'react-icons/fi';
-import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
+
 
 export default function ClaimFigureButton({ gameId, cardId, figure}) {
     const { playerId, currentTurn } = useGameContext();

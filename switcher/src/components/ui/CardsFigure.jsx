@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import { cardImg } from '../utils/getCardImg'
 import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
+import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
 
 export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name}) {
   

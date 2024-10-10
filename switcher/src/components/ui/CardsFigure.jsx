@@ -30,8 +30,8 @@ export default function CardsFigure({gameId, playerId, setSelectedFigure, select
   if (loading) return <div>Loading figure cards...</div>
 
   return (
-    <div className={`flex flex-col justify-center items-center w-full ${turnBorder}`}>
-      {name && <h2 className="text-xl text-center mb-5">{name}'s figures</h2>}
+    <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10 ${turnBorder}`}>
+      {name && <h2 className="text-m text-center mb-5">{name}'s figures</h2>}
       <AnimatedGroup
         className="flex justify-center items-center space-x-5 w-full"
         preset="scale"

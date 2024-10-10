@@ -213,7 +213,7 @@ export const undoMovement = async (gameId, playerId) => {
   try {
       const response = await fetch(`${apiUrl}/deck/movement/undo_move`,
           {
-              method:`PATCH`,
+              method:`POST`,
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ gameID: gameId, playerID: playerId })
           }

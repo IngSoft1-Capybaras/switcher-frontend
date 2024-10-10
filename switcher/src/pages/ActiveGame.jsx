@@ -10,7 +10,10 @@ import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { fetchTurnInfo } from '@/services/services';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { motion } from 'framer-motion';
-import { FaUndo, FaSignOutAlt, FaCheck } from 'react-icons/fa'; // Importing icons
+
+import EndTurnButton from '@/components/ui/EndShiftButton';
+import LeaveButton from '@/components/ui/LeaveButton';
+import UndoButton from '@/components/ui/undoButton';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
@@ -72,9 +75,9 @@ export default function ActiveGame() {
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
       {/* Other Player Panels */}
-      <div className="flex flex-row w-full text-white  justify-center">
+      <div className="flex flex-row w-full text-white  justify-center ">
         {otherPlayers.map((player) => (
-          <div key={player.id} className="relative w-[600px] m-10">
+          <div key={player.id} className="relative w-[600px] mx-10">
             <PlayerPanel
               game={gameId}
               player={player.id}
@@ -88,6 +91,7 @@ export default function ActiveGame() {
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
                 transition={{ duration: 120 }}
+                
               />
             )}
           </div>
@@ -144,17 +148,11 @@ export default function ActiveGame() {
         transition={{ duration: 0.5 }}
       >
         
-        <button onClick={() => {}} className="text-white">
-          <FaCheck size={28} />
-        </button>
+        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo}/>
         
-        <button onClick={() => {}} className="text-white">
-          <FaUndo size={28} />
-        </button>
+        <UndoButton gameId={gameId} currentTurn={currentTurn} />
         
-        <button onClick={() => {}} className="text-white">
-          <FaSignOutAlt size={28} />
-        </button>
+        <LeaveButton gameId={gameId} />
       </motion.div>
     </div>
   );

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button.jsx";
 import { useGameContext } from "@/context/GameContext"; 
 import { pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
-
+import {FaCheck} from 'react-icons/fa'
 
 const EndTurnButton = ({gameId, currentTurn, getTurnInfo}) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId } = useGameContext();
-  
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     if (currentTurn==playerId) {
@@ -38,13 +37,17 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo}) => {
   };
 
   return (
-    <Button
-      className="bg-green-500 hover:bg-green-600"
-      disabled={!isButtonActive || loading} // Deshabilitar si no es el turno del jugador o está cargando
-      onClick={onHandleEndTurn}
-    >
-      {loading ? "Terminando..." : "Terminar Turno"}
-    </Button>
+    <div className="relative">
+      <button onClick={onHandleEndTurn} onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)} className="text-white" disabled={!isButtonActive || loading}>
+            <FaCheck size={28} />
+      </button>
+      {showTooltip && (
+        <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
+            Finalizar turno
+        </div>
+      )}
+    </div>
   );
 };
 

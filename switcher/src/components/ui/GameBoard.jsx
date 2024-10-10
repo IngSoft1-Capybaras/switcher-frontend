@@ -24,7 +24,23 @@ const getColorBox = (color) => {
   }
 };
 
-export default function GameBoard() {
+const getBlockedColorBox = (color) => {
+  switch (color) {
+    case 'GREEN':
+      return 'bg-gradient-to-br from-green-900 to-green-700 opacity-70';
+    case 'BLUE':
+      return 'bg-gradient-to-br from-blue-900 to-blue-700 opacity-70';
+    case 'RED':
+      return 'bg-gradient-to-br from-red-900 to-red-700 opacity-70';
+    case 'YELLOW':
+      return 'bg-gradient-to-br from-yellow-900 to-yellow-700 opacity-70';
+    default:
+      return 'bg-gradient-to-br from-gray-900 to-gray-700 opacity-70';
+  }
+};
+
+
+export default function GameBoard({boxes, blockedColor}) {
   const [activeAnimation, setActiveAnimation] = useState('');
 
   useEffect(() => {
@@ -78,7 +94,7 @@ export default function GameBoard() {
               <div
                 data-testid={`box-${box.pos_x}-${box.pos_y}`}
                 key={`${rowIndex}-${colIndex}`}
-                className={`relative overflow-hidden rounded w-full h-full ${getColorBox(box.color)} ${box.highlighted ? `${activeAnimation}` : ''}`}
+                className={`relative overflow-hidden rounded w-full h-full ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} ${box.highlighted && blockedColor!=box.color ? `${activeAnimation}` : ''}`}
                 style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
               >
               </div>

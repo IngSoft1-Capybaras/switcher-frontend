@@ -20,10 +20,10 @@ export default function TurnInformation({ players, activeGameId, currentTurn, se
     <div className="flex flex-col  justify-center items-center bg-zinc-900 text-white p-6 rounded-lg shadow-md border-2 border-zinc-700 space-y-6">
       <h2 className="text-2xl font-bold mb-4">Información del Turno</h2>
       <p className="text-md mb-2">
-        Jugadores en la partida: <span className="font-semibold">{players.length}</span>
+        Jugadores en la partida <span className="font-semibold">{players.length}</span>
       </p>
       <p className="text-md">
-        Turno de:  
+        Juega  
         <span className={`font-semibold ml-2 ${colorClass}`}>
           {currentPlayer ? currentPlayer.name : "Cargando..."}
         </span>

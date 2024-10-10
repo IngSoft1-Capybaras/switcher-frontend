@@ -4,17 +4,15 @@ import { CarouselItem } from './carousel'
 
 export default function PlayerPanel({ game, player, name, setSelectedFigure, selectedFigure }) {
   return (
-    <CarouselItem  className="w-full h-full flex flex-col items-center justify-center">
-      {/* <div className="flex-grow flex items-center justify-center"> */}
-      
-        <CardsFigure 
+    <>
+    {/* <h2 className="text-xl text-center mb-5">{name}'s figures</h2> */}
+    <CardsFigure 
           name={name}
           gameId={game} 
           playerId={player} 
           setSelectedFigure={setSelectedFigure} 
           selectedFigure={selectedFigure} 
         />
-      {/* </div> */}
-    </CarouselItem>
+    </>
   )
 }

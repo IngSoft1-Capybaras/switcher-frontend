@@ -5,8 +5,7 @@ import { AnimatedGroup } from './animated-group';
 
 
 // Componente que representa las cartas de movimiento 
-const CardsMovement = ({gameId, playerId}) => {
-  const [movementCards, setMovementCards] = useState([]); // Estado para las cartas de movimiento
+const CardsMovement = ({gameId, playerId, movementCards, setMovementCards}) => {
   const [loading, setLoading] = useState(true); // Estado para la carga
   const [error, setError] = useState(null); // Estado para errores
 
@@ -21,12 +20,12 @@ const CardsMovement = ({gameId, playerId}) => {
         setError("Error al obtener las cartas de movimiento");
         console.error(error); // Loguea el error
       } finally {
-        setLoading(false); // Cambia el estado de carga a false
+        setLoading(false); 
       }
     };
     
     fetchMovementCards();
-  }, [gameId, playerId]); // Dependencias para volver a ejecutar el efecto si cambian
+  }, [gameId, playerId, setMovementCards, setLoading]);
 
   // renderizado condicional según el estado de carga y errores
   if (loading) return <div>Cargando cartas de movimiento...</div>; // Mensaje de carga

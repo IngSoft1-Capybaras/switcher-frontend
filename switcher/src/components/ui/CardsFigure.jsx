@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback} from 'react'
 import { cn } from "@/lib/utils"
 import { cardImg } from '../utils/getCardImg'
 import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 
 export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name}) {
-  const [figureCards, setFigureCards] = useState([])
+  
   const [loading, setLoading] = useState(true)
+  const [figureCards, setFigureCards] = useState([])
 
   const handleSelectedFigure = (figure) => {
     console.log(figure);
     setSelectedCardFigure(figure)
   }
+  
+  const fetchFigureCards = useCallback(async () => {
+    try {                 
+      const cards = await getDeckFigure(gameId, playerId)
+      setFigureCards(cards)
+    } catch (error) {
+      console.error('Error fetching figure cards', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [gameId, playerId, getDeckFigure, setFigureCards, setLoading]);
 
   useEffect(() => {
-    const fetchFigureCards = async () => {
-      try {                 
-        const cards = await getDeckFigure(gameId, playerId)
-        setFigureCards(cards)
-      } catch (error) {
-        console.error('Error fetching figure cards', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchFigureCards()
-  }, [gameId, playerId])
+  }, [])
+
+  useFigureCardsSocket(gameId, fetchFigureCards);
 
   if (loading) return <div>Loading figure cards...</div>
 

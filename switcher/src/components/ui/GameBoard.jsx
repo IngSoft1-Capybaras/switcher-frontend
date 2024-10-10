@@ -79,20 +79,6 @@ const getColorBox = (color) => {
 
 
 export default function GameBoard({boxes, blockedColor, selectedCardFigure, currentTurn, playerId, selectedCardMovement, setSelectedBoardFigure, selectedBoardFigure}) {
-  const [activeAnimation, setActiveAnimation] = useState('');
-  
-
-  useEffect(() => {
-
-    const startShineAnimation = () => {
-      const timer = setTimeout(() => {setActiveAnimation('shine-effect');}, 1000)
-      
-      return () => {clearTimeout(timer)}
-    }
-
-    
-    startShineAnimation();
-  }, [])
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
@@ -178,7 +164,7 @@ export default function GameBoard({boxes, blockedColor, selectedCardFigure, curr
             onClick={(selectedCardFigure && !selectedCardMovement) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)}
             data-testid={`box-${box.pos_x}-${box.pos_y}`}
             key={`${rowIndex}-${colIndex}`}
-            className={`relative overflow-hidden rounded w-full h-full ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} ${box.highlighted && blockedColor!=box.color ? `${activeAnimation}` : ''} ${isSelectedFigure ? 'animate-pulse' : ''}`}
+            className={`relative overflow-hidden rounded w-full h-full ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} ${box.highlighted && blockedColor!=box.color ? 'shine-effect' : ''} ${isSelectedFigure ? 'animate-pulse' : ''}`}
             style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
             disabled={!((currentTurn==playerId) && selectedCardFigure && box.highlighted)}
           >

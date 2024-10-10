@@ -274,3 +274,28 @@ export const leaveGame = async (playerId, gameId) => {
     throw new Error(`Error al abandonar la partida: ${error.message}`);
   }
 }
+
+export const claimFigure = async (gameId, playerId, cardId, figure) => {
+  const body = {
+    game_id: gameId,
+    player_id: playerId,
+    card_id: cardId,
+    figure: figure
+  };
+
+  try {
+    const response = await fetch(`${apiUrl}/deck/figure/play_card`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al reclamar figura: ${errorMessage}`);
+    }
+    return response.json();
+  } 
+  catch (error) {
+    throw new Error(`Error al reclamar figura: ${error.message}`);
+  }
+}

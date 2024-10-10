@@ -16,7 +16,8 @@ export default function LeaveButton({ gameId }) {
       navigate('/games'); 
     } 
     catch (error) {
-      setError(error.message); 
+      // setError(error.message); 
+      console.error(error);
     }
   }
 
@@ -26,7 +27,8 @@ export default function LeaveButton({ gameId }) {
         onClick={onAbandon}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className="text-white"
+        className="text-white hover:scale-110 transition-transform"
+
       >
         <FaSignOutAlt size={28} />
       </button>

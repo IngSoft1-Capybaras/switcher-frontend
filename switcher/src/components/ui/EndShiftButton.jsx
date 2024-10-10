@@ -39,7 +39,8 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo}) => {
   return (
     <div className="relative">
       <button onClick={onHandleEndTurn} onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)} className="text-white" disabled={!isButtonActive || loading}>
+      onMouseLeave={() => setShowTooltip(false)} className={`text-white ${isButtonActive ? 'hover:scale-110 transition-transform' : 'opacity-50'}`}
+      disabled={!isButtonActive || loading}>
             <FaCheck size={28} />
       </button>
       {showTooltip && (

@@ -14,15 +14,19 @@ import { motion } from 'framer-motion';
 import EndTurnButton from '@/components/ui/EndShiftButton';
 import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
+import ClaimFigureButton from '@/components/ui/claimFigureButton';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
-  const [boxes, setBoxes] = useState();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
+  const [boxes, setBoxes] = useState();
+  const [movementCards, setMovementCards] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
+
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -85,6 +89,7 @@ export default function ActiveGame() {
               name={player.name}
               setSelectedCardFigure={setSelectedCardFigure}
               selectedCardFigure={selectedCardFigure}
+              
             />
             {currentTurn === player.id && (
               <motion.div
@@ -118,7 +123,7 @@ export default function ActiveGame() {
           <div className="border-2 border-zinc-700 bg-zinc-900 text-white p-4 rounded-md flex flex-col h-full w-[600px]">
             <h2 className="text-xl text-center mb-10">Tus cartas</h2>
             <div className="flex-grow">
-              <CardsMovement gameId={gameId} playerId={playerId} />
+              <CardsMovement gameId={gameId} playerId={playerId} movementCards={movementCards} setMovementCards={setMovementCards}/>
             </div>
             <div className="flex-grow">
               <CardsFigure
@@ -126,7 +131,6 @@ export default function ActiveGame() {
                 playerId={playerId}
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}
-                
               />
             </div>
           </div>
@@ -136,7 +140,7 @@ export default function ActiveGame() {
       
       {currentTurn === playerId && (
         <motion.div
-          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-50" 
+          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-40" 
           initial={{ width: '100%' }}
           animate={{ width: '0%' }}
           transition={{ duration: 120 }}  
@@ -151,9 +155,8 @@ export default function ActiveGame() {
       >
         
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo}/>
-        
+        <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure}/>
         <UndoButton gameId={gameId} currentTurn={currentTurn} />
-        
         <LeaveButton gameId={gameId} />
       </motion.div>
     </div>

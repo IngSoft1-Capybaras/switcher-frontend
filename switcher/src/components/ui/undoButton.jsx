@@ -35,7 +35,7 @@ export default function UndoButton({ gameId, currentTurn }) {
             <button
                 onClick={onUndoMovement}
                 disabled={!isButtonActive}
-                className="text-white"
+                className={`text-white ${ isButtonActive ? 'hover:scale-110 transition-transform':'opacity-50'}`}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
             >

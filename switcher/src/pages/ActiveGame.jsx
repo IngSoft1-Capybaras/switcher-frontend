@@ -1,18 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { useGameContext } from '../context/GameContext'
-import CardsMovement from '../components/ui/CardsMovement'
-import CardsFigure from '../components/ui/CardsFigure'
-import { useParams } from 'react-router-dom'
-import { getPlayers, getBoard } from '@/services/services'
-import PlayerPanel from '../components/ui/PlayerPanel'
-import Board from '../components/ui/GameBoard'
-import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket'
-import { fetchTurnInfo } from '@/services/services'
-import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket'
+import React, { useCallback, useEffect, useState } from 'react';
+import { useGameContext } from '../context/GameContext';
+import CardsMovement from '../components/ui/CardsMovement';
+import CardsFigure from '../components/ui/CardsFigure';
+import { useParams } from 'react-router-dom';
+import { getPlayers, getBoard } from '@/services/services';
+import PlayerPanel from '../components/ui/PlayerPanel';
+import Board from '../components/ui/GameBoard';
+import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
+import { fetchTurnInfo } from '@/services/services';
+import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { motion } from 'framer-motion';
-import EndTurnButton from '@/components/ui/EndShiftButton'
-import LeaveButton from '@/components/ui/LeaveButton'
-import UndoButton from '@/components/ui/undoButton'
+import { FaUndo, FaSignOutAlt, FaCheck } from 'react-icons/fa'; // Importing icons
 
 export default function ActiveGame() {
   const { gameId } = useParams();
@@ -73,7 +71,6 @@ export default function ActiveGame() {
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
-
       {/* Other Player Panels */}
       <div className="flex flex-row w-full text-white  justify-center">
         {otherPlayers.map((player) => (
@@ -99,14 +96,10 @@ export default function ActiveGame() {
 
       {/* Board and Turn Info */}
       <div className="flex flex-col md:flex-row w-full text-white p-4 justify-center space-y-4 md:space-y-0">
-
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
-          {/* "Your Turn" indicator above the board */}
           <div className="relative">
             <Board boxes={boxes} blockedColor={'RED'} />
-            
-            {/* Show overlay only if it's another player's turn */}
             {currentTurn !== playerId && currentTurn && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
                 {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
@@ -130,26 +123,39 @@ export default function ActiveGame() {
                 selectedFigure={selectedFigure}
               />
             </div>
-            
-            {/* Time Indicator for Player's Own Turn */}
-            {currentTurn === playerId && (
-              <motion.div
-                className="absolute bottom-0 left-0 right-0 bg-green-500 h-1"
-                initial={{ width: '100%' }}
-                animate={{ width: '0%' }}
-                transition={{ duration: 120 }}  // Adjust this to the time limit
-              />
-            )}
-          </div>
-
-          {/* Buttons */}
-          <div className="flex flex-row w-[600px] justify-between space-x-3 mt-10">
-            <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} />
-            <UndoButton gameId={gameId} currentTurn={currentTurn}/>
-            <LeaveButton gameId={gameId}/>
           </div>
         </div>
       </div>
+
+      
+      {currentTurn === playerId && (
+        <motion.div
+          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-50" 
+          initial={{ width: '100%' }}
+          animate={{ width: '0%' }}
+          transition={{ duration: 120 }}  
+        />
+      )}
+
+      <motion.div
+        className="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-zinc-800 p-4 z-40"  
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        
+        <button onClick={() => {}} className="text-white">
+          <FaCheck size={28} />
+        </button>
+        
+        <button onClick={() => {}} className="text-white">
+          <FaUndo size={28} />
+        </button>
+        
+        <button onClick={() => {}} className="text-white">
+          <FaSignOutAlt size={28} />
+        </button>
+      </motion.div>
     </div>
   );
 }

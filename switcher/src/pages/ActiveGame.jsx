@@ -20,8 +20,9 @@ export default function ActiveGame() {
   const [boxes, setBoxes] = useState();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [loading, setLoading] = useState(false);
-  const [selectedFigure, setSelectedFigure] = useState(null);
   const [blockedColor, setBlockedColor] = useState(null);
+  const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
+  const [selectedCardFigure, setSelectedCardFigure] = useState(null);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -82,8 +83,8 @@ export default function ActiveGame() {
               game={gameId}
               player={player.id}
               name={player.name}
-              setSelectedFigure={setSelectedFigure}
-              selectedFigure={selectedFigure}
+              setSelectedCardFigure={setSelectedCardFigure}
+              selectedCardFigure={selectedCardFigure}
             />
             {currentTurn === player.id && (
               <motion.div
@@ -103,7 +104,7 @@ export default function ActiveGame() {
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">
-            <Board boxes={boxes} blockedColor={'RED'} />
+            <Board boxes={boxes} blockedColor={'RED'} currentTurn={currentTurn} playerId={playerId} selectedCardFigure={selectedCardFigure} setSelectedBoardFigure={setSelectedBoardFigure} selectedBoardFigure={selectedBoardFigure} />
             {currentTurn !== playerId && currentTurn && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
                 {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
@@ -123,8 +124,9 @@ export default function ActiveGame() {
               <CardsFigure
                 gameId={gameId}
                 playerId={playerId}
-                setSelectedFigure={setSelectedFigure}
-                selectedFigure={selectedFigure}
+                setSelectedCardFigure={setSelectedCardFigure}
+                selectedCardFigure={selectedCardFigure}
+                
               />
             </div>
           </div>

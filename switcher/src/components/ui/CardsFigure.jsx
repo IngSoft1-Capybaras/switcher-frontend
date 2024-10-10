@@ -4,12 +4,13 @@ import { cardImg } from '../utils/getCardImg'
 import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 
-export default function CardsFigure({gameId, playerId, setSelectedFigure, selectedFigure, name, turnBorder}) {
+export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name}) {
   const [figureCards, setFigureCards] = useState([])
   const [loading, setLoading] = useState(true)
 
   const handleSelectedFigure = (figure) => {
-    setSelectedFigure(figure)
+    console.log(figure);
+    setSelectedCardFigure(figure)
   }
 
   useEffect(() => {
@@ -30,14 +31,14 @@ export default function CardsFigure({gameId, playerId, setSelectedFigure, select
   if (loading) return <div>Loading figure cards...</div>
 
   return (
-    <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10 ${turnBorder}`}>
+    <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10`}>
       {name && <h2 className="text-m text-center mb-5">{name}'s figures</h2>}
       <AnimatedGroup
         className="flex justify-center items-center space-x-5 w-full"
         preset="scale"
       > 
         {figureCards.slice(0, 3).map((card) => {
-          const isSelected = selectedFigure && selectedFigure.id === card.id
+          const isSelected = selectedCardFigure && selectedCardFigure.id === card.id
 
           return (
             <button 

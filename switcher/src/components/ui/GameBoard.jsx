@@ -148,23 +148,23 @@ export default function GameBoard({boxes, blockedColor, selectedCardFigure, curr
         }
       `}</style>
       <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
-  {mockData.boxes.length > 0 &&
-    mockData.boxes.map((row, rowIndex) =>
-      row.map((box, colIndex) => {
-        // Check if the current box is in the selectedBoardFigure
-        const isSelectedFigure = selectedBoardFigure.some(
-          (selectedBox) =>
-            selectedBox.pos_x === box.pos_x &&
-            selectedBox.pos_y === box.pos_y &&
-            selectedBox.color === box.color
-        );
+        {mockData.boxes.length > 0 &&
+          mockData.boxes.map((row, rowIndex) =>
+            row.map((box, colIndex) => {
+              // Check if the current box is in the selectedBoardFigure
+              const isSelectedFigure = selectedBoardFigure.some(
+                (selectedBox) =>
+                  selectedBox.pos_x === box.pos_x &&
+                  selectedBox.pos_y === box.pos_y &&
+                  selectedBox.color === box.color
+              );
 
         return (
           <button
             onClick={(selectedCardFigure && !selectedCardMovement) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)}
             data-testid={`box-${box.pos_x}-${box.pos_y}`}
             key={`${rowIndex}-${colIndex}`}
-            className={`relative overflow-hidden rounded w-full h-full ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} ${box.highlighted && blockedColor!=box.color ? 'shine-effect' : ''} ${isSelectedFigure ? 'animate-pulse' : ''}`}
+            className={`relative overflow-hidden rounded w-full h-full ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} ${(box.highlighted && blockedColor!=box.color && !isSelectedFigure && currentTurn==playerId) ? 'shine-effect' : ''} ${isSelectedFigure ? 'animate-pulse' : ''}`}
             style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
             disabled={!((currentTurn==playerId) && selectedCardFigure && box.highlighted)}
           >

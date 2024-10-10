@@ -27,6 +27,11 @@ export default function ActiveGame() {
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
 
+  const resetFigureSelection = () => {
+    // reset selected figure states
+    setSelectedBoardFigure([]);
+    setSelectedCardFigure(null);
+  }
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -154,7 +159,7 @@ export default function ActiveGame() {
         transition={{ duration: 0.5 }}
       >
         
-        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo}/>
+        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection}/>
         <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure}/>
         <UndoButton gameId={gameId} currentTurn={currentTurn} />
         <LeaveButton gameId={gameId} />

@@ -2,7 +2,8 @@ import { useGameContext } from '../../context/GameContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { leaveGame } from "@/services/services";
-import { FaSignOutAlt } from 'react-icons/fa';
+import { MdLogout } from "react-icons/md";
+
 
 export default function LeaveButton({ gameId }) {
   const { playerId } = useGameContext();
@@ -30,7 +31,7 @@ export default function LeaveButton({ gameId }) {
         className="text-white hover:scale-110 transition-transform"
 
       >
-        <FaSignOutAlt size={28} />
+        <MdLogout size={28} />
       </button>
 
       {showTooltip && (

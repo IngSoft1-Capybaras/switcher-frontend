@@ -18,7 +18,8 @@ export default function ClaimFigureButton({ gameId, cardId, figure}) {
             const res = await claimFigure(gameId, playerId, cardId, figure);
 
             if (!res) console.error(res)
-        } catch (error) {
+        }
+        catch (error) {
             // setError(error.message);
             console.error(error)
         }
@@ -26,8 +27,9 @@ export default function ClaimFigureButton({ gameId, cardId, figure}) {
 
 
     return (
-        <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
+        <div className="relative">
             <button
+                data-testid = 'claimButtonTestId'
                 onClick={handleClaimFigure}
                 disabled={!(figure.length!==0 && (playerId == currentTurn) && cardId)}
                 className={`text-white ${(figure.length!==0 && (playerId == currentTurn) && cardId) ? 'animate-bounce' : 'opacity-50'}`}
@@ -37,13 +39,12 @@ export default function ClaimFigureButton({ gameId, cardId, figure}) {
             >
                 <FiCheckSquare size={28} />
             </button>
-            
+
             {showTooltip && (
                 <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
                     Reclamar figura
                 </div>
             )}
-            
         </div>
     );
 }

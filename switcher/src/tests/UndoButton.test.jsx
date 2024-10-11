@@ -13,12 +13,12 @@ describe(`Undo Button`, () => {
     vi.mock('@/context/GameContext', () => ({
         useGameContext: vi.fn(),
       }));
-    
+
     beforeEach(() => {
         useGameContext.mockReturnValue({ playerId: mockPlayerId });
         global.fetch = vi.fn();
       });
-    
+
     afterEach(() => {
         vi.clearAllMocks();
     });
@@ -28,22 +28,22 @@ describe(`Undo Button`, () => {
 
     it(`Should render de UndoButton Component and be enabled when it is player's turn `, () => {
         render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
-        const undoButton = screen.getByText(`Deshacer movimiento`);
-        
+        const undoButton = screen.getByTestId('undoButtonId');
+
         expect(undoButton).toBeInTheDocument();
         expect(undoButton).not.toBeDisabled();
     });
 
     it("Should not enable the button when it is not the player's turn", () => {
         render(<UndoButton gameId={mockGameId} currentTurn={mockNextPlayerId} />);
-        const undoButton = screen.getByText("Deshacer movimiento");
+        const undoButton = screen.getByTestId('undoButtonId');
         expect(undoButton).toBeDisabled();
       });
 
 
     it(`Should call fetch on Undo Movement when clicking`, async () => {
         render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
-        const mockUndoButton = screen.getByText(`Deshacer movimiento`);
+        const mockUndoButton = screen.getByTestId('undoButtonId');
         fetch.mockResolvedValueOnce({ ok : true })
 
         await userEvent.click(mockUndoButton);
@@ -53,7 +53,7 @@ describe(`Undo Button`, () => {
             `http://localhost:8000/deck/movement/undo_move`,
             expect.objectContaining(
                 {
-                method: "PATCH",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ gameID: mockGameId, playerID: mockPlayerId })
                 }
@@ -63,18 +63,18 @@ describe(`Undo Button`, () => {
 
     it("Should handle turn changes correctly", async () => {
         const { rerender } = render(<UndoButton gameId="123" currentTurn={mockPlayerId} />);
-        
-        let undoButton = screen.getByText("Deshacer movimiento");
-        expect(undoButton).toBeEnabled(); 
 
-        
+        let undoButton = screen.getByTestId('undoButtonId');
+        expect(undoButton).toBeEnabled();
+
+
         rerender(<UndoButton gameId="123" currentTurn={mockNextPlayerId} />);
-        undoButton = screen.getByText("Deshacer movimiento");
+        undoButton = screen.getByTestId('undoButtonId');
         expect(undoButton).toBeDisabled();
 
-        
+
         rerender(<UndoButton gameId="123" currentTurn={mockPlayerId} />);
-        undoButton = screen.getByText("Deshacer movimiento");
+        undoButton = screen.getByTestId('undoButtonId');
         expect(undoButton).toBeEnabled();
     });
 
@@ -86,7 +86,7 @@ describe(`Undo Button`, () => {
         useGameContext.mockReturnValue({ playerId: null });
         render(<UndoButton gameId={null} currentTurn={null}/>);
 
-        const undoButton = screen.getByText(`Deshacer movimiento`);
+        const undoButton = screen.getByTestId('undoButtonId');
         await userEvent.click(undoButton);
 
         await waitFor(() => expect(fetch).not.toHaveBeenCalled());
@@ -98,7 +98,7 @@ describe(`Undo Button`, () => {
         useGameContext.mockReturnValue({ playerId: undefined });
         render(<UndoButton gameId={undefined} currentTurn={undefined}/>);
 
-        const undoButton = screen.getByText(`Deshacer movimiento`);
+        const undoButton = screen.getByTestId('undoButtonId');
         await userEvent.click(undoButton);
 
         await waitFor(() => expect(fetch).not.toHaveBeenCalled());
@@ -109,12 +109,12 @@ describe(`Undo Button`, () => {
     it(`Should show error when response is not ok`, async () => {
         fetch.mockResolvedValueOnce(
             { ok : false,
-              text: () => Promise.resolve("Algo salió mal") // supongo mensaje que manda el back 
+              text: () => Promise.resolve("Algo salió mal") // supongo mensaje que manda el back
             });
-        
+
         render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
-        const mockUndoButton = screen.getByText(`Deshacer movimiento`);
-        
+        const mockUndoButton = screen.getByTestId('undoButtonId');
+
         await userEvent.click(mockUndoButton);
         await waitFor(() => expect(fetch).toHaveBeenCalledOnce());
 
@@ -125,7 +125,7 @@ describe(`Undo Button`, () => {
         fetch.mockRejectedValueOnce(new Error("Network error"));
 
         render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
-        const undoButton = screen.getByText(`Deshacer movimiento`);
+        const undoButton = screen.getByTestId('undoButtonId');
         await userEvent.click(undoButton);
 
         expect(await screen.findByText(/Error al deshacer movimiento: Network error/i)).toBeInTheDocument();

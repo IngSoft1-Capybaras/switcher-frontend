@@ -14,10 +14,10 @@ export default function LeaveButton({ gameId }) {
   const onAbandon = async () => {
     try {
       await leaveGame(playerId, gameId);
-      navigate('/games'); 
-    } 
+      navigate('/games');
+    }
     catch (error) {
-      // setError(error.message); 
+      setError(error.message);
       console.error(error);
     }
   }
@@ -25,6 +25,7 @@ export default function LeaveButton({ gameId }) {
   return (
     <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
       <button
+        data-testid='leaveButtonId'
         onClick={onAbandon}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}

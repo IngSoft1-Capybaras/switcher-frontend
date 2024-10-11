@@ -33,6 +33,7 @@ export default function UndoButton({ gameId, currentTurn }) {
     return (
         <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
             <button
+                data-testid='undoButtonId'
                 onClick={onUndoMovement}
                 disabled={!isButtonActive}
                 className={`text-white ${ isButtonActive ? 'hover:scale-110 transition-transform':'opacity-50'}`}
@@ -41,13 +42,13 @@ export default function UndoButton({ gameId, currentTurn }) {
             >
                 <FaUndo size={28} />
             </button>
-            
+
             {showTooltip && (
                 <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
                     Deshacer movimiento
                 </div>
             )}
-            
+
             {error && <p>{error}</p>}
         </div>
     );

@@ -34,7 +34,7 @@ const CardsMovement = ({gameId, playerId}) => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
     {movementCards.map((card) => (
-        <div key={card.id} className="relative w-full h-full aspect-[2/3] border rounded">
+        <div key={card.id} className="relative w-full h-full aspect-[2/3] rounded">
             {card.used ? (
                 <div className="flex items-center justify-center w-full h-full">
                     <span className="text-white">Carta Usada</span>

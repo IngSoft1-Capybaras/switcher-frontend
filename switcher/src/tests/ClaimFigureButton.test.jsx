@@ -1,8 +1,7 @@
 import ClaimFigureButton from "@/components/ui/claimFigureButton";
-import userEvent from "@testing-library/user-event";
 import { useGameContext } from "@/context/GameContext";
-import{ render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import{ fireEvent, render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 
 
 // disabled={!(figure.length!==0 && (playerId == currentTurn) && cardId)}
@@ -22,6 +21,7 @@ describe('Claim Figure Button', () => {
   vi.mock('@/context/GameContext', () => ({
     useGameContext: vi.fn(),
   }));
+
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -58,4 +58,16 @@ describe('Claim Figure Button', () => {
 
   // checking tooltip
 
+  it('Should show tooltip when showTooltip', () => {
+    useGameContext.mockReturnValue({ playerId: mockPlayerId, currentTurn: '1' });
+    render(<ClaimFigureButton gameId={mockGameId} cardId={mockCardId} figure={mockFigure}/>);
+    const claimButton = screen.getByTestId('claimButtonTestId');
+
+    // testeamos que aparezca y desaparezca el tooltip cuando se hace hover
+    expect(screen.queryByText('Reclamar figura')).not.toBeInTheDocument();
+    fireEvent.mouseEnter(claimButton);
+    expect(screen.getByText('Reclamar figura')).toBeInTheDocument();
+    fireEvent.mouseLeave(claimButton);
+    expect(screen.queryByText('Reclamar figura')).not.toBeInTheDocument();
+  })
 })

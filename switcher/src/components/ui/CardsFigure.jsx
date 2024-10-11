@@ -36,13 +36,13 @@ const CardsFigure = ({gameId, playerId}) => {
     <div className="flex space-x-4"> 
       {figureCards.slice(0, 3).map((card) => { // Solo toma las primeras 3 cartas
         // Asignar un color o borde según la dificultad
-        const difficultyStyle = card.difficulty === "HARD" ? "border-red-500" : "border-green-500";
+        // const difficultyStyle = card.difficulty === "HARD" ? "border-red-500" : "border-green-500";
         
         return (
           <div key={card.id} className={cn(
-            "relative w-full h-full aspect-[3/3] border rounded overflow-hidden",
+            "relative w-full h-full aspect-[3/3] rounded overflow-hidden",
             !card.show ? "opacity-50" : "", // Si no se muestra (show es false), aplicar opacidad
-            difficultyStyle // Agregar estilo basado en dificultad
+             // Agregar estilo basado en dificultad
           )}>
             <img 
               src={cardImg(card.type)} 
@@ -58,9 +58,9 @@ const CardsFigure = ({gameId, playerId}) => {
             )}
 
             {/* Mostrar la dificultad si es necesario */}
-            <div className="absolute bottom-0 left-0 bg-white text-black px-2 py-1 text-xs">
+            {/* <div className="absolute bottom-0 left-0 bg-white text-black px-2 py-1 text-xs">
               {card.difficulty}
-            </div>
+            </div> */}
           </div>
         );
       })}

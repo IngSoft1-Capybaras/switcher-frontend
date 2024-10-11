@@ -12,7 +12,7 @@ import TurnInfo from '@/components/ui/TurnInfo'
 import { fetchTurnInfo } from '@/services/services';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import UndoButton from '@/components/ui/undoButton';
-import GameBoard from '@/components/ui/GameBoard';
+import Board from '@/components/ui/GameBoard';
 import ConfirmButton from '@/components/ui/ConfirmButton';
 
 const ActiveGame = () => {
@@ -94,7 +94,7 @@ const ActiveGame = () => {
           {/* Game board */}
           {boxes ? (
             <div className="h-96 w-96 sm:h-[30rem] sm:w-[30rem] md:h-[35rem] md:w-[35rem] lg:h-[40rem] lg:w-[40rem]" >
-              <GameBoard boxes={boxes} 
+              <Board boxes={boxes} 
                 onSelectMovementPosition={setSelectedMovementPositions} 
                 selectMovementCard={selectedMovementCard}
                 selectedMovementPositions={selectedMovementPositions} 

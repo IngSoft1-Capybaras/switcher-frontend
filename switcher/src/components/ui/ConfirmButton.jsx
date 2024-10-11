@@ -24,11 +24,11 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
 
         try {
             await playMovementCard({
-                game_id: gameId,
-                player_id: playerId,
-                card_id: selectedCard.id,
-                pos_from: posFrom,
-                pos_to: posTo,
+                gameId: gameId,
+                playerId: playerId,
+                cardId: selectedCard.id,
+                posFrom: posFrom,
+                posTo: posTo,
             });
             // Aquí puedes manejar la respuesta de éxito, si es necesario
             resetMov();

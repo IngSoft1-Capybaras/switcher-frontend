@@ -28,9 +28,10 @@ const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, c
 
   // Maneja la selección de cartas
   const handleCardSelect = (card) => {
-    if (playerId === currentTurn && !card.used) {
-      onSelectCard(card); // Pasamos la carta seleccionada al componente padre
+    if (playerId !== currentTurn || card.used) {
+      return; // No permite seleccionar si no es el turno del jugador o si la carta ya está usada
     }
+    onSelectCard(card); // Pasamos la carta seleccionada al componente padre
   };
   
   // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
@@ -47,7 +48,7 @@ const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, c
         return (
           <div 
             key={card.id} 
-            className={`relative w-full h-full aspect-[2/3] border rounded ${isSelected ? 'scale-105 border-blue-500' : 'scale-100'} transition-transform duration-300 ease-in-out`} // Agregamos transición
+            className={`relative w-full h-full aspect-[2/3] rounded ${isSelected ? 'scale-105' : 'scale-100'} transition-transform duration-300 ease-in-out`} // Agregamos transición
             onClick={() => handleCardSelect(card)}
             style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
           >

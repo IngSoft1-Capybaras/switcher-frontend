@@ -3,13 +3,11 @@ import { cardImg } from '../utils/getCardImg';
 import { getDeckMovement } from '@/services/services'; 
 import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-cards_movement-socket';
 
-
 // Componente que representa las cartas de movimiento 
-const CardsMovement = ({gameId, playerId, onSelectCard, selectedMovementCard}) => {
+const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, currentTurn }) => {
   const [movementCards, setMovementCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [selectedCard, setSelectedCard] = useState(null);
 
   const fetchMovementCards = async () => {
     try {
@@ -23,43 +21,35 @@ const CardsMovement = ({gameId, playerId, onSelectCard, selectedMovementCard}) =
     }
   };
 
-  // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
-  useEffect(() => {    
+  // Obtiene las cartas de movimiento al montar el componente
+  useEffect(() => {
     fetchMovementCards();
-  }, [gameId, playerId]); // Dependencias para volver a ejecutar el efecto si cambian
-  
-  // // Envia la carta selecciona a ActiveGame
-  // const handleCardSelect = (card) => {
-  //   if(!card.used) {
-  //     setSelectedCard(card.id);
-  //     console.log("CARTA SELECCIONADA: ", card);
-  //     onSelectCard(card); // paso la carta seleccionada al componente padre
-  //   }
-  // }
+  }, [gameId, playerId]);
 
+  // Maneja la selección de cartas
   const handleCardSelect = (card) => {
-    if (!card.used) {
-      console.log("CARTA SELECCIONADA: ", card);
+    if (playerId === currentTurn && !card.used) {
       onSelectCard(card); // Pasamos la carta seleccionada al componente padre
     }
   };
   
-  useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards); // Actualiza las cartas de movimiento en tiempo real
+  // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
+  useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards);
 
-  // renderizado condicional según el estado de carga y errores
   if (loading) return <div>Cargando cartas de movimiento...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
       {movementCards.map((card) => {
-        const isSelected = selectedMovementCard?.id === card.id; // Verifica si la carta está seleccionada
+        const isSelected = selectedMovementCard?.id === card.id;
 
         return (
           <div 
             key={card.id} 
-            className={`relative w-full h-full aspect-[2/3] border rounded ${isSelected ? 'border-blue-500' : ''}`} // Aplica clase de resaltado si está seleccionada
-            onClick={() => handleCardSelect(card)} // Maneja el clic en la carta
+            className={`relative w-full h-full aspect-[2/3] border rounded ${isSelected ? 'scale-105 border-blue-500' : 'scale-100'} transition-transform duration-300 ease-in-out`} // Agregamos transición
+            onClick={() => handleCardSelect(card)}
+            style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
           >
             {card.used ? (
               <div className="flex items-center justify-center w-full h-full">

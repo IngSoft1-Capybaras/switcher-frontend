@@ -226,12 +226,11 @@ export const playMovementCard = async (gameId, playerId, cardId, posFrom, posTo)
     });
 
     if (!response.ok) {
-      throw new Error('Failed to play card');
+      throw new Error('Fallo al jugar la carta');
     }
-    // Aquí puedes manejar la respuesta, pero la actualización vendrá por WebSocket
-    console.log('Card played successfully!');
+    console.log('Carta jugada exitosamente!');
   } catch (err) {
-    console.error('Error playing card:', err);
+    console.error('Error al jugar la carta', err);
   }
 };
 

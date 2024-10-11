@@ -21,17 +21,34 @@ const GameBoard = ({ boxes, onSelectMovementPosition, selectMovementCard, select
       console.log("Debes seleccionar una carta de movimiento primero");
       return;
     }
-
+  
     const position = { x: box.pos_x, y: box.pos_y };
-
-    // Solo permitir agregar si se han seleccionado menos de 2 posiciones
-    if (selectedMovementPositions.length < 2) {
-      const newSelectedMovementPositions = [...selectedMovementPositions, position];
-      console.log("Casillas seleccionadas:", newSelectedMovementPositions);
-      onSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
+  
+    // Verificar si la casilla ya está seleccionada
+    const isAlreadySelected = selectedMovementPositions.some(
+      (pos) => pos.x === position.x && pos.y === position.y
+    );
+  
+    let newSelectedMovementPositions; // Nuevas posiciones seleccionadas
+  
+    if (isAlreadySelected) {
+      // Si la casilla ya está seleccionada, removerla
+      newSelectedMovementPositions = selectedMovementPositions.filter(
+        (pos) => pos.x !== position.x || pos.y !== position.y
+      );
+    } else if (selectedMovementPositions.length < 2) {
+      // Si aún no se han seleccionado dos casillas, agregar la nueva casilla
+      newSelectedMovementPositions = [...selectedMovementPositions, position];
     } else {
-      console.log("Ya has seleccionado dos posiciones", selectedMovementPositions);
+      // Si ya se han seleccionado dos casillas, reemplazar la más antigua (la primera)
+      newSelectedMovementPositions = [
+        selectedMovementPositions[1],
+        position                      // nueva posicion seleccionada
+      ];
     }
+  
+    console.log("Casillas seleccionadas:", newSelectedMovementPositions);
+    onSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
   };
 
   return (
@@ -47,7 +64,7 @@ const GameBoard = ({ boxes, onSelectMovementPosition, selectMovementCard, select
               <div
                 key={`${rowIndex}-${colIndex}`}
                 data-testid={`box-${box.pos_x}-${box.pos_y}`}
-                className={`rounded w-full h-full ${getColorClass(box.color)} ${isSelectedMovement ? 'scale-75 brightness-75 animate-pulse' : 'scale-100 brightness-100'} cursor-pointer`}
+                className={`rounded w-full h-full ${getColorClass(box.color)} ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'} cursor-pointer`}
                 style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
                 onClick={() => handleBoxClick(box)} // Manejar clic en las casillas
               />

@@ -57,17 +57,26 @@ const ActiveGame = () => {
       console.error("Error fetching board:", err);
     }
   }, [gameId, setBoxes]);
-
-  const resetMovement = () => {
+  
+  // Función para resetear el estado de las cartas y posiciones seleccionadas
+  const resetMovement = useCallback(() => {
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
-  };
+  }, []);
+
+  // Resetear estados cuando cambie el turno del jugador
+  useEffect(() => {
+    if (currentTurn !== playerId && gameId) {
+      resetMovement();  // Resetea si cambia el turno
+    }
+  }, [gameId, currentTurn, playerId, resetMovement]);
 
   useEffect(() => {
     fetchPlayers();
     fetchBoard();
     getTurnInfo();
   }, []);
+
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard);
@@ -102,6 +111,7 @@ const ActiveGame = () => {
               <CardsMovement gameId={gameId} playerId={playerId} 
                 onSelectCard={setSelectedMovementCard}
                 selectMovementCard={selectedMovementCard}
+                currentTurn={currentTurn}
               />
               <CardsFigure gameId={gameId} playerId={playerId} />
             </div>
@@ -118,7 +128,6 @@ const ActiveGame = () => {
           <div className="flex justify-around mt-4">
             <EndTurnButton gameId={gameId} currentTurn={currentTurn} className="bg-green-500 text-white px-4 py-2 rounded" />
             <LeaveGameButton gameId={gameId} className="bg-red-500 text-white px-4 py-2 rounded" />
-            {/* <button onClick={handleConfirmMove} className="bg-green-500 text-white px-4 py-2 rounded">Confirmar</button> */}
             </div>
         {/* Right section: Other players' cards */}
         <div className="flex-grow p-4 overflow-y-auto">

@@ -1,13 +1,15 @@
-import { Button } from "@/components/ui/button"
-import { useGameContext } from '../../context/GameContext'
-import { useNavigate } from 'react-router-dom'
+import { useGameContext } from '../../context/GameContext';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { leaveGame } from "@/services/services";
+import { MdLogout } from "react-icons/md";
 
-export default function LeaveButton({gameId}) {
+
+export default function LeaveButton({ gameId }) {
   const { playerId } = useGameContext();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const onAbandon = async () => {
     try {
@@ -15,16 +17,30 @@ export default function LeaveButton({gameId}) {
       navigate('/games'); 
     } 
     catch (error) {
-      setError(error.message); 
+      // setError(error.message); 
+      console.error(error);
     }
   }
 
   return (
-    <div>
-      <Button variant="destructive" onClick={onAbandon}>
-        Abandonar
-      </Button>
-      {error && <p>{error}</p>} 
+    <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
+      <button
+        onClick={onAbandon}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        className="text-white hover:scale-110 transition-transform"
+
+      >
+        <MdLogout size={28} />
+      </button>
+
+      {showTooltip && (
+        <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
+            Abandonar
+        </div>
+      )}
+
+      {error && <p>{error}</p>}
     </div>
   );
 }

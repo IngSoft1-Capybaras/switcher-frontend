@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useGameContext } from "@/context/GameContext"; 
+import { useGameContext } from "@/context/GameContext";
 import { pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 import {FaCheck} from 'react-icons/fa'
@@ -17,8 +17,8 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection})
   }, [currentTurn, playerId]);
 
   // Conexion con socket
-  useEndTurnSocket(gameId, playerId, setIsButtonActive, getTurnInfo);
-  
+  useEndTurnSocket(gameId, playerId, setIsButtonActive);
+
   // Manejar la lógica para terminar el turno
   const onHandleEndTurn = async () => {
     resetFigureSelection();
@@ -39,7 +39,7 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection})
 
   return (
     <div className="relative">
-      <button onClick={onHandleEndTurn} onMouseEnter={() => setShowTooltip(true)}
+      <button data-testid='endTurnButtonId' onClick={onHandleEndTurn} onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)} className={`text-white ${isButtonActive ? 'hover:scale-110 transition-transform' : 'opacity-50'}`}
       disabled={!isButtonActive || loading}>
             <FaCheck size={28} />

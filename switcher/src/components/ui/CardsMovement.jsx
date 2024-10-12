@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { cardImg } from '../utils/getCardImg';
-import { getDeckMovement } from '@/services/services'; 
+import { getDeckMovement } from '@/services/services';
 import { AnimatedGroup } from './animated-group';
 
 
-// Componente que representa las cartas de movimiento 
+// Componente que representa las cartas de movimiento
 const CardsMovement = ({gameId, playerId, movementCards, setMovementCards}) => {
   const [loading, setLoading] = useState(true); // Estado para la carga
   const [error, setError] = useState(null); // Estado para errores
@@ -20,10 +20,10 @@ const CardsMovement = ({gameId, playerId, movementCards, setMovementCards}) => {
         setError("Error al obtener las cartas de movimiento");
         console.error(error); // Loguea el error
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
-    
+
     fetchMovementCards();
   }, [gameId, playerId, setMovementCards, setLoading]);
 
@@ -63,11 +63,11 @@ const CardsMovement = ({gameId, playerId, movementCards, setMovementCards}) => {
     {movementCards.map((card,index) => (
         <div key={card.id} className={`relative h-44 w-auto rounded ${(index==0 && movementCards.length!=1) ? '-rotate-12': (index==movementCards.length-1 && movementCards.length!=1) ? 'rotate-12' : '-translate-y-5'}`}>
             {card.used ? (
-                <div className="flex items-center justify-center w-full h-full">
+                <div data-testid='UsedMovementCardId' className="flex items-center justify-center w-full h-full">
                     <span className="text-white">Carta Usada</span>
                 </div>
             ) : (
-                <img src={cardImg(card.type)} alt="Carta de movimiento" className="object-cover w-full h-full" />
+                <img src={cardImg(card.type)} data-testid='notUsedMovementCardId' alt="Carta de movimiento" className="object-cover w-full h-full" />
             )}
         </div>
     ))}

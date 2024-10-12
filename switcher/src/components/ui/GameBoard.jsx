@@ -83,32 +83,33 @@ export default function GameBoard({boxes, blockedColor, selectedCardFigure, curr
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
-  
-    
+
+
     mockData.figuresFormed.forEach((figure, index) => {
       boxFound = figure.find(
         (elem) => {
-          const isMatch = elem.pos_x === box.pos_x && 
-                          elem.pos_y === box.pos_y && 
+          const isMatch = elem.pos_x === box.pos_x &&
+                          elem.pos_y === box.pos_y &&
                           elem.color === box.color;
           return isMatch;
         }
       );
-  
+
       if (boxFound) {
         indexFigureFound = index;
         return;
       }
     });
-  
+    //
+
     if (!boxFound) {
       console.error("Box does not belong to a valid formed figure");
       return;
     }
-  
+
     setSelectedBoardFigure(mockData.figuresFormed[indexFigureFound]);
   };
-  
+
 
   const handleSelectMovement = () => {
     console.log("Selecciono casilla para movimiento")

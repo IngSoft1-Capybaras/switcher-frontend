@@ -7,6 +7,7 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
     const [isButtonActive, setIsButtonActive] = useState(false);
 
     useEffect(() => {
+        // Habilita el botón solo si es el turno del jugador actual y hay una carta seleccionada y dos posiciones.
         if (currentTurn === playerId && selectedCard && selectedPositions.length === 2) {
             setIsButtonActive(true);
         } else {
@@ -15,34 +16,31 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
     }, [currentTurn, playerId, selectedCard, selectedPositions]);
 
     const onConfirmMove = async () => {
-        if (!gameId || !playerId || !selectedCard || selectedPositions.length < 2) {
-            setError("Error al confirmar el movimiento: falta información necesaria.");
-            return;
-        }
-
+        // Aquí puedes manejar la lógica para confirmar el movimiento
         const [posFrom, posTo] = selectedPositions;
 
-        try {
-            await playMovementCard({
-                gameId: gameId,
-                playerId: playerId,
-                cardId: selectedCard.id,
-                posFrom: posFrom,
-                posTo: posTo,
-            });
-            // Aquí puedes manejar la respuesta de éxito, si es necesario
-            resetMov();
-        } catch (error) {
-            setError(error.message);
+        // Se asume que playMovementCard maneja errores internamente
+        if (gameId && playerId && selectedCard && selectedPositions.length >= 2) {
+            try {
+                await playMovementCard({
+                    gameId: gameId,
+                    playerId: playerId,
+                    cardId: selectedCard.id,
+                    posFrom: posFrom,
+                    posTo: posTo,
+                });
+                resetMov(); // Llama a resetMov si la jugada es exitosa
+            } catch (error) {
+                console.error("Error al confirmar el movimiento:", error.message); // Manejo de errores en la consola
+            }
         }
     };
-
+    
     return (
         <div>
             <Button onClick={onConfirmMove} disabled={!isButtonActive}>
                 Hacer movimiento
             </Button>
-            {error && <p>{error}</p>}
         </div>
     );
 }

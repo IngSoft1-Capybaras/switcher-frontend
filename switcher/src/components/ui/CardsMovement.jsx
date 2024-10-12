@@ -31,6 +31,7 @@ const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, c
     if (playerId !== currentTurn || card.used) {
       return; // No permite seleccionar si no es el turno del jugador o si la carta ya está usada
     }
+    console.log('Carta seleccionada:', card);
     onSelectCard(card); // Pasamos la carta seleccionada al componente padre
   };
   

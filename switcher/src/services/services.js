@@ -210,14 +210,6 @@ export const fetchTurnInfo = async (activeGameId) => {
 }
 
 export const playMovementCard = async ({gameId, playerId, cardId, posFrom, posTo}) => {
-  console.log('gameId:', gameId);
-  console.log('playerId:', playerId);
-  console.log('cardId:', cardId);
-  console.log('posFrom:', posFrom);
-  console.log('posTo: ', posTo);
-  console.log('posFrom2:', {pos: posFrom});
-  console.log('posTo2:', {pos: posTo});
-
   try {
     const response = await fetch(`${apiUrl}/deck/movement/play_card`, {
       method: 'POST',
@@ -232,13 +224,16 @@ export const playMovementCard = async ({gameId, playerId, cardId, posFrom, posTo
       pos_to: { pos: [posTo.x, posTo.y] },
       }),
     });
-
+    console.log(response);
     if (!response.ok) {
-      throw new Error('Fallo al jugar la carta');
+      const errorMessage = await response.text();
+      throw new Error(`Error al jugar la carta: ${errorMessage}`);
     }
-    console.log('Carta jugada exitosamente!');
-  } catch (err) {
-    console.error('Error al jugar la carta', err);
+    console.log('La Carta fue jugada exitosamente!');
+  }   catch (error) {
+    throw new Error(`Error al jugar la carta: ${error.message}`);
+    // catch (err) {
+    //   console.error('Error al jugar la carta', err);
   }
 };
 

@@ -12,10 +12,11 @@ const EndTurnButton = ({gameId, currentTurn}) => {
   
 
   useEffect(() => {
-    if (currentTurn==playerId) {
+    if (currentTurn===playerId) {
+      console.log("ES MI TURNO");
       setIsButtonActive(true);
     }
-  }, [currentTurn]);
+  }, [currentTurn, playerId]);
 
   // Conexion con socket
   useEndTurnSocket(gameId, playerId, setIsButtonActive);

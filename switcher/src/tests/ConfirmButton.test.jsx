@@ -49,26 +49,25 @@ describe('ConfirmButton Component', () => {
   });
 
     // Test para verificar que el botón esté deshabilitado cuando no hay una carta seleccionada
-  it('should display an error message if information is missing when confirming a move', async () => {
-    render(
-      <ConfirmButton 
-        gameId="game1"
-        selectedCard={null} // Sin carta seleccionada
-        selectedPositions={['A1', 'B2']}
-        playerId="player1"
-        currentTurn="player1"
-        resetMov={mockResetMov}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /Hacer movimiento/i });
-    fireEvent.click(button); // Simula el clic en el botón
-
-    await waitFor(() => {
-      expect(screen.getByText(/Error al confirmar el movimiento: falta información necesaria/i)).toBeInTheDocument(); // Verifica el mensaje de error
+    it('should not display an error message when information is missing', async () => {
+        render(
+            <ConfirmButton 
+                gameId="game1"
+                selectedCard={null} // Sin carta seleccionada
+                selectedPositions={[]} // Sin posiciones seleccionadas
+                playerId="player1"
+                currentTurn="player1"
+                resetMov={mockResetMov}
+            />
+        );
+    
+        const button = screen.getByRole('button', { name: /Hacer movimiento/i });
+        fireEvent.click(button); // Simula el clic en el botón
+    
+        // Verifica que el mensaje de error no aparezca
+        expect(screen.queryByText(/Error al confirmar el movimiento: falta información necesaria/i)).not.toBeInTheDocument();
     });
-  });
-
+      
     // Test para verificar que se llame a playMovementCard con los parámetros correctos al hacer clic en el botón
   it('should call playMovementCard with correct parameters on button click', async () => {
     render(
@@ -87,11 +86,11 @@ describe('ConfirmButton Component', () => {
 
     await waitFor(() => {
       expect(playMovementCard).toHaveBeenCalledWith({
-        game_id: 'game1',
-        player_id: 'player1',
-        card_id: 'card1',
-        pos_from: 'A1',
-        pos_to: 'B2',
+        gameId: 'game1',
+        playerId: 'player1',
+        cardId: 'card1',
+        posFrom: 'A1',
+        posTo: 'B2',
       }); // Verifica que playMovementCard fue llamado con los parámetros correctos
     });
   });

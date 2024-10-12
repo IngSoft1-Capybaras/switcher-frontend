@@ -85,7 +85,7 @@ describe('Creación del tablero', () => {
 
        // verifico que si esta no esta highlighted -> no tenga la className 'shine-effect'
        if(boxElement.highlighted){
-        expect(divElement.classList.length).toBe(6);
+        expect(boxElement).not.toHaveClass('shine-effect');
       }
     });
   });

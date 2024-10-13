@@ -1,21 +1,18 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, act, fireEvent } from "@testing-library/react";
 import { vi, describe, beforeEach, it, expect } from "vitest";
 import EndTurnButton from "@/components/ui/EndShiftButton";
 import { useGameContext } from "@/context/GameContext";
 import { useSocketContext } from "@/context/SocketContext";
 import { pathEndTurn } from "@/services/services";
 
-// Mockear el contexto del juego
 vi.mock("@/context/GameContext", () => ({
   useGameContext: vi.fn(),
 }));
 
-// Mockear el contexto del socket
 vi.mock("@/context/SocketContext", () => ({
   useSocketContext: vi.fn(),
 }));
 
-// Mockear la función de servicios
 vi.mock("@/services/services", () => ({
   pathEndTurn: vi.fn(),
 }));
@@ -26,11 +23,11 @@ describe("EndTurnButton", () => {
     removeEventListener: vi.fn(),
   };
 
+  const mockResetFigureSelection = vi.fn();
+
   beforeEach(() => {
-    // Reiniciar los mocks antes de cada prueba
     vi.clearAllMocks();
 
-    // Configurar el contexto simulado
     useGameContext.mockReturnValue({
       playerId: "player1",
       activeGameId: "game1",
@@ -41,11 +38,10 @@ describe("EndTurnButton", () => {
     });
   });
 
-  // Prueba para verificar que el botón se active cuando es el turno del jugador
-  it("activates the button when it's the player's turn", async () => {
-    render(<EndTurnButton gameId="game1" currentTurn="player1" />);
 
-    // Simular el evento del socket
+  it("activates the button when it's the player's turn", async () => {
+    render(<EndTurnButton gameId="game1" currentTurn="player1" resetFigureSelection={mockResetFigureSelection}/>);
+
     const eventData = JSON.stringify({ type: "game1:NEXT_TURN", nextPlayerId: "player1" });
 
     // Usar act para manejar la actualización del estado
@@ -56,13 +52,13 @@ describe("EndTurnButton", () => {
 
     // Asegurarse de que el estado del componente se haya actualizado
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Terminar Turno/i })).toBeEnabled();
+      expect(screen.getByTestId('endTurnButtonId')).toBeEnabled();
     });
   });
 
   // Prueba para verificar que el botón esté deshabilitado cuando no es el turno del jugador
   it("disables the button when it's not the player's turn", async () => {
-    render(<EndTurnButton gameId="game1" currentTurn="player2" />);
+    render(<EndTurnButton gameId="game1" currentTurn="player2" resetFigureSelection={mockResetFigureSelection} />);
 
     // Simular el evento del socket con un jugador diferente
     const eventData = JSON.stringify({ type: "game1:NEXT_TURN", nextPlayerId: "player2" });
@@ -75,32 +71,25 @@ describe("EndTurnButton", () => {
 
     // Asegurarse de que el botón sigue deshabilitado
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Terminar Turno/i })).toBeDisabled();
+      expect(screen.getByTestId('endTurnButtonId')).toBeDisabled();
     });
   });
 
-  // Prueba para verificar que se llama a pathEndTurn correctamente
+
   it("calls pathEndTurn when the button is clicked", async () => {
     // Mockear la respuesta de pathEndTurn
     pathEndTurn.mockResolvedValue(true);
 
-    render(<EndTurnButton gameId="game1" currentTurn="player1" />);
-
-    // Simular el evento del socket para activar el botón
-    const eventData = JSON.stringify({ type: "game1:NEXT_TURN", nextPlayerId: "player1" });
-
-    await act(async () => {
-      mockSocket.addEventListener.mock.calls[0][1]({ data: eventData });
-    });
+    render(<EndTurnButton gameId="game1" currentTurn="player1" resetFigureSelection={mockResetFigureSelection}/>);
 
     // Asegurarse de que el botón esté habilitado
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Terminar Turno/i })).toBeEnabled();
+        expect(screen.getByTestId('endTurnButtonId')).toBeEnabled();
     });
 
-    // Simular el clic en el botón
+    // Simular el clic en el botón usando fireEvent
     await act(async () => {
-      screen.getByRole("button", { name: /Terminar Turno/i }).click();
+        fireEvent.click(screen.getByTestId('endTurnButtonId'));
     });
 
     // Verificar que pathEndTurn haya sido llamada

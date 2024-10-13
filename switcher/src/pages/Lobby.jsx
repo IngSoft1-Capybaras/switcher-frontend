@@ -67,7 +67,7 @@ export default function Lobby() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-  <h1 className="text-5xl font-extrabold text-center mb-8 text-white">Lobby: {gameName}</h1>
+  <h1 className="text-5xl font-extrabold text-center mb-8 text-white">{gameName}</h1>
 
   {/* Outer Container for status, player list, and chat */}
   <div className="max-w-4xl w-full bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
@@ -108,7 +108,7 @@ export default function Lobby() {
   
 
   {/* Start Button */}
-  <div className="flex justify-center mt-8">
+  <div className="flex justify-center mt-8 space-x-3">
   <BotonAbandonar gameId={gameId} />
   {host && (
       <StartButton

@@ -50,7 +50,7 @@ describe(`Undo Button`, () => {
 
         await waitFor(() => expect(fetch).toHaveBeenCalledOnce());
         await waitFor(() => expect(fetch).toHaveBeenCalledWith(
-            `${apiUrl}/deck/movement/${mockGameId}/${mockPlayerId}/undo_move`,
+            `http://localhost:8000/deck/movement/${mockGameId}/${mockPlayerId}/undo_move`,
             expect.objectContaining(
                 {
                 method: "POST",

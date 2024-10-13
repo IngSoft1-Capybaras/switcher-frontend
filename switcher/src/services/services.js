@@ -211,11 +211,10 @@ export const fetchTurnInfo = async (activeGameId) => {
 
 export const undoMovement = async (gameId, playerId) => {
   try {
-      const response = await fetch(`${apiUrl}/deck/movement/undo_move`,
+      const response = await fetch(`${apiUrl}/deck/movement/${gameId}/${playerId}/undo_move`,
           {
               method:`POST`,
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ game_id: gameId, player_id: playerId })
           }
       )
       if (!response.ok){
@@ -294,7 +293,7 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
       throw new Error(`Error al reclamar figura: ${errorMessage}`);
     }
     return response.json();
-  } 
+  }
   catch (error) {
     throw new Error(`Error al reclamar figura: ${error.message}`);
   }

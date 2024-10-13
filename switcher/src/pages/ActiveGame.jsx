@@ -1,33 +1,45 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useGameContext } from '../context/GameContext'; 
+import { useParams } from 'react-router-dom';
+import { useGameContext } from '../context/GameContext';
+import { getPlayers, getBoard } from '@/services/services';
+import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
+import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
+import { fetchTurnInfo } from '@/services/services';
+import { motion } from 'framer-motion';
 import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
-import { useParams } from 'react-router-dom';
-import { getPlayers, getBoard } from '@/services/services';
 import PlayerPanel from '../components/ui/PlayerPanel';
-import EndTurnButton from '../components/ui/EndShiftButton';
-import LeaveGameButton from '../components/ui/LeaveButton';
-import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
-import TurnInfo from '@/components/ui/TurnInfo'
-import { fetchTurnInfo } from '@/services/services';
-import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
+import Board from '../components/ui/GameBoard';
+import EndTurnButton from '@/components/ui/EndShiftButton';
+import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
-import Board from '@/components/ui/GameBoard';
-import ConfirmButton from '@/components/ui/ConfirmButton';
+import ClaimFigureButton from '@/components/ui/claimFigureButton';
+import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 
-const ActiveGame = () => {
+
+export default function ActiveGame() {
   const { gameId } = useParams();
-  const [boxes, setBoxes] = useState();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
+  const [boxes, setBoxes] = useState();
   const [loading, setLoading] = useState(false);
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
+  const [blockedColor, setBlockedColor] = useState(null);
+  const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
+  const [selectedCardFigure, setSelectedCardFigure] = useState(null);
+
+  const resetFigureSelection = () => {
+    // reset selected figure states
+    setSelectedBoardFigure([]);
+    setSelectedCardFigure(null);
+  }
 
   const getTurnInfo = useCallback(async () => {
     try {
       const newTurnData = await fetchTurnInfo(gameId);
       if (newTurnData.current_player_id) {
         setCurrentTurn(newTurnData.current_player_id);
+        setBlockedColor(newTurnData.blocked_color);
       } else {
         console.error("Received an undefined player ID.");
       }
@@ -75,7 +87,7 @@ const ActiveGame = () => {
     fetchPlayers();
     fetchBoard();
     getTurnInfo();
-  }, []);
+  }, [fetchPlayers, fetchBoard, getTurnInfo]);
 
 
   useActiveGameSocket(gameId, fetchPlayers);
@@ -86,68 +98,106 @@ const ActiveGame = () => {
   const otherPlayers = players.filter(p => p.id !== playerId);
   
   return (
-    <div className="flex h-screen bg-zinc-950 text-white space-x-4 p-4">
-      {/* Left section: Board and current player's cards */}
-      <div className="w-3/5 flex flex-col">
-        <div className="flex-grow m-auto">
-
-          {/* Game board */}
-          {boxes ? (
-            <div className="h-96 w-96 sm:h-[30rem] sm:w-[30rem] md:h-[35rem] md:w-[35rem] lg:h-[40rem] lg:w-[40rem]" >
-              <Board boxes={boxes} 
-                onSelectMovementPosition={setSelectedMovementPositions} 
-                selectMovementCard={selectedMovementCard}
-                selectedMovementPositions={selectedMovementPositions} 
+    <div className="flex flex-col h-screen bg-zinc-950">
+      {/* Other Player Panels */}
+      <div className="flex flex-row w-full text-white  justify-center ">
+        {otherPlayers.map((player) => (
+          <div key={player.id} className="relative w-[600px] mx-10">
+            <PlayerPanel
+              game={gameId}
+              player={player.id}
+              name={player.name}
+              setSelectedCardFigure={setSelectedCardFigure}
+              selectedCardFigure={selectedCardFigure}
+              
+            />
+            {currentTurn === player.id && (
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-white h-1"
+                initial={{ width: '100%' }}
+                animate={{ width: '0%' }}
+                transition={{ duration: 120 }}
+                
               />
-            </div>
-            ) : (
-              <div>Loading...</div>
             )}
           </div>
+        ))}
+      </div>
 
-          {/* Current player's cards */}
-          <div className="p-4 h-full flex items-center justify-center">
-            <div className="flex justify-center items-center space-x-4">
-              <CardsMovement gameId={gameId} playerId={playerId} 
-                onSelectCard={setSelectedMovementCard}
+      {/* Board and Turn Info */}
+      <div className="flex flex-col md:flex-row w-full text-white p-4 justify-center space-y-4 md:space-y-0">
+        {/* Board */}
+        <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
+          <div className="relative">
+            <Board 
+              boxes={boxes} blockedColor={blockedColor}
+              currentTurn={currentTurn} playerId={playerId} 
+              selectedCardFigure={selectedCardFigure} 
+              selectedBoardFigure={selectedBoardFigure}
+              setSelectedBoardFigure={setSelectedBoardFigure} 
+              selectMovementCard={selectedMovementCard}
+              setSelectMovementPosition={setSelectedMovementPositions} 
+              selectedMovementPositions={selectedMovementPositions}
+              />
+            {currentTurn !== playerId && currentTurn && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
+                {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
+              </div>
+            )}
+          </div>        
+        </div>
+
+        {/* Right-side Panel: Turn Info and Your Cards */}
+        <div className="md:w-1/2 h-full flex flex-col p-4 justify-center items-start ml-5">
+          <div className="border-2 border-zinc-700 bg-zinc-900 text-white p-4 rounded-md flex flex-col h-full w-[600px]">
+            <h2 className="text-xl text-center mb-10">Tus cartas</h2>
+            <div className="flex-grow">
+              <CardsMovement 
+                gameId={gameId} 
+                playerId={playerId} 
+                setSelectedMovementCard={setSelectedMovementCard}
                 selectMovementCard={selectedMovementCard}
                 currentTurn={currentTurn}
+                />
+            </div>
+            <div className="flex-grow">
+              <CardsFigure
+                gameId={gameId}
+                playerId={playerId}
+                setSelectedCardFigure={setSelectedCardFigure}
+                selectedCardFigure={selectedCardFigure}
               />
-              <CardsFigure gameId={gameId} playerId={playerId} />
             </div>
           </div>
+        </div>
       </div>
 
-      <div className="w-2/5 flex flex-col">
+      
+      {currentTurn === playerId && (
+        <motion.div
+          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-40" 
+          initial={{ width: '100%' }}
+          animate={{ width: '0%' }}
+          transition={{ duration: 120 }}  
+        />
+      )}
 
-        {/* Turn Info */}
-        <div className="text-center p-4">
-
-          <TurnInfo players={players} activeGameId={gameId} currentTurn={currentTurn} setCurrentTurn={setCurrentTurn} />
-        </div>
-          <div className="flex justify-around mt-4">
-            <EndTurnButton gameId={gameId} currentTurn={currentTurn} className="bg-green-500 text-white px-4 py-2 rounded" />
-            <LeaveGameButton gameId={gameId} className="bg-red-500 text-white px-4 py-2 rounded" />
-            </div>
-        {/* Right section: Other players' cards */}
-        <div className="flex-grow p-4 overflow-y-auto">
-          {otherPlayers.map((player) => (
-            <PlayerPanel key={player.id} game={gameId} player={player.id} name={player.name} />
-          ))}
-        </div>
-          {/* Buttons for current player */}
-          <UndoButton gameId={gameId} currentTurn={currentTurn}/>
-          <ConfirmButton 
-            gameId={gameId} 
-            selectedCard={selectedMovementCard} 
-            selectedPositions={selectedMovementPositions} 
-            playerId={playerId} 
-            currentTurn={currentTurn} 
-            resetMov={resetMovement}
+      <motion.div
+        className="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-zinc-800 p-4 z-40"  
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        
+        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement}/>
+        <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure}/>
+        <UndoButton gameId={gameId} currentTurn={currentTurn} />
+        <LeaveButton gameId={gameId} />
+        <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn} 
+          selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions} 
+          resetMov={resetMovement}
           />
-      </div>
+      </motion.div>
     </div>
   );
-};
-
-export default ActiveGame;
+}

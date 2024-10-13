@@ -177,8 +177,7 @@ export async function getGameStatus(gameId) {
 
     try {
       const response = await fetch(url);
-
-
+      console.log("BOARD services: ",response);
       if (!response.ok) {
         throw new Error('Error al obtener tablero');
       }
@@ -203,9 +202,8 @@ export const fetchTurnInfo = async (activeGameId) => {
 
         const data = await response.json();
         return data;
-    }
-    catch (error) {
-        throw new Error("Error al obtener información del turno");
+    } catch (error) {
+      throw new Error(`Error al obtener información del turno ${error.message}`);
     }
 }
 
@@ -232,8 +230,6 @@ export const playMovementCard = async ({gameId, playerId, cardId, posFrom, posTo
     console.log('La Carta fue jugada exitosamente!');
   }   catch (error) {
     throw new Error(`Error al jugar la carta: ${error.message}`);
-    // catch (err) {
-    //   console.error('Error al jugar la carta', err);
   }
 };
 
@@ -241,7 +237,7 @@ export const undoMovement = async (gameId, playerId) => {
   try {
       const response = await fetch(`${apiUrl}/deck/movement/undo_move`,
           {
-              method:`PATCH`,
+              method:`POST`,
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ gameID: gameId, playerID: playerId })
           }
@@ -300,5 +296,30 @@ export const leaveGame = async (playerId, gameId) => {
   }
   catch (error) {
     throw new Error(`Error al abandonar la partida: ${error.message}`);
+  }
+}
+
+export const claimFigure = async (gameId, playerId, cardId, figure) => {
+  const body = {
+    game_id: gameId,
+    player_id: playerId,
+    card_id: cardId,
+    figure: figure
+  };
+
+  try {
+    const response = await fetch(`${apiUrl}/deck/figure/play_card`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al reclamar figura: ${errorMessage}`);
+    }
+    return response.json();
+  } 
+  catch (error) {
+    throw new Error(`Error al reclamar figura: ${error.message}`);
   }
 }

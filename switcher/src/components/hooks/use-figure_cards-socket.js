@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useSocketContext } from "@/context/SocketContext";
-import { pathEndTurn } from "@/services/services";
 
-export function useEndTurnSocket(gameId, playerId, setIsButtonActive) {
+export function useFigureCardsSocket(gameId, getFigureCards) {
     const { socket } = useSocketContext();
 
     useEffect(() => {
@@ -11,24 +10,18 @@ export function useEndTurnSocket(gameId, playerId, setIsButtonActive) {
         const handleNextTurnEvent = (event) => {
             const data = JSON.parse(event.data);
 
-
-            if (data.type === `${gameId}:NEXT_TURN`) {
-
-                // if (data.nextPlayerId === playerId) {
-                //     setIsButtonActive(true);
-                // } else {
-                //     setIsButtonActive(false);
-                // }
-                //pathEndTurn();
+            
+            if (data.type === `${gameId}:FIGURE_UPDATE`) {
+                getFigureCards();
             }
         };
 
-
+        
         socket.addEventListener("message", handleNextTurnEvent);
 
-
+        
         return () => {
             socket.removeEventListener("message", handleNextTurnEvent);
         };
-    }, [socket, gameId, playerId, setIsButtonActive]);
+    }, [socket, gameId, getFigureCards]);
 }

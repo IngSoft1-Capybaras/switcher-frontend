@@ -1,13 +1,66 @@
 import React, {useState, useEffect} from "react";
 
-const mockBoxes = [
-  [{ "pos_x": 0, "pos_y": 0, "color": "RED", "highlighted": true }, { "pos_x": 1, "pos_y": 0, "color": "RED", "highlighted": true }, { "pos_x": 2, "pos_y": 0, "color": "RED", "highlighted": true }, { "pos_x": 3, "pos_y": 0, "color": "BLUE", "highlighted": false }, { "pos_x": 4, "pos_y": 0, "color": "YELLOW", "highlighted": false }, { "pos_x": 5, "pos_y": 0, "color": "GREEN", "highlighted": false }],
-  [{ "pos_x": 0, "pos_y": 1, "color": "GREEN", "highlighted": false }, { "pos_x": 1, "pos_y": 1, "color": "YELLOW", "highlighted": false }, { "pos_x": 2, "pos_y": 1, "color": "RED", "highlighted": true }, { "pos_x": 3, "pos_y": 1, "color": "BLUE", "highlighted": false }, { "pos_x": 4, "pos_y": 1, "color": "GREEN", "highlighted": false }, { "pos_x": 5, "pos_y": 1, "color": "RED", "highlighted": false }],
-  [{ "pos_x": 0, "pos_y": 2, "color": "BLUE", "highlighted": true }, { "pos_x": 1, "pos_y": 2, "color": "YELLOW", "highlighted": false }, { "pos_x": 2, "pos_y": 2, "color": "GREEN", "highlighted": false }, { "pos_x": 3, "pos_y": 2, "color": "RED", "highlighted": false }, { "pos_x": 4, "pos_y": 2, "color": "YELLOW", "highlighted": false }, { "pos_x": 5, "pos_y": 2, "color": "GREEN", "highlighted": false }],
-  [{ "pos_x": 0, "pos_y": 3, "color": "BLUE", "highlighted": true }, { "pos_x": 1, "pos_y": 3, "color": "RED", "highlighted": false }, { "pos_x": 2, "pos_y": 3, "color": "GREEN", "highlighted": false }, { "pos_x": 3, "pos_y": 3, "color": "YELLOW", "highlighted": false }, { "pos_x": 4, "pos_y": 3, "color": "BLUE", "highlighted": false }, { "pos_x": 5, "pos_y": 3, "color": "RED", "highlighted": false }],
-  [{ "pos_x": 0, "pos_y": 4, "color": "BLUE", "highlighted": true }, { "pos_x": 1, "pos_y": 4, "color": "BLUE", "highlighted": true }, { "pos_x": 2, "pos_y": 4, "color": "RED", "highlighted": false }, { "pos_x": 3, "pos_y": 4, "color": "YELLOW", "highlighted": false }, { "pos_x": 4, "pos_y": 4, "color": "GREEN", "highlighted": false }, { "pos_x": 5, "pos_y": 4, "color": "YELLOW", "highlighted": false }],
-  [{ "pos_x": 0, "pos_y": 5, "color": "GREEN", "highlighted": false }, { "pos_x": 1, "pos_y": 5, "color": "YELLOW", "highlighted": false }, { "pos_x": 2, "pos_y": 5, "color": "RED", "highlighted": false }, { "pos_x": 3, "pos_y": 5, "color": "BLUE", "highlighted": false }, { "pos_x": 4, "pos_y": 5, "color": "GREEN", "highlighted": false }, { "pos_x": 5, "pos_y": 5, "color": "RED", "highlighted": false }],
-];
+const mockData = {
+  boxes: [
+    [
+      { pos_x: 0, pos_y: 0, color: "RED", highlighted: true },
+      { pos_x: 1, pos_y: 0, color: "RED", highlighted: true },
+      { pos_x: 2, pos_y: 0, color: "RED", highlighted: true },
+      { pos_x: 3, pos_y: 0, color: "BLUE", highlighted: false },
+      { pos_x: 4, pos_y: 0, color: "YELLOW", highlighted: false },
+      { pos_x: 5, pos_y: 0, color: "GREEN", highlighted: false }
+    ],
+    [
+      { pos_x: 0, pos_y: 1, color: "GREEN", highlighted: false },
+      { pos_x: 1, pos_y: 1, color: "YELLOW", highlighted: false },
+      { pos_x: 2, pos_y: 1, color: "RED", highlighted: true },
+      { pos_x: 3, pos_y: 1, color: "BLUE", highlighted: false },
+      { pos_x: 4, pos_y: 1, color: "GREEN", highlighted: false },
+      { pos_x: 5, pos_y: 1, color: "RED", highlighted: false }
+    ],
+    [
+      { pos_x: 0, pos_y: 2, color: "BLUE", highlighted: true },
+      { pos_x: 1, pos_y: 2, color: "YELLOW", highlighted: false },
+      { pos_x: 2, pos_y: 2, color: "GREEN", highlighted: false },
+      { pos_x: 3, pos_y: 2, color: "RED", highlighted: false },
+      { pos_x: 4, pos_y: 2, color: "YELLOW", highlighted: false },
+      { pos_x: 5, pos_y: 2, color: "GREEN", highlighted: false }
+    ],
+    [
+      { pos_x: 0, pos_y: 3, color: "BLUE", highlighted: true },
+      { pos_x: 1, pos_y: 3, color: "RED", highlighted: false },
+      { pos_x: 2, pos_y: 3, color: "GREEN", highlighted: false },
+      { pos_x: 3, pos_y: 3, color: "YELLOW", highlighted: false },
+      { pos_x: 4, pos_y: 3, color: "BLUE", highlighted: false },
+      { pos_x: 5, pos_y: 3, color: "RED", highlighted: false }
+    ],
+    [
+      { pos_x: 0, pos_y: 4, color: "BLUE", highlighted: true },
+      { pos_x: 1, pos_y: 4, color: "BLUE", highlighted: true },
+      { pos_x: 2, pos_y: 4, color: "RED", highlighted: false },
+      { pos_x: 3, pos_y: 4, color: "YELLOW", highlighted: false },
+      { pos_x: 4, pos_y: 4, color: "GREEN", highlighted: false },
+      { pos_x: 5, pos_y: 4, color: "YELLOW", highlighted: false }
+    ],
+    [
+      { pos_x: 0, pos_y: 5, color: "GREEN", highlighted: false },
+      { pos_x: 1, pos_y: 5, color: "YELLOW", highlighted: false },
+      { pos_x: 2, pos_y: 5, color: "RED", highlighted: false },
+      { pos_x: 3, pos_y: 5, color: "BLUE", highlighted: false },
+      { pos_x: 4, pos_y: 5, color: "GREEN", highlighted: false },
+      { pos_x: 5, pos_y: 5, color: "RED", highlighted: false }
+    ]
+  ],
+  figuresFormed: [
+    [
+      { pos_x: 0, pos_y: 2, color: "BLUE", highlighted: true },
+      { pos_x: 0, pos_y: 3, color: "BLUE", highlighted: true },
+      { pos_x: 0, pos_y: 4, color: "BLUE", highlighted: true },
+      { pos_x: 1, pos_y: 4, color: "BLUE", highlighted: true }
+    ],
+  ]
+};
+
 
 const getColorBox = (color) => {
   switch (color) {
@@ -24,27 +77,49 @@ const getColorBox = (color) => {
   }
 };
 
-export default function GameBoard({ boxes, onSelectMovementPosition, selectMovementCard, selectedMovementPositions }) {
-  const [activeAnimation, setActiveAnimation] = useState('');
 
-  useEffect(() => {
+export default function GameBoard({boxes, blockedColor, currentTurn, playerId, 
+                                  selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure, 
+                                  selectMovementCard, setSelectMovementPosition, selectedMovementPositions}) {
 
-    const startShineAnimation = () => {
-      const timer = setTimeout(() => {setActiveAnimation('shine-effect');}, 1000)
-      
-      return () => {clearTimeout(timer)}
+  const handleSelectFigure = (box) => {
+    let boxFound = null;
+    let indexFigureFound = -1;
+
+
+    mockData.figuresFormed.forEach((figure, index) => {
+      boxFound = figure.find(
+        (elem) => {
+          const isMatch = elem.pos_x === box.pos_x &&
+                          elem.pos_y === box.pos_y &&
+                          elem.color === box.color;
+          return isMatch;
+        }
+      );
+
+      if (boxFound) {
+        indexFigureFound = index;
+        return;
+      }
+    });
+    //
+
+    if (!boxFound) {
+      console.error("Box does not belong to a valid formed figure");
+      return;
     }
 
-    startShineAnimation();
-  }, [])
-
-  // Manejo de clic en las casillas
-  const handleBoxClick = (box) => {
+    setSelectedBoardFigure(mockData.figuresFormed[indexFigureFound]);
+  };
+  
+  console.log("SELECTED MOVEMENT CARD:", selectMovementCard);
+  // Manejo de clic en las casillas, Armand
+  const handleSelectMovement = (box) => {
     if (!selectMovementCard) {
       console.log("Debes seleccionar una carta de movimiento primero");
       return;
     }
-    
+    console.log("CASILLA SELECCIONADA:", box);
     // Obtener la posición de la casilla seleccionada
     const position = { x: box.pos_x, y: box.pos_y };
   
@@ -71,7 +146,7 @@ export default function GameBoard({ boxes, onSelectMovementPosition, selectMovem
       ];
     }
     console.log("Casillas seleccionadas:", newSelectedMovementPositions);
-    onSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
+    setSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
   };
 
   return (
@@ -104,43 +179,46 @@ export default function GameBoard({ boxes, onSelectMovementPosition, selectMovem
         }
         .animate-fast-pulse {
           animation: fast-pulse 0.3s ease-in-out 3;
-        }
-      `}</style>
-      {/* <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
-        {mockBoxes.length > 0 &&
-          mockBoxes.map((row, rowIndex) =>
-            row.map((box, colIndex) => (
-              <div
-                data-testid={`box-${box.pos_x}-${box.pos_y}`}
-                key={`${rowIndex}-${colIndex}`}
-                className={`relative overflow-hidden rounded w-full h-full ${getColorBox(box.color)} ${box.highlighted ? `${activeAnimation}` : ''}`}
-                style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
-              >
-              </div>
-            ))
-          )}
-      </div> */}
+        }`}
+      </style>
       <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
-      {boxes.length > 0 &&
-        boxes.map((row, rowIndex) =>
-          row.map((box, colIndex) => {
-            const isSelectedMovement = selectedMovementPositions.some(
-              (pos) => pos.x === box.pos_x && pos.y === box.pos_y
-            );
+        {mockData.boxes.length > 0 &&
+          mockData.boxes.map((row, rowIndex) =>
+            row.map((box, colIndex) => {
+              // Check if the current box is in the selectedBoardFigure
+              const isSelectedFigure = selectedBoardFigure.some(
+                (selectedBox) =>
+                  selectedBox.pos_x === box.pos_x &&
+                  selectedBox.pos_y === box.pos_y &&
+                  selectedBox.color === box.color
+              );
 
-            return (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                data-testid={`box-${box.pos_x}-${box.pos_y}`}
-                className={`rounded w-full h-full ${getColorBox(box.color)} ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'} cursor-pointer`}
-                style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
-                onClick={() => handleBoxClick(box)} // Manejar clic en las casillas
-              />
-            );
-          })
-        )}
-    </div>
-    </div>
-  );
+              // Check if the current box is in the selectedMovementPositions
+              const isSelectedMovement = selectedMovementPositions.some(
+                (pos) => pos.x === box.pos_x && pos.y === box.pos_y
+              );
   
+              return (
+                <button
+                  onClick={
+                    (selectedCardFigure && !selectMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
+                  }
+                  data-testid={`box-${box.pos_x}-${box.pos_y}`}
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`relative overflow-hidden rounded w-full h-full 
+                    ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} 
+                    ${ (box.highlighted && blockedColor!=box.color && !isSelectedFigure && currentTurn==playerId) ? 'shine-effect' : ''} 
+                    ${ isSelectedFigure ? 'animate-pulse' : '' } 
+                    ${ isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'} cursor-pointer`}
+                  style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
+                  // disabled={!((currentTurn==playerId) && selectedCardFigure && box.highlighted)}
+                >
+                </button>
+              );
+            })
+          )
+        }
+      </div>
+    </div>
+  ); 
 }

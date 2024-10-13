@@ -21,7 +21,7 @@ describe('CardsMovement Component', () => {
     { id: '2', type: 'DIAGONAL_CONT', used: false },
     { id: '3', type: 'EN_L_DERECHA', used: true }, // Carta marcada como usada
   ];
-  const mockOnSelectCard = vi.fn();
+  const mocksetSelectedMovementCard = vi.fn();
   const mockCurrentTurn = mockPlayer.id;
 
   // Test para verificar el estado de carga inicial
@@ -33,7 +33,7 @@ describe('CardsMovement Component', () => {
       <CardsMovement 
         gameId={mockGameId} 
         playerId={mockPlayer.id} 
-        onSelectCard={mockOnSelectCard} 
+        setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn} 
       />
     );
@@ -54,14 +54,15 @@ describe('CardsMovement Component', () => {
       <CardsMovement 
         gameId={mockGameId} 
         playerId={mockPlayer.id} 
-        onSelectCard={mockOnSelectCard} 
+        setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn} 
       />
     );
     
     // Espera hasta que se rendericen las cartas no usadas
     await waitFor(() => {
-      expect(screen.getAllByAltText('Carta de movimiento')).toHaveLength(2); // Verifica solo las cartas no usadas
+      expect(screen.getAllByTestId('notUsedMovementCardId')).toHaveLength(2); // Verifica solo las cartas no usadas
+      expect(screen.getByTestId('UsedMovementCardId')).toBeInTheDocument(); // Verifica que la carta usada también está presente
     });
   });
 
@@ -73,81 +74,86 @@ describe('CardsMovement Component', () => {
       <CardsMovement 
         gameId={mockGameId} 
         playerId={mockPlayer.id} 
-        onSelectCard={mockOnSelectCard} 
+        setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn} 
       />
     );
 
     // Espera hasta que se rendericen las cartas
     await waitFor(() => {
-      expect(screen.getAllByAltText('Carta de movimiento')).toHaveLength(2);
+      expect(screen.getAllByTestId('notUsedMovementCardId')).toHaveLength(2);
     });
 
-    const firstCard = screen.getAllByAltText('Carta de movimiento')[0];
+    const firstCard = screen.getAllByTestId('notUsedMovementCardId')[0];
 
     // Simula el clic en la primera carta
     fireEvent.click(firstCard);
 
-    // Verifica que la función onSelectCard fue llamada con la carta correcta
-    expect(mockOnSelectCard).toHaveBeenCalledWith(mockCards[0]);
+    // Verifica que la función setSelectedMovementCard fue llamada con la carta correcta
+    expect(mocksetSelectedMovementCard).toHaveBeenCalledWith(mockCards[0]);
   });
 
   // Test para verificar que no se puede seleccionar una carta si no es el turno del jugador
   it('does not allow selecting a card if it is not the current player\'s turn', async () => {
-    const mockOnSelectCard = vi.fn();
+    const mocksetSelectedMovementCard = vi.fn();
   
     // Configura el mock para devolver las cartas mockeadas
     getDeckMovement.mockResolvedValueOnce(mockCards);
   
-    // Renderiza el componente y pasa una función mock para onSelectCard
+    // Renderiza el componente y pasa una función mock para setSelectedMovementCard
     render(
       <CardsMovement
         gameId={mockGameId}
         playerId={mockPlayer.id}
         currentTurn={'2'} // No es el turno del jugador
-        onSelectCard={mockOnSelectCard}
+        setSelectedMovementCard={mocksetSelectedMovementCard}
       />
     );
   
     // Espera hasta que las cartas se rendericen
     await waitFor(() => {
-      expect(screen.getAllByAltText('Carta de movimiento')).toHaveLength(2);
+      expect(screen.getAllByTestId('notUsedMovementCardId')).toHaveLength(2);
     });
   
-    // Obtiene todas las cartas con el alt text 'Carta de movimiento'
-    const cards = screen.getAllByAltText('Carta de movimiento');
+    // Obtiene todas las cartas no usadas
+    const firstCard = screen.getAllByTestId('notUsedMovementCardId')[0];
   
     // Simula el click en la primera carta no usada
-    fireEvent.click(cards[0]); // Cambia aquí para seleccionar la carta específica
+    fireEvent.click(firstCard);
   
-    // Verifica que onSelectCard no fue llamado ya que no es el turno del jugador
-    expect(mockOnSelectCard).not.toHaveBeenCalled();
+    // Verifica que setSelectedMovementCard no fue llamado ya que no es el turno del jugador
+    expect(mocksetSelectedMovementCard).not.toHaveBeenCalled();
   });
+
+  // Test para verificar que no se puede seleccionar una carta si no es el turno del jugador
+  it('does not allow selecting a card if it is not the current player\'s turn', async () => {
+    const mocksetSelectedMovementCard = vi.fn();
   
+    // Configura el mock para devolver las cartas mockeadas
+    getDeckMovement.mockResolvedValueOnce(mockCards);
   
-  // it('does not allow selecting a card if it is not the current player\'s turn', async () => {
-  //   getDeckMovement.mockResolvedValueOnce(mockCards);
-
-  //   render(
-  //     <CardsMovement 
-  //       gameId={mockGameId} 
-  //       playerId={mockPlayer.id} 
-  //       onSelectCard={mockOnSelectCard} 
-  //       currentTurn={'2'} // Simula que el turno es de otro jugador
-  //     />
-  //   );
-
-  //   // Espera hasta que se rendericen las cartas
-  //   await waitFor(() => {
-  //     expect(screen.getAllByAltText('Carta de movimiento')).toHaveLength(2);
-  //   });
-
-  //   const firstCard = screen.getAllByAltText('Carta de movimiento')[0];
-
-  //   // Simula el clic en la primera carta
-  //   fireEvent.click(firstCard);
-
-  //   // Verifica que onSelectCard no fue llamado ya que no es el turno del jugador
-  //   expect(mockOnSelectCard).not.toHaveBeenCalled();
-  // });
+    // Renderiza el componente y pasa una función mock para setSelectedMovementCard
+    render(
+      <CardsMovement
+        gameId={mockGameId}
+        playerId={mockPlayer.id}
+        currentTurn={'2'} // No es el turno del jugador
+        setSelectedMovementCard={mocksetSelectedMovementCard}
+      />
+    );
+  
+    // Espera hasta que las cartas se rendericen
+    await waitFor(() => {
+      expect(screen.getAllByTestId('notUsedMovementCardId')).toHaveLength(2);
+    });
+  
+    // Obtiene todas las cartas con el data-testid 'notUsedMovementCardId'
+    const cards = screen.getAllByTestId('notUsedMovementCardId');
+  
+    // Simula el click en la primera carta no usada
+    fireEvent.click(cards[0]);
+  
+    // Verifica que setSelectedMovementCard no fue llamado ya que no es el turno del jugador
+    expect(mocksetSelectedMovementCard).not.toHaveBeenCalled();
+  });
 });

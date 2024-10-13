@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button.jsx";
-import { useGameContext } from "@/context/GameContext"; 
+import { useGameContext } from "@/context/GameContext";
 import { pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
+import {FaCheck} from 'react-icons/fa'
 
-
-const EndTurnButton = ({gameId, currentTurn}) => {
+const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, resetMovement }) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId } = useGameContext();
-  
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     if (currentTurn===playerId) {
@@ -20,9 +19,11 @@ const EndTurnButton = ({gameId, currentTurn}) => {
 
   // Conexion con socket
   useEndTurnSocket(gameId, playerId, setIsButtonActive);
-  
+
   // Manejar la lógica para terminar el turno
   const onHandleEndTurn = async () => {
+    resetFigureSelection();
+    resetMovement();
     setLoading(true);
     try {
       const res = await pathEndTurn(gameId); // Llama al endpoint para finalizar el turno
@@ -39,13 +40,18 @@ const EndTurnButton = ({gameId, currentTurn}) => {
   };
 
   return (
-    <Button
-      className="bg-green-500 hover:bg-green-600"
-      disabled={!isButtonActive || loading} // Deshabilitar si no es el turno del jugador o está cargando
-      onClick={onHandleEndTurn}
-    >
-      {loading ? "Terminando..." : "Terminar Turno"}
-    </Button>
+    <div className="relative">
+      <button data-testid='endTurnButtonId' onClick={onHandleEndTurn} onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)} className={`text-white ${isButtonActive ? 'hover:scale-110 transition-transform' : 'opacity-50'}`}
+      disabled={!isButtonActive || loading}>
+            <FaCheck size={28} />
+      </button>
+      {showTooltip && (
+        <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
+            Finalizar turno
+        </div>
+      )}
+    </div>
   );
 };
 

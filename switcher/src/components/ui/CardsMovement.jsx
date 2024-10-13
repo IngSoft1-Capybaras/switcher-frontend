@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { cn } from "@/lib/utils";
 import { cardImg } from '../utils/getCardImg';
 import { getDeckMovement } from '@/services/services'; 
 import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-cards_movement-socket';
+import { AnimatedGroup } from './animated-group';
 
 // Componente que representa las cartas de movimiento 
-const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, currentTurn }) => {
+const CardsMovement = ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn }) => {
   const [movementCards, setMovementCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Obtiene las cartas de movimiento del jugador
   const fetchMovementCards = async () => {
     try {
       const cards = await getDeckMovement(gameId, playerId);
@@ -24,15 +27,15 @@ const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, c
   // Obtiene las cartas de movimiento al montar el componente
   useEffect(() => {
     fetchMovementCards();
-  }, [gameId, playerId]);
+  }, [gameId, playerId, setMovementCards, setLoading]);
 
-  // Maneja la selección de cartas
+
   const handleCardSelect = (card) => {
     if (playerId !== currentTurn || card.used) {
       return; // No permite seleccionar si no es el turno del jugador o si la carta ya está usada
     }
     console.log('Carta seleccionada:', card);
-    onSelectCard(card); // Pasamos la carta seleccionada al componente padre
+    setSelectedMovementCard(card);
   };
   
   // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
@@ -42,29 +45,66 @@ const CardsMovement = ({ gameId, playerId, onSelectCard, selectedMovementCard, c
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
-      {movementCards.map((card) => {
-        const isSelected = selectedMovementCard?.id === card.id;
-
+    // <div className="">
+     <AnimatedGroup
+      className='flex flex-row justify-center items-center h-full w-full space-x-6'
+      variants={{
+        container: {
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.05,
+            },
+          },
+        },
+        item: {
+          hidden: { opacity: 0, y: 40, filter: 'blur(4px)' },
+          visible: {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            transition: {
+              duration: 1.2,
+              type: 'spring',
+              bounce: 0.3,
+            },
+          },
+        },
+      }}
+    >
+    {movementCards.map((card, index) => {
+        const isSelected = selectedMovementCard && selectedMovementCard?.id === card.id;
+        
         return (
-          <div 
-            key={card.id} 
-            className={`relative w-full h-full aspect-[2/3] rounded ${isSelected ? 'scale-105' : 'scale-100'} transition-transform duration-300 ease-in-out`} // Agregamos transición
+          <button
+            key={card.id}
+            className={cn(
+              "relative h-44 w-auto rounded-lg overflow-hidden transition-transform",
+              isSelected ? 'scale-125' : 'hover:scale-110',
+              (index === 0 && movementCards.length !== 1) ? '-rotate-12' :
+              (index === movementCards.length - 1 && movementCards.length !== 1) ? 'rotate-12' : '-translate-y-5'
+            )}
             onClick={() => handleCardSelect(card)}
             style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
           >
             {card.used ? (
-              <div className="flex items-center justify-center w-full h-full">
+              <div data-testid="UsedMovementCardId" className="flex items-center justify-center w-full h-full">
                 <span className="text-white">Carta Usada</span>
               </div>
             ) : (
-              <img src={cardImg(card.type)} alt="Carta de movimiento" className="object-cover w-full h-full" />
+              <img
+                src={cardImg(card.type)}
+                data-testid="notUsedMovementCardId"
+                alt={`Carta de movimiento ${card.type}`}
+                className="object-cover w-full h-full"
+              />
             )}
-          </div>
+          </button>
         );
       })}
-    </div>
+    </AnimatedGroup>
+  // </div>
   );
 };
-
 export default CardsMovement;

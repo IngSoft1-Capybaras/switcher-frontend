@@ -10,6 +10,12 @@ import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
 import PlayerPanel from '../components/ui/PlayerPanel';
 import Board from '../components/ui/GameBoard';
+import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
+import { fetchTurnInfo } from '@/services/services';
+import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
+import { motion } from 'framer-motion';
+import { useTurnInfoSocket } from '@/components/hooks/use-turn_info-socket';
+
 import EndTurnButton from '@/components/ui/EndShiftButton';
 import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
@@ -92,6 +98,7 @@ export default function ActiveGame() {
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard);
+  useTurnInfoSocket(gameId, setCurrentTurn);
 
   if (loading) return <div>Loading game...</div>;
 

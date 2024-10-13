@@ -7,7 +7,7 @@ const colors = ['text-red-500', 'text-blue-500', 'text-green-500', 'text-yellow-
 export default function TurnInformation({ players, activeGameId, currentTurn, setCurrentTurn }) {
   const [colorClass, setColorClass] = useState('');
 
-  useTurnInfoSocket(activeGameId, setCurrentTurn);
+  
 
   useEffect(() => {
     const randomColor = colors[Math.floor(Math.random() * colors.length)];

@@ -10,10 +10,6 @@ import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
 import PlayerPanel from '../components/ui/PlayerPanel';
 import Board from '../components/ui/GameBoard';
-import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
-import { fetchTurnInfo } from '@/services/services';
-import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
-import { motion } from 'framer-motion';
 import { useTurnInfoSocket } from '@/components/hooks/use-turn_info-socket';
 
 import EndTurnButton from '@/components/ui/EndShiftButton';
@@ -185,7 +181,7 @@ export default function ActiveGame() {
           className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-40" 
           initial={{ width: '100%' }}
           animate={{ width: '0%' }}
-          transition={{ duration: 120 }}  
+          transition={{ duration: 120 }}
         />
       )}
 

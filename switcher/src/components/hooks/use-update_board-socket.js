@@ -10,7 +10,7 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard) {
         const handleUptadeBoard = async (event) => {
             const data = JSON.parse(event.data);
 
-            if (data.type == `${activeGameId}: MOVEMENT_UPDATE`) {
+            if (data.type == `${activeGameId}:MOVEMENT_UPDATE`) {
                 fetchBoard();
             }
         }

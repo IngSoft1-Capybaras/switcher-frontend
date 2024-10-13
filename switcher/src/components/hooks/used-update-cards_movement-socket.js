@@ -13,7 +13,7 @@ export function useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCard
       const data = JSON.parse(event.data);
 
       // Verifica si el mensaje es del tipo MOVEMENT_UPDATE y pertenece al gameId correcto
-      if (data.type === `${gameId}: MOVEMENT_UPDATE`) {
+      if (data.type === `${gameId}:MOVEMENT_UPDATE`) {
         console.log("Mensaje de actualización de movimiento recibido", data);
         fetchMovementCards(); // Llama a la función para actualizar las cartas de movimiento
       }

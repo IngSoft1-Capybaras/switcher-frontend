@@ -132,21 +132,25 @@ export default function ActiveGame() {
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">
-            <Board 
-              boxes={boxes} blockedColor={blockedColor}
-              currentTurn={currentTurn} playerId={playerId} 
-              selectedCardFigure={selectedCardFigure} 
-              selectedBoardFigure={selectedBoardFigure}
-              setSelectedBoardFigure={setSelectedBoardFigure} 
-              selectMovementCard={selectedMovementCard}
-              setSelectMovementPosition={setSelectedMovementPositions} 
-              selectedMovementPositions={selectedMovementPositions}
-              />
+            {boxes?
+             <Board 
+             boxes={boxes} blockedColor={blockedColor}
+             currentTurn={currentTurn} playerId={playerId} 
+             selectedCardFigure={selectedCardFigure} 
+             selectedBoardFigure={selectedBoardFigure}
+             setSelectedBoardFigure={setSelectedBoardFigure} 
+             selectMovementCard={selectedMovementCard}
+             setSelectMovementPosition={setSelectedMovementPositions} 
+             selectedMovementPositions={selectedMovementPositions}
+             />
+          
+
+            :<>Loading...</>}
             {currentTurn !== playerId && currentTurn && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
-                {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
-              </div>
-            )}
+             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
+               {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
+             </div>
+           )}
           </div>        
         </div>
 

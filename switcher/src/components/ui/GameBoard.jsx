@@ -182,8 +182,8 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
         }`}
       </style>
       <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
-        {mockData.boxes.length > 0 &&
-          mockData.boxes.map((row, rowIndex) =>
+        {boxes.length > 0 &&
+          boxes.map((row, rowIndex) =>
             row.map((box, colIndex) => {
               // Check if the current box is in the selectedBoardFigure
               const isSelectedFigure = selectedBoardFigure.some(

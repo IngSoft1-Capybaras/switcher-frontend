@@ -80,46 +80,45 @@ const getColorBox = (color) => {
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId, 
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure, 
-                                  selectMovementCard, setSelectMovementPosition, selectedMovementPositions}) {
+                                  selectMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
+    // console.log(figuresFormed)
 
-
-    mockData.figuresFormed.forEach((figure, index) => {
+    figuresFormed.find((figure, index) => {
       boxFound = figure.find(
         (elem) => {
           const isMatch = elem.pos_x === box.pos_x &&
-                          elem.pos_y === box.pos_y &&
-                          elem.color === box.color;
+          elem.pos_y === box.pos_y &&
+          elem.color === box.color;
+          
+          // console.log(`Comparing box->${JSON.stringify(box)} with \nelem->${JSON.stringify(elem)} from figure->${index} \nisMatch->${isMatch}\n`)
           return isMatch;
         }
       );
 
-      if (boxFound) {
-        indexFigureFound = index;
-        return;
-      }
+      indexFigureFound = index;
+      return boxFound;
     });
-    //
 
     if (!boxFound) {
       console.error("Box does not belong to a valid formed figure");
       return;
     }
 
-    setSelectedBoardFigure(mockData.figuresFormed[indexFigureFound]);
+    setSelectedBoardFigure(figuresFormed[indexFigureFound]);
   };
   
-  console.log("SELECTED MOVEMENT CARD:", selectMovementCard);
+  // console.log("SELECTED MOVEMENT CARD:", selectMovementCard);
   // Manejo de clic en las casillas, Armand
   const handleSelectMovement = (box) => {
     if (!selectMovementCard) {
-      console.log("Debes seleccionar una carta de movimiento primero");
+      // console.log("Debes seleccionar una carta de movimiento primero");
       return;
     }
-    console.log("CASILLA SELECCIONADA:", box);
+    // console.log("CASILLA SELECCIONADA:", box);
     // Obtener la posición de la casilla seleccionada
     const position = { x: box.pos_x, y: box.pos_y };
   
@@ -145,7 +144,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
         position                      // nueva posicion seleccionada
       ];
     }
-    console.log("Casillas seleccionadas:", newSelectedMovementPositions);
+    // console.log("Casillas seleccionadas:", newSelectedMovementPositions);
     setSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
   };
 

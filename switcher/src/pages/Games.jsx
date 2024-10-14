@@ -36,7 +36,7 @@ const Games = () => {
     if (selectedGame) {
       joinGame(selectedGame.id, username)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           setPlayerId(res.player_id);
           navigate(`/games/lobby/${selectedGame.id}`);
         })

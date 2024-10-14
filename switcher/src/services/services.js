@@ -30,25 +30,25 @@ export async function getPlayers(gameId) {
 
 // Obtener cartas de movimiento para cada jugador
 export async function getDeckMovement(gameId, player) {
-    console.log("gameIDMov: ", gameId);
-    console.log("playerMov: ", player);
+    // console.log("gameIDMov: ", gameId);
+    // console.log("playerMov: ", player);
     const url = `${apiUrl}/deck/movement/${gameId}/${player}`;
 
     const response = await fetch(url);
-    console.log(response);
+    // console.log(response);
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("cardsMOV: ", data);
+    // console.log("cardsMOV: ", data);
     return data;
 }
 
 // Obtener cartas de figura para cada jugador
 export async function getDeckFigure(gameId, player) {
-    console.log("gameIDFig: ", gameId);
-    console.log("playerFig: ", player);
+    // console.log("gameIDFig: ", gameId);
+    // console.log("playerFig: ", player);
     const url = `${apiUrl}/deck/figure/${gameId}/${player}`;
 
     const response = await fetch(url);
@@ -58,7 +58,7 @@ export async function getDeckFigure(gameId, player) {
     }
 
     const data = await response.json();
-    console.log("cardsFIG: ", data);
+    // console.log("cardsFIG: ", data);
     return data;
 }
 
@@ -177,7 +177,7 @@ export async function getGameStatus(gameId) {
 
     try {
       const response = await fetch(url);
-      console.log("BOARD services: ",response);
+      // console.log("BOARD services: ",response);
       if (!response.ok) {
         throw new Error('Error al obtener tablero');
       }
@@ -222,12 +222,12 @@ export const playMovementCard = async ({gameId, playerId, cardId, posFrom, posTo
       pos_to: { pos: [posTo.x, posTo.y] },
       }),
     });
-    console.log(response);
+    // console.log(response);
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(`Error al jugar la carta: ${errorMessage}`);
     }
-    console.log('La Carta fue jugada exitosamente!');
+    // console.log('La Carta fue jugada exitosamente!');
   }   catch (error) {
     throw new Error(`Error al jugar la carta: ${error.message}`);
   }
@@ -300,15 +300,17 @@ export const leaveGame = async (playerId, gameId) => {
 }
 
 export const claimFigure = async (gameId, playerId, cardId, figure) => {
+  const url = `${apiUrl}/deck/figure/play_card`;
   const body = {
     game_id: gameId,
     player_id: playerId,
     card_id: cardId,
     figure: figure
   };
+  console.log(`body sent to claim figure: ${JSON.stringify(body)}`);
 
   try {
-    const response = await fetch(`${apiUrl}/deck/figure/play_card`, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },

@@ -29,6 +29,7 @@ export default function ActiveGame() {
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
+  const [figuresFormed, setFiguresFormed] = useState([]);
 
   const resetFigureSelection = () => {
     // reset selected figure states
@@ -46,7 +47,7 @@ export default function ActiveGame() {
         console.error("Received an undefined player ID.");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw err;
     }
   }, [setCurrentTurn, gameId]);
@@ -67,6 +68,8 @@ export default function ActiveGame() {
     try {
       const res = await getBoard(gameId);
       setBoxes(res.boxes);
+      console.log(res);
+      setFiguresFormed(res.formed_figures);
     } catch (err) {
       console.error("Error fetching board:", err);
     }
@@ -142,6 +145,7 @@ export default function ActiveGame() {
              selectMovementCard={selectedMovementCard}
              setSelectMovementPosition={setSelectedMovementPositions} 
              selectedMovementPositions={selectedMovementPositions}
+             figuresFormed={figuresFormed}
              />
           
 

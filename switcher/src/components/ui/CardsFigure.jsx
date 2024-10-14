@@ -11,7 +11,7 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
   const [figureCards, setFigureCards] = useState([])
 
   const handleSelectedFigure = (figure) => {
-    console.log(figure);
+    // console.log(figure);
     setSelectedCardFigure(figure)
   }
 

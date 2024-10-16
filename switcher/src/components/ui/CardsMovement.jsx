@@ -1,35 +1,48 @@
 import React, { useEffect, useState } from 'react';
+import { cn } from "@/lib/utils";
 import { cardImg } from '../utils/getCardImg';
-import { getDeckMovement } from '@/services/services';
+import { getDeckMovement } from '@/services/services'; 
+import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-cards_movement-socket';
 import { AnimatedGroup } from './animated-group';
 
+// Componente que representa las cartas de movimiento 
+const CardsMovement = ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn }) => {
+  const [movementCards, setMovementCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-// Componente que representa las cartas de movimiento
-const CardsMovement = ({gameId, playerId, movementCards, setMovementCards}) => {
-  const [loading, setLoading] = useState(true); // Estado para la carga
-  const [error, setError] = useState(null); // Estado para errores
+  // Obtiene las cartas de movimiento del jugador
+  const fetchMovementCards = async () => {
+    try {
+      const cards = await getDeckMovement(gameId, playerId);
+      setMovementCards(cards);
+    } catch (error) {
+      setError("Error al obtener las cartas de movimiento");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
-  // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
+  // Obtiene las cartas de movimiento al montar el componente
   useEffect(() => {
-    const fetchMovementCards = async () => {
-      try {
-        const cards = await getDeckMovement(gameId, playerId); // Obtiene las cartas de movimiento getDeckMovement(gameId, playerId)
-        setMovementCards(cards); // Actualiza el estado con las cartas
-      } catch (error) {
-        setError("Error al obtener las cartas de movimiento");
-        console.error(error); // Loguea el error
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchMovementCards();
   }, [gameId, playerId, setMovementCards, setLoading]);
 
-  // renderizado condicional según el estado de carga y errores
-  if (loading) return <div>Cargando cartas de movimiento...</div>; // Mensaje de carga
-  if (error) return <div>{error}</div>; // Muestra error si hay
+
+  const handleCardSelect = (card) => {
+    if (playerId !== currentTurn || card.used) {
+      return; // No permite seleccionar si no es el turno del jugador o si la carta ya está usada
+    }
+    console.log('Carta seleccionada:', card);
+    setSelectedMovementCard(card);
+  };
+  
+  // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
+  useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards);
+
+  if (loading) return <div>Cargando cartas de movimiento...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     // <div className="">
@@ -60,21 +73,38 @@ const CardsMovement = ({gameId, playerId, movementCards, setMovementCards}) => {
         },
       }}
     >
-    {movementCards.map((card,index) => (
-        <div key={card.id} className={`relative h-44 w-auto rounded ${(index==0 && movementCards.length!=1) ? '-rotate-12': (index==movementCards.length-1 && movementCards.length!=1) ? 'rotate-12' : '-translate-y-5'}`}>
-            {card.used ? (
-                <div data-testid='UsedMovementCardId' className="flex items-center justify-center w-full h-full">
-                    <span className="text-white">Carta Usada</span>
-                </div>
-            ) : (
-                <img src={cardImg(card.type)} data-testid='notUsedMovementCardId' alt="Carta de movimiento" className="object-cover w-full h-full" />
+    {movementCards.map((card, index) => {
+        const isSelected = selectedMovementCard && selectedMovementCard?.id === card.id;
+        
+        return (
+          <button
+            key={card.id}
+            className={cn(
+              "relative h-44 w-auto rounded-lg overflow-hidden transition-transform",
+              isSelected ? 'scale-125' : 'hover:scale-110',
+              (index === 0 && movementCards.length !== 1) ? '-rotate-12' :
+              (index === movementCards.length - 1 && movementCards.length !== 1) ? 'rotate-12' : '-translate-y-5'
             )}
-        </div>
-    ))}
-  </AnimatedGroup>
+            onClick={() => handleCardSelect(card)}
+            style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
+          >
+            {card.used ? (
+              <div data-testid="UsedMovementCardId" className="flex items-center justify-center w-full h-full">
+                <span className="text-white">Carta Usada</span>
+              </div>
+            ) : (
+              <img
+                src={cardImg(card.type)}
+                data-testid="notUsedMovementCardId"
+                alt={`Carta de movimiento ${card.type}`}
+                className="object-cover w-full h-full"
+              />
+            )}
+          </button>
+        );
+      })}
+    </AnimatedGroup>
   // </div>
-
   );
 };
-
 export default CardsMovement;

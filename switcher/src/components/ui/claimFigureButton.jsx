@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { useGameContext } from "@/context/GameContext";
 import { claimFigure } from "@/services/services";
 import { FiCheckSquare } from 'react-icons/fi';
@@ -9,14 +9,16 @@ export default function ClaimFigureButton({ gameId, cardId, figure}) {
     const [showTooltip, setShowTooltip] = useState(false);
 
     const handleClaimFigure = async () => {
+        // console.log("HOLAAAA")
         if (!gameId || !playerId) {
             console.error("No gameId or playerId")
             return;
         }
-        fetchFigureCards
+        
         try {
+            console.log(`Voy a jugar la carta ${cardId} con la figura del tablero ${JSON.stringify(figure)}`);
             const res = await claimFigure(gameId, playerId, cardId, figure);
-
+            console.log(res);
             if (!res) console.error(res)
         }
         catch (error) {

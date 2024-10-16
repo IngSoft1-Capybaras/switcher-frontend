@@ -28,27 +28,27 @@ export async function getPlayers(gameId) {
     return data;
 }
 
-// Obtener cartas de movimiento y figura para cada jugador
+// Obtener cartas de movimiento para cada jugador
 export async function getDeckMovement(gameId, player) {
-    console.log("gameIDMov: ", gameId);
-    console.log("playerMov: ", player);
+    // console.log("gameIDMov: ", gameId);
+    // console.log("playerMov: ", player);
     const url = `${apiUrl}/deck/movement/${gameId}/${player}`;
 
     const response = await fetch(url);
-    console.log(response);
+    // console.log(response);
     if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("cardsMOV: ", data);
+    // console.log("cardsMOV: ", data);
     return data;
 }
 
 // Obtener cartas de figura para cada jugador
 export async function getDeckFigure(gameId, player) {
-    console.log("gameIDFig: ", gameId);
-    console.log("playerFig: ", player);
+    // console.log("gameIDFig: ", gameId);
+    // console.log("playerFig: ", player);
     const url = `${apiUrl}/deck/figure/${gameId}/${player}`;
 
     const response = await fetch(url);
@@ -58,7 +58,7 @@ export async function getDeckFigure(gameId, player) {
     }
 
     const data = await response.json();
-    console.log("cardsFIG: ", data);
+    // console.log("cardsFIG: ", data);
     return data;
 }
 
@@ -177,8 +177,7 @@ export async function getGameStatus(gameId) {
 
     try {
       const response = await fetch(url);
-
-
+      // console.log("BOARD services: ",response);
       if (!response.ok) {
         throw new Error('Error al obtener tablero');
       }
@@ -203,15 +202,41 @@ export const fetchTurnInfo = async (activeGameId) => {
 
         const data = await response.json();
         return data;
-    }
-    catch (error) {
-        throw new Error("Error al obtener información del turno");
+    } catch (error) {
+      throw new Error(`Error al obtener información del turno ${error.message}`);
     }
 }
 
-export const undoMovement = async (gameId, playerId) => {
+export const playMovementCard = async ({gameId, playerId, cardId, posFrom, posTo}) => {
   try {
-      const response = await fetch(`${apiUrl}/deck/movement/${gameId}/${playerId}/undo_move`,
+    const response = await fetch(`${apiUrl}/deck/movement/play_card`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+      game_id: gameId,
+      player_id: playerId,
+      card_id: cardId,
+      pos_from: { pos: [posFrom.x, posFrom.y] },
+      pos_to: { pos: [posTo.x, posTo.y] },
+      }),
+    });
+    // console.log(response);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al jugar la carta: ${errorMessage}`);
+    }
+    // console.log('La Carta fue jugada exitosamente!');
+  }   catch (error) {
+    throw new Error(`Error al jugar la carta: ${error.message}`);
+  }
+};
+
+export const undoMovement = async (gameId, playerId) => {
+  const url = `${apiUrl}/deck/movement/${gameId}/${playerId}/undo_move`
+  try {
+      const response = await fetch(url,
           {
               method:`POST`,
               headers: { 'Content-Type': 'application/json' },
@@ -275,15 +300,17 @@ export const leaveGame = async (playerId, gameId) => {
 }
 
 export const claimFigure = async (gameId, playerId, cardId, figure) => {
+  const url = `${apiUrl}/deck/figure/play_card`;
   const body = {
     game_id: gameId,
     player_id: playerId,
     card_id: cardId,
     figure: figure
   };
+  console.log(`body sent to claim figure: ${JSON.stringify(body)}`);
 
   try {
-    const response = await fetch(`${apiUrl}/deck/figure/play_card`, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },

@@ -78,43 +78,75 @@ const getColorBox = (color) => {
 };
 
 
-export default function GameBoard({boxes, blockedColor, selectedCardFigure, currentTurn, playerId, selectedCardMovement, setSelectedBoardFigure, selectedBoardFigure}) {
+export default function GameBoard({boxes, blockedColor, currentTurn, playerId, 
+                                  selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure, 
+                                  selectMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
+    // console.log(figuresFormed)
 
-
-    mockData.figuresFormed.forEach((figure, index) => {
+    figuresFormed.find((figure, index) => {
       boxFound = figure.find(
         (elem) => {
           const isMatch = elem.pos_x === box.pos_x &&
-                          elem.pos_y === box.pos_y &&
-                          elem.color === box.color;
+          elem.pos_y === box.pos_y &&
+          elem.color === box.color;
+          
+          // console.log(`Comparing box->${JSON.stringify(box)} with \nelem->${JSON.stringify(elem)} from figure->${index} \nisMatch->${isMatch}\n`)
           return isMatch;
         }
       );
 
-      if (boxFound) {
-        indexFigureFound = index;
-        return;
-      }
+      indexFigureFound = index;
+      return boxFound;
     });
-    //
 
     if (!boxFound) {
       console.error("Box does not belong to a valid formed figure");
       return;
     }
 
-    setSelectedBoardFigure(mockData.figuresFormed[indexFigureFound]);
+    setSelectedBoardFigure(figuresFormed[indexFigureFound]);
   };
-
-
-  const handleSelectMovement = () => {
-    console.log("Selecciono casilla para movimiento")
-    // Armando's job
-  }
+  
+  // console.log("SELECTED MOVEMENT CARD:", selectMovementCard);
+  // Manejo de clic en las casillas, Armand
+  const handleSelectMovement = (box) => {
+    if (!selectMovementCard) {
+      // console.log("Debes seleccionar una carta de movimiento primero");
+      return;
+    }
+    // console.log("CASILLA SELECCIONADA:", box);
+    // Obtener la posición de la casilla seleccionada
+    const position = { x: box.pos_x, y: box.pos_y };
+  
+    // Verificar si la casilla ya está seleccionada
+    const isAlreadySelected = selectedMovementPositions.some(
+      (pos) => pos.x === position.x && pos.y === position.y
+    );
+  
+    let newSelectedMovementPositions; // Nuevas posiciones seleccionadas
+  
+    if (isAlreadySelected) {
+      // Si la casilla ya está seleccionada, removerla
+      newSelectedMovementPositions = selectedMovementPositions.filter(
+        (pos) => pos.x !== position.x || pos.y !== position.y
+      );
+    } else if (selectedMovementPositions.length < 2) {
+      // Si aún no se han seleccionado dos casillas, agregar la nueva casilla
+      newSelectedMovementPositions = [...selectedMovementPositions, position];
+    } else {
+      // Si ya se han seleccionado dos casillas, reemplazar la más antigua (la primera)
+      newSelectedMovementPositions = [
+        selectedMovementPositions[1],
+        position                      // nueva posicion seleccionada
+      ];
+    }
+    // console.log("Casillas seleccionadas:", newSelectedMovementPositions);
+    setSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
+  };
 
   return (
     <div className="relative flex h-[600px] w-[600px] flex-col items-center justify-center rounded-md shadow-xl border-4 border-zinc-700 bg-zinc-800 p-4">
@@ -146,11 +178,11 @@ export default function GameBoard({boxes, blockedColor, selectedCardFigure, curr
         }
         .animate-fast-pulse {
           animation: fast-pulse 0.3s ease-in-out 3;
-        }
-      `}</style>
+        }`}
+      </style>
       <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
-        {mockData.boxes.length > 0 &&
-          mockData.boxes.map((row, rowIndex) =>
+        {boxes.length > 0 &&
+          boxes.map((row, rowIndex) =>
             row.map((box, colIndex) => {
               // Check if the current box is in the selectedBoardFigure
               const isSelectedFigure = selectedBoardFigure.some(
@@ -160,20 +192,32 @@ export default function GameBoard({boxes, blockedColor, selectedCardFigure, curr
                   selectedBox.color === box.color
               );
 
-        return (
-          <button
-            onClick={(selectedCardFigure && !selectedCardMovement) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)}
-            data-testid={`box-${box.pos_x}-${box.pos_y}`}
-            key={`${rowIndex}-${colIndex}`}
-            className={`relative overflow-hidden rounded w-full h-full ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} ${(box.highlighted && blockedColor!=box.color && !isSelectedFigure && currentTurn==playerId) ? 'shine-effect' : ''} ${isSelectedFigure ? 'animate-pulse' : ''}`}
-            style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
-            disabled={!((currentTurn==playerId) && selectedCardFigure && box.highlighted)}
-          >
-          </button>
-        );
-      })
-    )}
-</div>
+              // Check if the current box is in the selectedMovementPositions
+              const isSelectedMovement = selectedMovementPositions.some(
+                (pos) => pos.x === box.pos_x && pos.y === box.pos_y
+              );
+  
+              return (
+                <button
+                  onClick={
+                    (selectedCardFigure && !selectMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
+                  }
+                  data-testid={`box-${box.pos_x}-${box.pos_y}`}
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`relative overflow-hidden rounded w-full h-full 
+                    ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} 
+                    ${ (box.highlighted && blockedColor!=box.color && !isSelectedFigure && currentTurn==playerId) ? 'shine-effect' : ''} 
+                    ${ isSelectedFigure ? 'animate-pulse' : '' } 
+                    ${ isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'} cursor-pointer`}
+                  style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
+                  // disabled={!((currentTurn==playerId) && selectedCardFigure && box.highlighted)}
+                >
+                </button>
+              );
+            })
+          )
+        }
+      </div>
     </div>
-  );
+  ); 
 }

@@ -24,6 +24,7 @@ describe("EndTurnButton", () => {
   };
 
   const mockResetFigureSelection = vi.fn();
+  const mockResetMovement = vi.fn(); // Mock para resetMovement
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,61 +39,49 @@ describe("EndTurnButton", () => {
     });
   });
 
-
   it("activates the button when it's the player's turn", async () => {
-    render(<EndTurnButton gameId="game1" currentTurn="player1" resetFigureSelection={mockResetFigureSelection}/>);
+    render(<EndTurnButton gameId="game1" currentTurn="player1" resetFigureSelection={mockResetFigureSelection} resetMovement={mockResetMovement} />);
 
     const eventData = JSON.stringify({ type: "game1:NEXT_TURN", nextPlayerId: "player1" });
 
-    // Usar act para manejar la actualización del estado
     await act(async () => {
-      // Simular la llamada al manejador de eventos
       mockSocket.addEventListener.mock.calls[0][1]({ data: eventData });
     });
 
-    // Asegurarse de que el estado del componente se haya actualizado
     await waitFor(() => {
       expect(screen.getByTestId('endTurnButtonId')).toBeEnabled();
     });
   });
 
-  // Prueba para verificar que el botón esté deshabilitado cuando no es el turno del jugador
   it("disables the button when it's not the player's turn", async () => {
-    render(<EndTurnButton gameId="game1" currentTurn="player2" resetFigureSelection={mockResetFigureSelection} />);
+    render(<EndTurnButton gameId="game1" currentTurn="player2" resetFigureSelection={mockResetFigureSelection} resetMovement={mockResetMovement} />);
 
-    // Simular el evento del socket con un jugador diferente
     const eventData = JSON.stringify({ type: "game1:NEXT_TURN", nextPlayerId: "player2" });
 
-    // Usar act para manejar la actualización del estado
     await act(async () => {
-      // Simular la llamada al manejador de eventos
       mockSocket.addEventListener.mock.calls[0][1]({ data: eventData });
     });
 
-    // Asegurarse de que el botón sigue deshabilitado
     await waitFor(() => {
       expect(screen.getByTestId('endTurnButtonId')).toBeDisabled();
     });
   });
 
-
-  it("calls pathEndTurn when the button is clicked", async () => {
-    // Mockear la respuesta de pathEndTurn
+  it("calls pathEndTurn and resets selections when the button is clicked", async () => {
     pathEndTurn.mockResolvedValue(true);
 
-    render(<EndTurnButton gameId="game1" currentTurn="player1" resetFigureSelection={mockResetFigureSelection}/>);
+    render(<EndTurnButton gameId="game1" currentTurn="player1" resetFigureSelection={mockResetFigureSelection} resetMovement={mockResetMovement} />);
 
-    // Asegurarse de que el botón esté habilitado
     await waitFor(() => {
-        expect(screen.getByTestId('endTurnButtonId')).toBeEnabled();
+      expect(screen.getByTestId('endTurnButtonId')).toBeEnabled();
     });
 
-    // Simular el clic en el botón usando fireEvent
     await act(async () => {
-        fireEvent.click(screen.getByTestId('endTurnButtonId'));
+      fireEvent.click(screen.getByTestId('endTurnButtonId'));
     });
 
-    // Verificar que pathEndTurn haya sido llamada
     expect(pathEndTurn).toHaveBeenCalledWith("game1");
+    expect(mockResetFigureSelection).toHaveBeenCalled(); // Verificar que se llame a resetFigureSelection
+    expect(mockResetMovement).toHaveBeenCalled(); // Verificar que se llame a resetMovement
   });
 });

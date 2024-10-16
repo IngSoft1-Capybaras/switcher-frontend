@@ -4,14 +4,15 @@ import { pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 import {FaCheck} from 'react-icons/fa'
 
-const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection}) => {
+const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, resetMovement }) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId } = useGameContext();
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    if (currentTurn==playerId) {
+    if (currentTurn===playerId) {
+      // console.log("ES MI TURNO");
       setIsButtonActive(true);
     }
   }, [currentTurn, playerId]);
@@ -22,13 +23,14 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection})
   // Manejar la lógica para terminar el turno
   const onHandleEndTurn = async () => {
     resetFigureSelection();
+    resetMovement();
     setLoading(true);
     try {
       const res = await pathEndTurn(gameId); // Llama al endpoint para finalizar el turno
       if (!res) {
         console.error("Error actualizando el turno");
       }
-      console.log("Turno finalizado", res);
+      // console.log("Turno finalizado", res);
       setIsButtonActive(false); // Desactiva el botón después de terminar el turno
     } catch (error) {
       console.error("Error al terminar el turno", error);

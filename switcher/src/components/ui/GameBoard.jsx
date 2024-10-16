@@ -78,8 +78,8 @@ const getColorBox = (color) => {
 };
 
 
-export default function GameBoard({boxes, blockedColor, currentTurn, playerId, 
-                                  selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure, 
+export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
+                                  selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
                                   selectMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed}) {
 
   const handleSelectFigure = (box) => {
@@ -93,7 +93,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
           const isMatch = elem.pos_x === box.pos_x &&
           elem.pos_y === box.pos_y &&
           elem.color === box.color;
-          
+
           // console.log(`Comparing box->${JSON.stringify(box)} with \nelem->${JSON.stringify(elem)} from figure->${index} \nisMatch->${isMatch}\n`)
           return isMatch;
         }
@@ -110,7 +110,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
 
     setSelectedBoardFigure(figuresFormed[indexFigureFound]);
   };
-  
+
   // console.log("SELECTED MOVEMENT CARD:", selectMovementCard);
   // Manejo de clic en las casillas, Armand
   const handleSelectMovement = (box) => {
@@ -121,14 +121,14 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
     // console.log("CASILLA SELECCIONADA:", box);
     // Obtener la posición de la casilla seleccionada
     const position = { x: box.pos_x, y: box.pos_y };
-  
+
     // Verificar si la casilla ya está seleccionada
     const isAlreadySelected = selectedMovementPositions.some(
       (pos) => pos.x === position.x && pos.y === position.y
     );
-  
+
     let newSelectedMovementPositions; // Nuevas posiciones seleccionadas
-  
+
     if (isAlreadySelected) {
       // Si la casilla ya está seleccionada, removerla
       newSelectedMovementPositions = selectedMovementPositions.filter(
@@ -196,7 +196,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
               const isSelectedMovement = selectedMovementPositions.some(
                 (pos) => pos.x === box.pos_x && pos.y === box.pos_y
               );
-  
+
               return (
                 <button
                   onClick={
@@ -204,20 +204,21 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                   }
                   data-testid={`box-${box.pos_x}-${box.pos_y}`}
                   key={`${rowIndex}-${colIndex}`}
-                  className={`relative overflow-hidden rounded w-full h-full 
-                    ${blockedColor==box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)} 
-                    ${ (box.highlighted && blockedColor!=box.color && !isSelectedFigure && currentTurn==playerId) ? 'shine-effect' : ''} 
-                    ${ isSelectedFigure ? 'animate-pulse' : '' } 
-                    ${ isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'} cursor-pointer`}
+                  className={`relative overflow-hidden rounded w-full h-full
+                    ${blockedColor == box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)}
+                    ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId) ? 'shine-effect' : ''}
+                    ${isSelectedFigure ? 'animate-pulse' : ''}
+                    ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
+                    ${(!selectedCardFigure || !selectMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}
                   style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
-                  // disabled={!((currentTurn==playerId) && selectedCardFigure && box.highlighted)}
                 >
                 </button>
+
               );
             })
           )
         }
       </div>
     </div>
-  ); 
+  );
 }

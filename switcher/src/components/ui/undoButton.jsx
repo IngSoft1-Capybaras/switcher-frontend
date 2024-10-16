@@ -6,6 +6,7 @@ import { undoMovement } from "@/services/services";
 export default function UndoButton({ gameId, currentTurn }) {
     const { playerId } = useGameContext();
     const [error, setError] = useState(null);
+    const [showError, setShowError] = useState(false);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
 
@@ -17,21 +18,31 @@ export default function UndoButton({ gameId, currentTurn }) {
         }
     }, [currentTurn, playerId]);
 
+    const handleError = (errorMessage) => {
+        console.error(errorMessage);
+        setError(errorMessage);
+        setShowError(true);
+        setTimeout(() => {
+            setShowError(false);
+            setError(null);
+        }, 1000)
+    }
+
     const onUndoMovement = async () => {
         if (!gameId || !playerId) {
-            setError(`Error al deshacer movimiento:`);
+            handleError(`Error al deshacer movimiento: (!gameId || !playerId)`);
             return;
         }
 
         try {
             await undoMovement(gameId, playerId);
         } catch (error) {
-            setError(error.message);
+            handleError(`Error al deshacer movimiento: No hay movimientos que deshacer`);
         }
     };
 
     return (
-        <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
+        <div className="relative">
             <button
                 data-testid='undoButtonId'
                 onClick={onUndoMovement}
@@ -49,7 +60,11 @@ export default function UndoButton({ gameId, currentTurn }) {
                 </div>
             )}
 
-            {error && <p>{error}</p>}
+            {showError && (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white p-4 rounded shadow-md z-50">
+                    {error}
+                </div>
+            )}
         </div>
     );
 }

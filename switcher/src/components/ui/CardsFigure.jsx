@@ -5,14 +5,16 @@ import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
 
-export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name}) {
+export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name, resetMovement}) {
 
   const [loading, setLoading] = useState(true)
   const [figureCards, setFigureCards] = useState([])
 
   const handleSelectedFigure = (figure) => {
     // console.log(figure);
-    setSelectedCardFigure(figure)
+    console.log('CartaFigure seleccionada:', figure);
+    setSelectedCardFigure(figure);
+    resetMovement();
   }
 
   const fetchFigureCards = useCallback(async () => {

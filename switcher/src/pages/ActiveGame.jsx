@@ -31,11 +31,6 @@ export default function ActiveGame() {
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
   const [figuresFormed, setFiguresFormed] = useState([]);
 
-  const resetFigureSelection = () => {
-    // reset selected figure states
-    setSelectedBoardFigure([]);
-    setSelectedCardFigure(null);
-  }
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -75,18 +70,35 @@ export default function ActiveGame() {
     }
   }, [gameId, setBoxes]);
   
-  // Función para resetear el estado de las cartas y posiciones seleccionadas
-  const resetMovement = useCallback(() => {
+  const resetFigureSelection = () => {
+    // reset selected figure states
+    setSelectedBoardFigure([]);
+    setSelectedCardFigure(null);
+    console.log('reset cardFigureSelect:', selectedCardFigure);
+    console.log('reset boardFigureSelect:', selectedBoardFigure);
+  }
+
+  const resetMovement = () => {
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
-  }, []);
+    console.log('reset cardMovementSelect:', selectedMovementCard);
+    console.log('reset cardPositionsSelect:', selectedMovementPositions);
+  }
 
-  // Resetear estados cuando cambie el turno del jugador
-  useEffect(() => {
-    if (currentTurn !== playerId && gameId) {
-      resetMovement();  // Resetea si cambia el turno
-    }
-  }, [gameId, currentTurn, playerId, resetMovement]);
+  // Función para resetear el estado de las cartas y posiciones seleccionadas
+  // const resetMovement = useCallback(() => {
+  //   setSelectedMovementCard(null);
+  //   setSelectedMovementPositions([]);
+  //   console.log('reset cardMovementSelect:', selectedMovementCard);
+  //   console.log('reset cardPositionsSelect:', selectedMovementPositions);
+  // }, []);
+
+  // // Resetear estados cuando cambie el turno del jugador
+  // useEffect(() => {
+  //   if (currentTurn !== playerId && gameId) {
+  //     resetMovement();  // Resetea si cambia el turno
+  //   }
+  // }, [gameId, currentTurn, playerId, resetMovement]);
 
   useEffect(() => {
     fetchPlayers();
@@ -169,6 +181,7 @@ export default function ActiveGame() {
                 setSelectedMovementCard={setSelectedMovementCard}
                 selectMovementCard={selectedMovementCard}
                 currentTurn={currentTurn}
+                resetFigureSelection={resetFigureSelection}
                 />
             </div>
             <div className="flex-grow">
@@ -177,6 +190,7 @@ export default function ActiveGame() {
                 playerId={playerId}
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}
+                resetMovement={resetMovement}
               />
             </div>
           </div>

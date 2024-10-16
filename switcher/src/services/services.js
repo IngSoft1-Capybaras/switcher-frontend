@@ -320,7 +320,7 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
       throw new Error(`Error al reclamar figura: ${errorMessage}`);
     }
     return response.json();
-  } 
+  }
   catch (error) {
     throw new Error(`Error al reclamar figura: ${error.message}`);
   }

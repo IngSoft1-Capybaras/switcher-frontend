@@ -80,7 +80,7 @@ const getColorBox = (color) => {
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
-                                  selectMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed}) {
+                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
@@ -111,10 +111,10 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
     setSelectedBoardFigure(figuresFormed[indexFigureFound]);
   };
 
-  // console.log("SELECTED MOVEMENT CARD:", selectMovementCard);
+  // console.log("SELECTED MOVEMENT CARD:", selectedMovementCard);
   // Manejo de clic en las casillas, Armand
   const handleSelectMovement = (box) => {
-    if (!selectMovementCard) {
+    if (!selectedMovementCard) {
       // console.log("Debes seleccionar una carta de movimiento primero");
       return;
     }
@@ -200,7 +200,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
               return (
                 <button
                   onClick={
-                    (selectedCardFigure && !selectMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
+                    (selectedCardFigure && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
                   }
                   data-testid={`box-${box.pos_x}-${box.pos_y}`}
                   key={`${rowIndex}-${colIndex}`}
@@ -209,7 +209,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                     ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId) ? 'shine-effect' : ''}
                     ${isSelectedFigure ? 'animate-pulse' : ''}
                     ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
-                    ${(!selectedCardFigure || !selectMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}
+                    ${(!selectedCardFigure && !selectedMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}
                   style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
                 >
                 </button>

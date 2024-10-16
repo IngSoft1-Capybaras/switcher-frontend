@@ -74,7 +74,7 @@ export default function ActiveGame() {
       console.error("Error fetching board:", err);
     }
   }, [gameId, setBoxes]);
-  
+
   // Función para resetear el estado de las cartas y posiciones seleccionadas
   const resetMovement = useCallback(() => {
     setSelectedMovementCard(null);
@@ -102,7 +102,7 @@ export default function ActiveGame() {
   if (loading) return <div>Loading game...</div>;
 
   const otherPlayers = players.filter(p => p.id !== playerId);
-  
+
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
       {/* Other Player Panels */}
@@ -115,7 +115,7 @@ export default function ActiveGame() {
               name={player.name}
               setSelectedCardFigure={setSelectedCardFigure}
               selectedCardFigure={selectedCardFigure}
-              
+
             />
             {currentTurn === player.id && (
               <motion.div
@@ -123,7 +123,7 @@ export default function ActiveGame() {
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
                 transition={{ duration: 120 }}
-                
+
               />
             )}
           </div>
@@ -136,18 +136,18 @@ export default function ActiveGame() {
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">
             {boxes?
-             <Board 
+             <Board
              boxes={boxes} blockedColor={blockedColor}
-             currentTurn={currentTurn} playerId={playerId} 
-             selectedCardFigure={selectedCardFigure} 
+             currentTurn={currentTurn} playerId={playerId}
+             selectedCardFigure={selectedCardFigure}
              selectedBoardFigure={selectedBoardFigure}
-             setSelectedBoardFigure={setSelectedBoardFigure} 
-             selectMovementCard={selectedMovementCard}
-             setSelectMovementPosition={setSelectedMovementPositions} 
+             setSelectedBoardFigure={setSelectedBoardFigure}
+             selectedMovementCard={selectedMovementCard}
+             setSelectMovementPosition={setSelectedMovementPositions}
              selectedMovementPositions={selectedMovementPositions}
              figuresFormed={figuresFormed}
              />
-          
+
 
             :<>Loading...</>}
             {currentTurn !== playerId && currentTurn && (
@@ -155,7 +155,7 @@ export default function ActiveGame() {
                {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
              </div>
            )}
-          </div>        
+          </div>
         </div>
 
         {/* Right-side Panel: Turn Info and Your Cards */}
@@ -163,11 +163,11 @@ export default function ActiveGame() {
           <div className="border-2 border-zinc-700 bg-zinc-900 text-white p-4 rounded-md flex flex-col h-full w-[600px]">
             <h2 className="text-xl text-center mb-10">Tus cartas</h2>
             <div className="flex-grow">
-              <CardsMovement 
-                gameId={gameId} 
-                playerId={playerId} 
+              <CardsMovement
+                gameId={gameId}
+                playerId={playerId}
                 setSelectedMovementCard={setSelectedMovementCard}
-                selectMovementCard={selectedMovementCard}
+                selectedMovementCard={selectedMovementCard}
                 currentTurn={currentTurn}
                 />
             </div>
@@ -183,10 +183,10 @@ export default function ActiveGame() {
         </div>
       </div>
 
-      
+
       {currentTurn === playerId && (
         <motion.div
-          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-40" 
+          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-40"
           initial={{ width: '100%' }}
           animate={{ width: '0%' }}
           transition={{ duration: 120 }}
@@ -194,18 +194,18 @@ export default function ActiveGame() {
       )}
 
       <motion.div
-        className="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-zinc-800 p-4 z-40"  
+        className="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-zinc-800 p-4 z-40"
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        
+
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement}/>
         <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure}/>
         <UndoButton gameId={gameId} currentTurn={currentTurn} />
         <LeaveButton gameId={gameId} />
-        <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn} 
-          selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions} 
+        <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}
+          selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
           resetMov={resetMovement}
           />
       </motion.div>

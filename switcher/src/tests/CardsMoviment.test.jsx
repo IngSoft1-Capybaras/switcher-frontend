@@ -23,6 +23,7 @@ describe('CardsMovement Component', () => {
   ];
   const mocksetSelectedMovementCard = vi.fn();
   const mockCurrentTurn = mockPlayer.id;
+  const mockResetFigureSelection = vi.fn();
 
   // Test para verificar el estado de carga inicial
   it('renders loading state initially', async () => {
@@ -34,7 +35,8 @@ describe('CardsMovement Component', () => {
         gameId={mockGameId} 
         playerId={mockPlayer.id} 
         setSelectedMovementCard={mocksetSelectedMovementCard} 
-        currentTurn={mockCurrentTurn} 
+        currentTurn={mockCurrentTurn}
+        resetFigureSelection={mockResetFigureSelection}
       />
     );
 
@@ -56,6 +58,7 @@ describe('CardsMovement Component', () => {
         playerId={mockPlayer.id} 
         setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn} 
+        resetFigureSelection={mockResetFigureSelection}
       />
     );
     
@@ -75,7 +78,8 @@ describe('CardsMovement Component', () => {
         gameId={mockGameId} 
         playerId={mockPlayer.id} 
         setSelectedMovementCard={mocksetSelectedMovementCard} 
-        currentTurn={mockCurrentTurn} 
+        currentTurn={mockCurrentTurn}
+        resetFigureSelection={mockResetFigureSelection}
       />
     );
 
@@ -107,6 +111,7 @@ describe('CardsMovement Component', () => {
         playerId={mockPlayer.id}
         currentTurn={'2'} // No es el turno del jugador
         setSelectedMovementCard={mocksetSelectedMovementCard}
+        resetFigureSelection={mockResetFigureSelection}
       />
     );
   
@@ -139,6 +144,7 @@ describe('CardsMovement Component', () => {
         playerId={mockPlayer.id}
         currentTurn={'2'} // No es el turno del jugador
         setSelectedMovementCard={mocksetSelectedMovementCard}
+        resetFigureSelection={mockResetFigureSelection}
       />
     );
   

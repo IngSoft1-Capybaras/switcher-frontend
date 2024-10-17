@@ -107,18 +107,17 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
       console.error("Box does not belong to a valid formed figure");
       return;
     }
-
+    console.log("FIGURA SELECCIONADA:", figuresFormed[indexFigureFound]);
     setSelectedBoardFigure(figuresFormed[indexFigureFound]);
   };
-
-  // console.log("SELECTED MOVEMENT CARD:", selectedMovementCard);
-  // Manejo de clic en las casillas, Armand
+  
+  // Manejo de clic en las casillas
   const handleSelectMovement = (box) => {
     if (!selectedMovementCard) {
       // console.log("Debes seleccionar una carta de movimiento primero");
       return;
     }
-    // console.log("CASILLA SELECCIONADA:", box);
+    console.log("CASILLA SELECCIONADA:", box);
     // Obtener la posición de la casilla seleccionada
     const position = { x: box.pos_x, y: box.pos_y };
 

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '@/context/GameContext';
 import { joinGame } from '../services/services';
+import { PageFilter } from '@/components/ui/pageFilter';
 
 const Games = () => {
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ const Games = () => {
           >
             Crear partida
           </button>
+
           <button
                 onClick={handleJoinGame}
                 disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
@@ -77,6 +79,9 @@ const Games = () => {
               >
                 Jugar
           </button>
+
+          <PageFilter/>
+
         </div>
         <GamesList
           games={games}

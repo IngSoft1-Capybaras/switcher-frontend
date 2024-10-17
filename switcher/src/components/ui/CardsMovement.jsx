@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { cardImg } from '../utils/getCardImg';
-import { getDeckMovement } from '@/services/services'; 
+import { getDeckMovement } from '@/services/services';
 import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-cards_movement-socket';
 import { AnimatedGroup } from './animated-group';
 
-// Componente que representa las cartas de movimiento 
+// Componente que representa las cartas de movimiento
 export default function CardsMovement ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn, resetFigureSelection}) {
 
   const [movementCards, setMovementCards] = useState([]);
@@ -39,7 +39,7 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
     setSelectedMovementCard(card);
     resetFigureSelection();
   };
-  
+
   // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
   useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards);
 
@@ -77,7 +77,7 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
     >
     {movementCards.map((card, index) => {
         const isSelected = selectedMovementCard && selectedMovementCard?.id === card.id;
-        
+
         return (
           <button
             key={card.id}

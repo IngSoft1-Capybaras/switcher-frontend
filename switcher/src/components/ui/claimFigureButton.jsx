@@ -7,23 +7,37 @@ import { FiCheckSquare } from 'react-icons/fi';
 export default function ClaimFigureButton({ gameId, cardId, figure}) {
     const { playerId, currentTurn } = useGameContext();
     const [showTooltip, setShowTooltip] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleError = (errorMessage) => {
+        console.error(errorMessage);
+        setError(errorMessage);
+        setShowError(true);
+        setTimeout(() => {
+            setShowError(false);
+            setError(null);
+        }, 1000)
+    }
 
     const handleClaimFigure = async () => {
         // console.log("HOLAAAA")
         if (!gameId || !playerId) {
-            console.error("No gameId or playerId")
+            handleError("No gameId or playerId")
             return;
         }
-        
+
         try {
             console.log(`Voy a jugar la carta ${cardId} con la figura del tablero ${JSON.stringify(figure)}`);
             const res = await claimFigure(gameId, playerId, cardId, figure);
-            console.log(res);
-            if (!res) console.error(res)
+
+            if(!res.ok){
+                handleError('Figura inválida');
+            }
+
         }
         catch (error) {
-            // setError(error.message);
-            console.error(error)
+            handleError(error.message);
         }
     };
 
@@ -45,6 +59,12 @@ export default function ClaimFigureButton({ gameId, cardId, figure}) {
             {showTooltip && (
                 <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
                     Reclamar figura
+                </div>
+            )}
+
+            {showError && (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white p-4 rounded shadow-md z-50">
+                    {error}
                 </div>
             )}
         </div>

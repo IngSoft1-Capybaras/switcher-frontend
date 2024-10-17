@@ -7,19 +7,31 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+import { useState } from "react"
+
+
 export function PageFilter() {
+
+  const [isOpen, setIsOpen] = useState(false);
+
+
+  const handleFilterInfoSubmit = () => {
+    console.log(formData);
+    setIsOpen(false);
+  }
+
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button className="bg-slate-600" variant="outline">Filtar Partida</Button>
+        <Button onClick={() => setIsOpen(true)} className="bg-slate-600" variant="outline">Filtar Partida</Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-80">
-        <div className="grid gap-4">
+      <PopoverContent className="w-90">
+        <form className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">Dimensions</h4>
+            <h4 className="font-medium leading-none">Filtrar Partida</h4>
             <p className="text-sm text-muted-foreground">
-              Set the dimensions for the layer.
+              Filtrar por Nombre y/o número de jugadores
             </p>
           </div>
           <div className="grid gap-2">
@@ -39,24 +51,10 @@ export function PageFilter() {
                 className="col-span-2 h-8"
               />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Height</Label>
-              <Input
-                id="height"
-                defaultValue="25px"
-                className="col-span-2 h-8"
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Max. height</Label>
-              <Input
-                id="maxHeight"
-                defaultValue="none"
-                className="col-span-2 h-8"
-              />
-            </div>
           </div>
-        </div>
+
+          <button type="submit">Filtrar</button>
+        </form>
       </PopoverContent>
     </Popover>
   )

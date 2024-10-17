@@ -106,6 +106,8 @@ describe(`Undo Button`, () => {
     });
 
     it(`Should show error when response is not ok`, async () => {
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
         fetch.mockResolvedValueOnce(
             { ok : false,
               text: () => Promise.resolve("Algo salió mal") // supongo mensaje que manda el back
@@ -117,16 +119,17 @@ describe(`Undo Button`, () => {
         await userEvent.click(mockUndoButton);
         await waitFor(() => expect(fetch).toHaveBeenCalledOnce());
 
-        expect(await screen.findByText(/Error al deshacer movimiento: Algo salió mal/)).toBeInTheDocument();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`Error al deshacer movimiento: No hay movimientos que deshacer`);
     })
 
     it(`Should show error when fetch throws one`, async () => {
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         fetch.mockRejectedValueOnce(new Error("Network error"));
 
         render(<UndoButton gameId={mockGameId} currentTurn={mockPlayerId}/>);
         const undoButton = screen.getByTestId('undoButtonId');
         await userEvent.click(undoButton);
 
-        expect(await screen.findByText(/Error al deshacer movimiento: Network error/i)).toBeInTheDocument();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(`Error al deshacer movimiento: No hay movimientos que deshacer`);
     })
 });

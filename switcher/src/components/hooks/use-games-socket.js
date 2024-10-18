@@ -2,15 +2,15 @@ import { useSocketContext } from '@/context/SocketContext';
 import { useEffect } from 'react';
 
 export function useGameSocket(fetchGames, page) {
-  const { socket } = useSocketContext(); 
+  const { socket } = useSocketContext();
 
   useEffect(() => {
     if (!socket) return;
 
     const handleGamesListUpdate = (event) => {
-      const data = JSON.parse(event.data);  
+      const data = JSON.parse(event.data);
       if (data.type === "GAMES_LIST_UPDATE") {
-        fetchGames(page); 
+        fetchGames(page);
       }
     };
 
@@ -21,5 +21,5 @@ export function useGameSocket(fetchGames, page) {
       // Unsubscribe from WebSocket message events on cleanup
       socket.removeEventListener("message", handleGamesListUpdate);
     };
-  }, [socket, fetchGames]);  
+  }, [socket, fetchGames]);
 }

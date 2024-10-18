@@ -8,22 +8,26 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 import { filterGames } from "@/services/services"
+import { useNavigate } from "react-router-dom"
 
 export function PageFilter({ setGames }) {
   const [formData, setFormData] = useState({name:'', players:''})
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate()
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFilterInfoSubmit = async () => {
+    //e.preventDefault()
     const name = formData.name || null;
     const players = formData.players || null;
 
     try {
       const games = await filterGames(name, players);
+      console.log(games)
       setGames(games);
+      navigate(`/games/`)
     }
     catch (error) {
       console.log('hubo un error');

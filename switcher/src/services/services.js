@@ -325,3 +325,7 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
     throw new Error(`Error al reclamar figura: ${error.message}`);
   }
 }
+
+export const filterGames = async (data) => {
+
+}

@@ -80,7 +80,7 @@ const Games = () => {
                 Jugar
           </button>
 
-          <PageFilter/>
+          <PageFilter setGames={setGames}/>
 
         </div>
         <GamesList

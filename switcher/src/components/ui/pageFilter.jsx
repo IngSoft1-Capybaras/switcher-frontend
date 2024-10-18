@@ -9,7 +9,7 @@ import {
 import { useState } from "react"
 import { filterGames } from "@/services/services"
 
-export function PageFilter() {
+export function PageFilter({ setGames }) {
   const [formData, setFormData] = useState({name:'', players:''})
   const [isOpen, setIsOpen] = useState(false);
 
@@ -21,15 +21,13 @@ export function PageFilter() {
     const name = formData.name || null;
     const players = formData.players || null;
 
-
     try {
-      await filterGames(name, players);
+      const games = await filterGames(name, players);
+      setGames(games);
     }
     catch (error) {
       console.log('hubo un error');
     }
-
-
     setIsOpen(false);
   }
 

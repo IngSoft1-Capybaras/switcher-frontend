@@ -326,6 +326,37 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
   }
 }
 
-export const filterGames = async (data) => {
+export const filterGames = async (name, players) => {
 
+  const url = new URL(`${apiUrl}/games`);
+  url.searchParams.append('page', 1);
+  url.searchParams.append('limit', 1);
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
+  console.log(name);
+  console.log(players);
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
+  if (name) {
+    url.searchParams.append('name', name);
+  }
+
+  if (players) {
+    url.searchParams.append('num_players', players);
+  }
+
+  try {
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al filtrar partidas: ${errorMessage}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw new Error(`Error al filtrar partidas: ${error.message}`);
+  }
 }

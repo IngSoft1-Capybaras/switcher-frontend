@@ -19,6 +19,11 @@ export function useLobbySocket(gameId, fetchGameInfo) {
       if (data.type === `${gameId}:GAME_STARTED`) {
         navigate(`/games/ongoing/${gameId}`);
       }
+
+      // si el owner abandona el lobby, redirigir a los jugadores a la pantalla de juegos
+      if (data.type === `OWNER_LEFT`) {
+        navigate('/games');
+      }
     };
 
     // Subscribe to WebSocket message events

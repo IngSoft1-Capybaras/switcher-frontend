@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
-import { getPlayers, getBoard } from '@/services/services';
+import { getPlayers, getBoard, calculateFigures } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
@@ -20,16 +20,18 @@ import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 
 
 export default function ActiveGame() {
-  const { gameId } = useParams();
+  const { gameId, host } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [boxes, setBoxes] = useState();
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
   const [figuresFormed, setFiguresFormed] = useState([]);
+  
+  const [fetchedTurn, setFetchedTurn] = useState(null);
 
   const resetFigureSelection = () => {
     // reset selected figure states
@@ -42,6 +44,7 @@ export default function ActiveGame() {
       const newTurnData = await fetchTurnInfo(gameId);
       if (newTurnData.current_player_id) {
         setCurrentTurn(newTurnData.current_player_id);
+        setFetchedTurn(newTurnData.current_player_id); // Store fetched value
         setBlockedColor(newTurnData.blocked_color);
       } else {
         console.error("Received an undefined player ID.");
@@ -54,13 +57,11 @@ export default function ActiveGame() {
 
   const fetchPlayers = useCallback(async () => {
     try {
-      setLoading(true);
+      
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
     } catch (err) {
       console.error("Error fetching players:", err);
-    } finally {
-      setLoading(false);
     }
   }, [gameId, setPlayers]);
 
@@ -68,38 +69,53 @@ export default function ActiveGame() {
     try {
       const res = await getBoard(gameId);
       setBoxes(res.boxes);
-      console.log(res);
-      setFiguresFormed(res.formed_figures);
     } catch (err) {
       console.error("Error fetching board:", err);
     }
-  }, [gameId, setBoxes]);
+  }, [gameId]);
+  
+  
+  useEffect(() => {
+    if (boxes) {
+      console.log("BOARD UPDATED:", boxes);
+    }
+  }, [boxes]);
+  
   
   // Función para resetear el estado de las cartas y posiciones seleccionadas
   const resetMovement = useCallback(() => {
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, []);
-
-  // Resetear estados cuando cambie el turno del jugador
+  
+  
+  useEffect(() => {
+    Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
+      console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
+      if (fetchedTurn === playerId) {
+        console.log("HOLLAAAAdsfsdf");
+        calculateFigures(gameId); // highlight board figures
+      }
+    });
+  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
+  
+  
+  // Existing effect for resetting movement on turn change
   useEffect(() => {
     if (currentTurn !== playerId && gameId) {
-      resetMovement();  // Resetea si cambia el turno
+      resetMovement();  // Reset if turn changes
     }
   }, [gameId, currentTurn, playerId, resetMovement]);
-
-  useEffect(() => {
-    fetchPlayers();
-    fetchBoard();
-    getTurnInfo();
-  }, [fetchPlayers, fetchBoard, getTurnInfo]);
-
+  
+  
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard);
+  useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId);
   useTurnInfoSocket(gameId, setCurrentTurn);
+  
 
-  if (loading) return <div>Loading game...</div>;
+
+  // if (loading) return <div>Loading game...</div>;
 
   const otherPlayers = players.filter(p => p.id !== playerId);
   
@@ -149,7 +165,7 @@ export default function ActiveGame() {
              />
           
 
-            :<>Loading...</>}
+            :<>Loading board...</>}
             {currentTurn !== playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
                {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}

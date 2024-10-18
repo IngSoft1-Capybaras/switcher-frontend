@@ -325,3 +325,22 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
     throw new Error(`Error al reclamar figura: ${error.message}`);
   }
 }
+
+export const calculateFigures = async (gameId) => {
+  const url = `${apiUrl}/board/calculate_figures/${gameId}`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al calcular figuras: ${errorMessage}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw new Error(`Error al calcular figuras: ${error.message}`);
+  }
+}

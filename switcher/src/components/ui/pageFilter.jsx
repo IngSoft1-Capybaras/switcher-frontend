@@ -10,7 +10,7 @@ import { useState } from "react"
 import { filterGames } from "@/services/services"
 import { useNavigate } from "react-router-dom"
 
-export function PageFilter({ setGames }) {
+export function PageFilter( {setGames, setTotalPages}) {
   const [formData, setFormData] = useState({name:'', players:''})
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
@@ -25,9 +25,12 @@ export function PageFilter({ setGames }) {
 
     try {
       const games = await filterGames(name, players);
-      console.log(games)
-      setGames(games);
-      navigate(`/games/`)
+      console.log('PASO 1');
+      setGames(games.games);
+      console.log('PASO 2');
+      setTotalPages(games.total_pages);
+      console.log('PASO 3');
+      //navigate(`/games/`)
     }
     catch (error) {
       console.log('hubo un error');

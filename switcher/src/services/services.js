@@ -37,11 +37,6 @@ export const filterGames = async (name, players) => {
     console.log(url.toString());
   }
 
-  /*if (name && players) {
-    url = `${apiUrl}/games?page=1&limit=5&name=${name}&num_players=${players}`;
-    console.log(url);
-  }*/
-
   try {
     const response = await fetch(url.toString(), {
       method: 'GET',

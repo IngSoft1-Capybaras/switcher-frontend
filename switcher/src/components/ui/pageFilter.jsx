@@ -22,17 +22,22 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
     const name = formData.name || null;
     const players = formData.players || null;
 
-    try {
-      const games = await filterGames(name, players);
-      console.log('PASO 1');
-      setGames(games.games);
-      console.log(games.games)
-      console.log('PASO 2');
-      setTotalPages(games.total_pages);
-      console.log('PASO 3');
+    if(!name && !players){
+      setIsFiltering(false);
     }
-    catch (error) {
-      console.log('hubo un error');
+    else{
+      try {
+        const games = await filterGames(name, players);
+        console.log('PASO 1');
+        setGames(games.games);
+        console.log(games.games)
+        console.log('PASO 2');
+        setTotalPages(games.total_pages);
+        console.log('PASO 3');
+      }
+      catch (error) {
+        console.log('hubo un error');
+      }
     }
     setIsOpen(false);
   }

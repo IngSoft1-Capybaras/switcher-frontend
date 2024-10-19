@@ -40,7 +40,7 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
       console.log('hubo un error');
     }
     setIsOpen(false);
-    setIsFiltering(false);
+    //setIsFiltering(false);
   }
 
   return (

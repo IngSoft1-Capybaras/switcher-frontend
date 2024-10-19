@@ -23,6 +23,10 @@ const Games = () => {
     navigate('/games/create');
   };
 
+  const handleRemoveFilter =  async () => {
+    setIsFiltering(false);
+  }
+
   const fetchGames = async (page) => {
     try {
       const data = await getGames(page);
@@ -56,8 +60,10 @@ const Games = () => {
 
   // initial fetch
   useEffect(() => {
-    fetchGames(currentPage);
-  }, [currentPage]);
+    if (!isFiltering) {
+      fetchGames(currentPage);
+    }
+  }, [currentPage, isFiltering]);
 
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center bg-black space-y-20 text-white">
@@ -86,7 +92,17 @@ const Games = () => {
                 Jugar
           </button>
 
-          <PageFilter setGames={setGames} setTotalPages={setTotalPages} setIsFiltering={setIsFiltering}/>
+          <div className="flex flex-col space-y-4">
+            <PageFilter setGames={setGames} setTotalPages={setTotalPages} setIsFiltering={setIsFiltering} />
+            <button
+              disabled={!isFiltering}
+              onClick={handleRemoveFilter}
+              className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-400 transition-all duration-200"
+            >
+              Deshacer Filtros
+            </button>
+            </div>
+
 
         </div>
         <GamesList

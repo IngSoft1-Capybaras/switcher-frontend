@@ -46,46 +46,58 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button onClick={() => setIsOpen(true)} className="bg-slate-600" variant="outline">Filtar Partida</Button>
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-500 transition duration-200"
+          variant="outline"
+        >
+          Filtrar Partida
+        </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-90 bg-zinc-600">
-        <form onSubmit={handleFilterInfoSubmit} className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Filtrar Partida</h4>
-            <p className="text-sm text-muted-foreground">
-              Filtrar por Nombre y/o número de jugadores
+      <PopoverContent className="w-90 bg-zinc-800 p-6 rounded-md shadow-lg">
+        <form onSubmit={handleFilterInfoSubmit} className="grid gap-6">
+          <div className="space-y-2 text-white">
+            <h4 className="font-semibold text-lg">Filtrar Partida</h4>
+            <p className="text-sm text-gray-400">
+              Filtrar por nombre y/o número de jugadores
             </p>
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-4">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="nombrePartida">Nombre</Label>
+              <Label htmlFor="nombrePartida" className="text-white font-medium">Nombre</Label>
               <Input
                 id="nombrePartida"
-                name='name'
-                placeholder='opcional'
-                className="col-span-2 h-8"
+                name="name"
+                placeholder="Opcional"
+                className="col-span-2 h-10 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.name}
                 onChange={handleInputChange}
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="jugadoresPartida">N° jugadores</Label>
+              <Label htmlFor="jugadoresPartida" className="text-white font-medium">N° jugadores</Label>
               <Input
                 id="jugadoresPartida"
-                name='players'
-                placeholder='opcional'
-                className="col-span-2 h-8"
+                name="players"
+                placeholder="Opcional"
+                className="col-span-2 h-10 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.players}
                 onChange={handleInputChange}
               />
             </div>
           </div>
 
-          <Button type="submit">Filtrar</Button>
+          <Button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition duration-200"
+          >
+            Filtrar
+          </Button>
         </form>
       </PopoverContent>
     </Popover>
+
   )
 }

@@ -11,11 +11,13 @@ const Games = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null); // Store selected game
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
   const [loading, setLoading] = useState(true);
   const { setPlayerId, username } = useGameContext();
+
+  // Estado para que no se actualice si es que estoy filtrando, a ver si se soluciona
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const handleCreateGame = () => {
     navigate('/games/create');
@@ -24,8 +26,12 @@ const Games = () => {
   const fetchGames = async (page) => {
     try {
       const data = await getGames(page);
-      setGames(data.games);
-      setTotalPages(data.total_pages);
+      console.log('Check is filtering');
+      console.log(isFiltering);
+      if(!isFiltering){
+        setGames(data.games);
+        setTotalPages(data.total_pages);
+      }
     } catch (error) {
       console.error("Couldn't fetch games");
     } finally {
@@ -80,7 +86,7 @@ const Games = () => {
                 Jugar
           </button>
 
-          <PageFilter setGames={setGames} setTotalPages={setTotalPages}/>
+          <PageFilter setGames={setGames} setTotalPages={setTotalPages} setIsFiltering={setIsFiltering}/>
 
         </div>
         <GamesList

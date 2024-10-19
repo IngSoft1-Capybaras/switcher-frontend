@@ -7,10 +7,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState } from "react"
-import { filterGames } from "@/services/services"
+import { filterGames, getGames } from "@/services/services"
 import { useNavigate } from "react-router-dom"
 
-export function PageFilter( {setGames, setTotalPages}) {
+export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
   const [formData, setFormData] = useState({name:'', players:''})
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
@@ -18,11 +18,15 @@ export function PageFilter( {setGames, setTotalPages}) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFilterInfoSubmit = async () => {
-    //e.preventDefault()
+  const handleFilterInfoSubmit = async (e) => {
+    e.preventDefault()
+    setIsFiltering(true);
     const name = formData.name || null;
     const players = formData.players || null;
 
+    if (!name && !players) {
+      // fetchGames
+    }
     try {
       const games = await filterGames(name, players);
       console.log('PASO 1');
@@ -36,6 +40,7 @@ export function PageFilter( {setGames, setTotalPages}) {
       console.log('hubo un error');
     }
     setIsOpen(false);
+    setIsFiltering(false);
   }
 
   return (

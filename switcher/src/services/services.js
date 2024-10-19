@@ -17,7 +17,7 @@ export const filterGames = async (name, players) => {
 
   const url = new URL(`${apiUrl}/games`);
   url.searchParams.append('page', 1);
-  url.searchParams.append('limit', 1);
+  url.searchParams.append('limit', 5);
 
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
   console.log(name);

@@ -29,12 +29,10 @@ const Games = () => {
   const fetchGames = async (page, formData) => {
     try {
       const data = await getGames(page, formData, isFiltering);
-      console.log('Check is filtering');
-      console.log(isFiltering);
-      //if(!isFiltering){
+
       setGames(data.games);
       setTotalPages(data.total_pages);
-      //}
+
     } catch (error) {
       console.error("Couldn't fetch games");
     } finally {
@@ -46,7 +44,6 @@ const Games = () => {
     if (selectedGame) {
       joinGame(selectedGame.id, username)
         .then((res) => {
-          // console.log(res)
           setPlayerId(res.player_id);
           navigate(`/games/lobby/${selectedGame.id}`);
         })

@@ -1,7 +1,7 @@
 import { useSocketContext } from '@/context/SocketContext';
 import { useEffect } from 'react';
 
-export function useGameSocket(fetchGames, page) {
+export function useGameSocket(fetchGames, page, isFiltering, formData) {
   const { socket } = useSocketContext();
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export function useGameSocket(fetchGames, page) {
     const handleGamesListUpdate = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "GAMES_LIST_UPDATE") {
-        fetchGames(page);
+        fetchGames(page, formData);
       }
     };
 

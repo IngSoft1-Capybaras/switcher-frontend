@@ -7,10 +7,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState } from "react"
-import { filterGames, getGames } from "@/services/services"
 
-export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
-  const [formData, setFormData] = useState({name:'', players:''})
+export function PageFilter( {setGames, setTotalPages, setIsFiltering, formData, setFormData, fetchGames}) {
   const [isOpen, setIsOpen] = useState(false);
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,13 +25,16 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
     }
     else{
       try {
-        const games = await filterGames(name, players);
+        await fetchGames(1, formData);
+        //const games = await filterGames(name, players);
+        /*const games = await getGames(0, formData)
         console.log('PASO 1');
         setGames(games.games);
         console.log(games.games)
         console.log('PASO 2');
         setTotalPages(games.total_pages);
         console.log('PASO 3');
+        */
       }
       catch (error) {
         console.log('hubo un error');
@@ -90,6 +91,7 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
           </div>
 
           <Button
+            data-testid='submitButtonId'
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition duration-200"
           >

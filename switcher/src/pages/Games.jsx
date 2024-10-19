@@ -15,8 +15,7 @@ const Games = () => {
   const [totalPages, setTotalPages] = useState(10);
   const [loading, setLoading] = useState(true);
   const { setPlayerId, username } = useGameContext();
-
-  // Estado para que no se actualice si es que estoy filtrando, a ver si se soluciona
+  const [formData, setFormData] = useState({name:'', players:''})
   const [isFiltering, setIsFiltering] = useState(false);
 
   const handleCreateGame = () => {
@@ -27,15 +26,15 @@ const Games = () => {
     setIsFiltering(false);
   }
 
-  const fetchGames = async (page) => {
+  const fetchGames = async (page, formData) => {
     try {
-      const data = await getGames(page);
+      const data = await getGames(page, formData, isFiltering);
       console.log('Check is filtering');
       console.log(isFiltering);
-      if(!isFiltering){
-        setGames(data.games);
-        setTotalPages(data.total_pages);
-      }
+      //if(!isFiltering){
+      setGames(data.games);
+      setTotalPages(data.total_pages);
+      //}
     } catch (error) {
       console.error("Couldn't fetch games");
     } finally {
@@ -56,7 +55,7 @@ const Games = () => {
   };
 
   // games socket connection
-  useGameSocket(fetchGames, currentPage);
+  useGameSocket(fetchGames, currentPage, isFiltering, formData);
 
   // initial fetch
   useEffect(() => {
@@ -93,7 +92,7 @@ const Games = () => {
           </button>
 
           <div className="flex flex-col space-y-4">
-            <PageFilter setGames={setGames} setTotalPages={setTotalPages} setIsFiltering={setIsFiltering} />
+            <PageFilter setGames={setGames} setTotalPages={setTotalPages} setIsFiltering={setIsFiltering} formData={formData} setFormData={setFormData} fetchGames={fetchGames}/>
             <button
               disabled={!isFiltering}
               onClick={handleRemoveFilter}

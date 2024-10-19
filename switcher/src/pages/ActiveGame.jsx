@@ -63,7 +63,9 @@ export default function ActiveGame() {
   const fetchBoard = useCallback(async () => {
     try {
       const res = await getBoard(gameId);
+      console.log(res);
       setBoxes(res.boxes);
+      setFiguresFormed(res.formed_figures);
     } catch (err) {
       console.error("Error fetching board:", err);
     }
@@ -107,7 +109,7 @@ export default function ActiveGame() {
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId);
-  useTurnInfoSocket(gameId, setCurrentTurn);
+  useTurnInfoSocket(gameId, setCurrentTurn, fetchBoard);
   
 
   const otherPlayers = players.filter(p => p.id !== playerId);
@@ -212,7 +214,7 @@ export default function ActiveGame() {
       >
 
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement}/>
-        <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure}/>
+        <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure} resetFigureSelection={resetFigureSelection}/>
         <UndoButton gameId={gameId} currentTurn={currentTurn} />
         <LeaveButton gameId={gameId} />
         <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./button"; // Asegúrate de que esta importación sea correcta.
-import { playMovementCard } from "@/services/services";
+import { calculateFigures, playMovementCard } from "@/services/services";
 
 export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov}) {
     const [error, setError] = useState(null);
@@ -23,17 +23,19 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
 
         // Se asume que playMovementCard maneja errores internamente
         if (gameId && playerId && selectedCard && selectedPositions.length >= 2) {
-            try {
-                await playMovementCard({
-                    gameId: gameId,
-                    playerId: playerId,
-                    cardId: selectedCard.id,
-                    posFrom: posFrom,
-                    posTo: posTo,
-                });
+           
+            playMovementCard({
+                gameId: gameId,
+                playerId: playerId,
+                cardId: selectedCard.id,
+                posFrom: posFrom,
+                posTo: posTo,
+            }).then( (res) => {
+                calculateFigures(gameId);
                 resetMov(); // Llama a resetMov si la jugada es exitosa
                 setError(null);
-            } catch (error) {
+
+            }).catch(err=>{
                 console.error("Error al confirmar el movimiento:", error.message);
                 setError("Movimiento invalido. Por favor, intenta de nuevo."); // Muestra un mensaje de error al usuario
                 setShowError(true); // Muestra el mensaje de error
@@ -42,7 +44,9 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                     setShowError(false);
                     setError(null); // Limpiar el mensaje de error
                 }, 1000)
-            }
+            })
+
+           
         }
     };
     

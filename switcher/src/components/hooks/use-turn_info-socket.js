@@ -2,7 +2,7 @@ import { useSocketContext } from "@/context/SocketContext";
 import {useEffect} from "react";
 import { fetchTurnInfo } from "@/services/services";
 
-export function useTurnInfoSocket(activeGameId, setCurrentTurn){
+export function useTurnInfoSocket(activeGameId, setCurrentTurn, fetchBoard){
     const { socket } = useSocketContext();
 
     useEffect(() => {
@@ -13,7 +13,7 @@ export function useTurnInfoSocket(activeGameId, setCurrentTurn){
     
           if (data.type === `${activeGameId}:NEXT_TURN`) {
             const newTurnData = await fetchTurnInfo(activeGameId);
-    
+            await fetchBoard();
             if (newTurnData.current_player_id) {
               setCurrentTurn(newTurnData.current_player_id);
             } else {

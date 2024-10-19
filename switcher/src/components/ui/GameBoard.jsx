@@ -85,7 +85,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
-    // console.log(figuresFormed)
+    console.log(figuresFormed)
 
     figuresFormed.find((figure, index) => {
       boxFound = figure.find(
@@ -94,7 +94,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
           elem.pos_y === box.pos_y &&
           elem.color === box.color;
 
-          // console.log(`Comparing box->${JSON.stringify(box)} with \nelem->${JSON.stringify(elem)} from figure->${index} \nisMatch->${isMatch}\n`)
+          console.log(`Comparing box->${JSON.stringify(box)} with \nelem->${JSON.stringify(elem)} from figure->${index} \nisMatch->${isMatch}\n`)
           return isMatch;
         }
       );

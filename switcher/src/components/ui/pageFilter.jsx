@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 
-export function PageFilter( {setGames, setTotalPages, setIsFiltering, formData, setFormData, fetchGames}) {
+export function PageFilter( {setIsFiltering, formData, setFormData, fetchGames}) {
   const [isOpen, setIsOpen] = useState(false);
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,15 +26,6 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering, formData, 
     else{
       try {
         await fetchGames(1, formData);
-        //const games = await filterGames(name, players);
-        /*const games = await getGames(0, formData)
-        console.log('PASO 1');
-        setGames(games.games);
-        console.log(games.games)
-        console.log('PASO 2');
-        setTotalPages(games.total_pages);
-        console.log('PASO 3');
-        */
       }
       catch (error) {
         console.log('hubo un error');

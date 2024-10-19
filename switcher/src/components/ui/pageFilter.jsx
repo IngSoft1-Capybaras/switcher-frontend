@@ -22,9 +22,6 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
     const name = formData.name || null;
     const players = formData.players || null;
 
-    if (!name && !players) {
-      // fetchGames
-    }
     try {
       const games = await filterGames(name, players);
       console.log('PASO 1');

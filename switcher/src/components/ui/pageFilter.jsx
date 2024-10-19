@@ -8,12 +8,10 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 import { filterGames, getGames } from "@/services/services"
-import { useNavigate } from "react-router-dom"
 
 export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
   const [formData, setFormData] = useState({name:'', players:''})
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate()
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -34,19 +32,18 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
       console.log('PASO 2');
       setTotalPages(games.total_pages);
       console.log('PASO 3');
-      //navigate(`/games/`)
     }
     catch (error) {
       console.log('hubo un error');
     }
     setIsOpen(false);
-    //setIsFiltering(false);
   }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
+          data-testid='triggerButton'
           onClick={() => setIsOpen(true)}
           className="bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-500 transition duration-200"
           variant="outline"
@@ -55,7 +52,7 @@ export function PageFilter( {setGames, setTotalPages, setIsFiltering}) {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-90 bg-zinc-800 p-6 rounded-md shadow-lg">
+      <PopoverContent data-testid='popOverId' className="w-90 bg-zinc-800 p-6 rounded-md shadow-lg">
         <form onSubmit={handleFilterInfoSubmit} className="grid gap-6">
           <div className="space-y-2 text-white">
             <h4 className="font-semibold text-lg">Filtrar Partida</h4>

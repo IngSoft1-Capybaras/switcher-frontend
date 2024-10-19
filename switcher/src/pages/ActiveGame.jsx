@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
-import { getPlayers, getBoard } from '@/services/services';
+import { getPlayers, getBoard, calculateFigures } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
@@ -20,16 +20,18 @@ import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 
 
 export default function ActiveGame() {
-  const { gameId } = useParams();
+  const { gameId, host } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [boxes, setBoxes] = useState();
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
   const [figuresFormed, setFiguresFormed] = useState([]);
+  
+  const [fetchedTurn, setFetchedTurn] = useState(null);
 
 
   const getTurnInfo = useCallback(async () => {
@@ -37,6 +39,7 @@ export default function ActiveGame() {
       const newTurnData = await fetchTurnInfo(gameId);
       if (newTurnData.current_player_id) {
         setCurrentTurn(newTurnData.current_player_id);
+        setFetchedTurn(newTurnData.current_player_id); // Store fetched value
         setBlockedColor(newTurnData.blocked_color);
       } else {
         console.error("Received an undefined player ID.");
@@ -49,54 +52,65 @@ export default function ActiveGame() {
 
   const fetchPlayers = useCallback(async () => {
     try {
-      setLoading(true);
+      
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
     } catch (err) {
       console.error("Error fetching players:", err);
-    } finally {
-      setLoading(false);
     }
   }, [gameId, setPlayers]);
 
   const fetchBoard = useCallback(async () => {
     try {
       const res = await getBoard(gameId);
-      setBoxes(res.boxes);
       console.log(res);
+      setBoxes(res.boxes);
       setFiguresFormed(res.formed_figures);
     } catch (err) {
       console.error("Error fetching board:", err);
     }
-  }, [gameId, setBoxes]);
+  }, [gameId]);
+  
+  
 
-  // Funciónes para resetear el estado de las cartas, posiciones y figuras seleccionadas
-  const resetFigureSelection = () => {
-    setSelectedBoardFigure([]);
-    setSelectedCardFigure(null);
+  const resetFigureSelection = useCallback(() => {
     console.log('reset cardFigureSelect:', selectedCardFigure);
     console.log('reset boardFigureSelect:', selectedBoardFigure);
-  }
-
-  const resetMovement = () => {
-    setSelectedMovementCard(null);
-    setSelectedMovementPositions([]);
+    setSelectedBoardFigure([]);
+    setSelectedCardFigure(null);
+  }, [setSelectedBoardFigure, setSelectedCardFigure]); // Ensure this only depends on relevant state
+  
+  const resetMovement = useCallback(() => {
     console.log('reset cardMovementSelect:', selectedMovementCard);
     console.log('reset cardPositionsSelect:', selectedMovementPositions);
-  }
+    setSelectedMovementCard(null);
+    setSelectedMovementPositions([]);
+  }, [setSelectedMovementCard, setSelectedMovementPositions]);
+  
   
   useEffect(() => {
-    fetchPlayers();
-    fetchBoard();
-    getTurnInfo();
-  }, [fetchPlayers, fetchBoard, getTurnInfo]);
-
+    Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
+      console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
+      if (fetchedTurn === playerId) {
+        console.log("HOLLAAAAdsfsdf");
+        calculateFigures(gameId); // highlight board figures
+      }
+    });
+  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
+  
+  
+  // Existing effect for resetting movement on turn change
+  useEffect(() => {
+    if (currentTurn !== playerId && gameId) {
+      resetMovement();  // Reset if turn changes
+    }
+  }, [gameId, currentTurn, playerId, resetMovement]);
+  
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard);
-  useTurnInfoSocket(gameId, setCurrentTurn);
-
-  if (loading) return <div>Loading game...</div>;
+  useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId);
+  useTurnInfoSocket(gameId, setCurrentTurn, fetchBoard);
+  
 
   const otherPlayers = players.filter(p => p.id !== playerId);
 
@@ -146,7 +160,7 @@ export default function ActiveGame() {
              />
 
 
-            :<>Loading...</>}
+            :<>Loading board...</>}
             {currentTurn !== playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
                {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
@@ -200,7 +214,7 @@ export default function ActiveGame() {
       >
 
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement}/>
-        <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure}/>
+        <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure} resetFigureSelection={resetFigureSelection}/>
         <UndoButton gameId={gameId} currentTurn={currentTurn} />
         <LeaveButton gameId={gameId} />
         <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}

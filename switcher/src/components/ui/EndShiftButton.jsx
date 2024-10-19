@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGameContext } from "@/context/GameContext";
-import { pathEndTurn } from "@/services/services";
+import { calculateFigures, pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 import {FaCheck} from 'react-icons/fa'
 
@@ -25,18 +25,26 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, 
     resetFigureSelection();
     resetMovement();
     setLoading(true);
-    try {
-      const res = await pathEndTurn(gameId); // Llama al endpoint para finalizar el turno
-      if (!res) {
-        console.error("Error actualizando el turno");
-      }
-      // console.log("Turno finalizado", res);
-      setIsButtonActive(false); // Desactiva el botón después de terminar el turno
-    } catch (error) {
-      console.error("Error al terminar el turno", error);
-    } finally {
-      setLoading(false);
-    }
+    
+     pathEndTurn(gameId).then((res) => {
+
+       if (!res) {
+         console.error("Error actualizando el turno");
+       }
+       if (res.reverted_movements) {
+          console.log(res.reverted_movements)
+          calculateFigures(gameId);
+       }
+       // console.log("Turno finalizado", res);
+       setIsButtonActive(false); // Desactiva el botón después de terminar el turno
+     }).catch(error => {
+
+       console.error("Error al terminar el turno", error);
+       
+      }).finally(() => {
+       setLoading(false);
+     })
+
   };
 
   return (

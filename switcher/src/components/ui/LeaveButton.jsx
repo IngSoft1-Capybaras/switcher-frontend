@@ -1,7 +1,7 @@
 import { useGameContext } from '../../context/GameContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { leaveGame } from "@/services/services";
+import { calculateFigures, leaveGame } from "@/services/services";
 import { MdLogout } from "react-icons/md";
 
 
@@ -12,14 +12,19 @@ export default function LeaveButton({ gameId }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const onAbandon = async () => {
-    try {
-      await leaveGame(playerId, gameId);
-      navigate('/games');
-    }
-    catch (error) {
-      setError(error.message);
-      console.error(error);
-    }
+   
+      leaveGame(playerId, gameId).then((res) => {
+        console.log(res)
+        if (res.reverted_movements) {
+          calculateFigures(gameId);
+        }
+        navigate('/games');
+      }).catch(error => {
+        setError(error.message);
+        console.error(error);
+      })
+   
+    
   }
 
   return (

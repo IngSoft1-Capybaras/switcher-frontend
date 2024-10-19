@@ -177,7 +177,7 @@ export async function getGameStatus(gameId) {
 
     try {
       const response = await fetch(url);
-      // console.log("BOARD services: ",response);
+      console.log("BOARD services: ",response);
       if (!response.ok) {
         throw new Error('Error al obtener tablero');
       }
@@ -289,10 +289,12 @@ export const leaveGame = async (playerId, gameId) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
+    console.log(response)
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(`Error al abandonar la partida: ${errorMessage}`);
     }
+    return await response.json()
   }
   catch (error) {
     throw new Error(`Error al abandonar la partida: ${error.message}`);
@@ -323,5 +325,24 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
   }
   catch (error) {
     throw new Error(`Error al reclamar figura: ${error.message}`);
+  }
+}
+
+export const calculateFigures = async (gameId) => {
+  const url = `${apiUrl}/board/calculate_figures/${gameId}`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al calcular figuras: ${errorMessage}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw new Error(`Error al calcular figuras: ${error.message}`);
   }
 }

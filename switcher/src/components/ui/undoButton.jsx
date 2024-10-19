@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaUndo } from 'react-icons/fa';
 import { useGameContext } from "@/context/GameContext";
 import { undoMovement } from "@/services/services";
+import { calculateFigures } from "@/services/services";
 
 export default function UndoButton({ gameId, currentTurn }) {
     const { playerId } = useGameContext();
@@ -34,11 +35,13 @@ export default function UndoButton({ gameId, currentTurn }) {
             return;
         }
 
-        try {
-            await undoMovement(gameId, playerId);
-        } catch (error) {
-            handleError(`Error al deshacer movimiento: No hay movimientos que deshacer`);
-        }
+        undoMovement(gameId, playerId).then((res) => {
+                calculateFigures(gameId);
+        }).catch(err=> {
+            handleError(`Error al deshacer movimiento: ${err.message}`);
+        })
+    
+        
     };
 
     return (

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PlayersList from '../components/ui/PlayersList';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import StartButton from '../components/ui/activeButton';
 import { useGameContext } from '@/context/GameContext';
-import { getPlayers, getGameInfo, getPlayer, startGame } from '../services/services';
+import { getPlayers, getGameInfo, getPlayer, startGame, calculateFigures } from '../services/services';
 import { useLobbySocket } from '@/components/hooks/use-lobby-socket';
 import BotonAbandonar from '@/components/ui/LeaveButton';
 
@@ -16,8 +16,7 @@ export default function Lobby() {
   const [minPlayers, setMinPlayers] = useState(Infinity);
   
   const [host, setHost] = useState(false);
-
-  const navigate = useNavigate();
+  // const { socket } = useSocketContext();  // Get WebSocket instance
 
   const fetchPlayersInfo = async () => {
     getPlayers(gameId).then((fetchedPlayers) => {
@@ -28,11 +27,11 @@ export default function Lobby() {
   };
 
   const onStartClick = async () => {
-    startGame(gameId).then(() => {
-      navigate(`/games/ongoing/${gameId}`);
-    }).catch((err) => {
-      console.error(`Error: ${err}`);
-    });
+    // navigate(`/games/ongoing/${gameId}`);
+    // await manager.broadcast(message)
+    // socket.send(JSON.stringify({"type":`${gameId}:GAME_STARTED`}));
+    
+    await startGame(gameId);
   };
 
   useEffect(() => {
@@ -63,7 +62,7 @@ export default function Lobby() {
   }, [players, host, minPlayers]); // Run this effect whenever players, host, or minPlayers changes
 
 
-  useLobbySocket(gameId, fetchPlayersInfo); // Subscribe to events for dynamic updates
+  useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">

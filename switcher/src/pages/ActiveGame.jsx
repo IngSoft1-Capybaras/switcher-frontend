@@ -17,22 +17,22 @@ import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 export default function ActiveGame() {
   const { gameId, host } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [boxes, setBoxes] = useState();
-  // const [loading, setLoading] = useState(false);
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
-  const [figuresFormed, setFiguresFormed] = useState([]);
-  
+  const [figuresFormed, setFiguresFormed] = useState([]);  
   const [fetchedTurn, setFetchedTurn] = useState(null);
-
+  const [loadingFig, setLoadingFig] = useState(false);
+  const [loadingOut, setLoadingOut] = useState(false);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -92,7 +92,7 @@ export default function ActiveGame() {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
       console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
       if (fetchedTurn === playerId) {
-        console.log("HOLLAAAAdsfsdf");
+        // console.log("HOLLAAAAdsfsdf");
         calculateFigures(gameId); // highlight board figures
       }
     });
@@ -116,6 +116,19 @@ export default function ActiveGame() {
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
+      {loadingFig && currentTurn === playerId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
+          <h2 className="text-white text-2xl ml-4">Calculando figuras formadas...</h2>
+        </div>
+      )}
+      {loadingOut && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
+          <h2 className="text-white text-2xl ml-4">Redirigiendo...</h2>
+        </div>
+      )}
+      
       {/* Other Player Panels */}
       <div className="flex flex-row w-full text-white  justify-center ">
         {otherPlayers.map((player) => (
@@ -213,14 +226,14 @@ export default function ActiveGame() {
         transition={{ duration: 0.5 }}
       >
 
-        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement}/>
+        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
         <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure} resetFigureSelection={resetFigureSelection}/>
-        <UndoButton gameId={gameId} currentTurn={currentTurn} />
-        <LeaveButton gameId={gameId} />
+        <UndoButton gameId={gameId} currentTurn={currentTurn} setLoadingFig={setLoadingFig}/>
         <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
-          resetMov={resetMovement}
+          resetMov={resetMovement} setLoadingFig={setLoadingFig} // agrgue el setLoading
           />
+        <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} />
       </motion.div>
     </div>
   );

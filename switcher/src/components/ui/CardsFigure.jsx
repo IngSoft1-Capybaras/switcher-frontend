@@ -62,9 +62,12 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
                 className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
               />
               {!card.show && (
-                <div data-testid='blockedCard' className="absolute inset-0 bg-gray-800 opacity-70 flex items-center justify-center">
-                  <span className="text-white text-sm">Locked</span>
-                </div>
+                <img data-testid='blockedCard'
+                src={cardImg("DORSO_FIG")}
+                alt={`Dorso de carta de movimiento`}
+                className="absolute inset-0 bg-gray-800 opacity-70 flex items-center justify-center"
+                // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
+              />
               )}
             </button>
           )

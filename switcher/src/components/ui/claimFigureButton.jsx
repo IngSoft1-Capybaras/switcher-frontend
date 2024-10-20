@@ -4,7 +4,7 @@ import { claimFigure } from "@/services/services";
 import { FiCheckSquare } from 'react-icons/fi';
 
 
-export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureSelection}) {
+export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureSelection }) {
     const { playerId, currentTurn } = useGameContext();
     const [showTooltip, setShowTooltip] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -26,7 +26,6 @@ export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureS
             handleError("No gameId or playerId")
             return;
         }
-
         try {
             console.log(`Voy a jugar la carta ${cardId} con la figura del tablero ${JSON.stringify(figure)}`);
             await claimFigure(gameId, playerId, cardId, figure);
@@ -36,7 +35,6 @@ export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureS
             // if(!res.ok){
             //     handleError('Figura inválida');
             // }
-
         }
         catch (error) {
             handleError(error.message);

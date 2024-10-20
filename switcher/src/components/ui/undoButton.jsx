@@ -4,7 +4,7 @@ import { useGameContext } from "@/context/GameContext";
 import { undoMovement } from "@/services/services";
 import { calculateFigures } from "@/services/services";
 
-export default function UndoButton({ gameId, currentTurn }) {
+export default function UndoButton({ gameId, currentTurn, setLoadingFig}) {
     const { playerId } = useGameContext();
     const [error, setError] = useState(null);
     const [showError, setShowError] = useState(false);
@@ -34,13 +34,15 @@ export default function UndoButton({ gameId, currentTurn }) {
             handleError(`Error al deshacer movimiento: (!gameId || !playerId)`);
             return;
         }
+        setLoadingFig(true);
 
         undoMovement(gameId, playerId).then((res) => {
-                calculateFigures(gameId);
+                return calculateFigures(gameId);
         }).catch(err=> {
             handleError(`Error al deshacer movimiento: ${err.message}`);
-        })
-    
+        }).finally(() => {
+            setLoadingFig(false);
+        });
         
     };
 

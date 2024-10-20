@@ -5,26 +5,29 @@ import { calculateFigures, leaveGame } from "@/services/services";
 import { MdLogout } from "react-icons/md";
 
 
-export default function LeaveButton({ gameId }) {
+export default function LeaveButton({ gameId, setLoadingOut }) {
   const { playerId } = useGameContext();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
 
   const onAbandon = async () => {
-   
+    
       leaveGame(playerId, gameId).then((res) => {
         console.log(res)
         if (res.reverted_movements) {
-          calculateFigures(gameId);
+          setLoadingOut(true);
+          return calculateFigures(gameId);
         }
         navigate('/games');
       }).catch(error => {
         setError(error.message);
         console.error(error);
+      }). finally(() => {
+        setLoadingOut(false);
+        navigate('/games');
       })
-   
-    
+
   }
 
   return (

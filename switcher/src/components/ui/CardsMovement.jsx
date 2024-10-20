@@ -91,9 +91,12 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
             style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
           >
             {card.used ? (
-              <div data-testid="UsedMovementCardId" className="flex items-center justify-center w-full h-full">
-                <span className="text-white">Carta Usada</span>
-              </div>
+              <img
+              src={cardImg("DORSO_MOV")} 
+              alt={`Dorso de carta de movimiento`}
+              data-testid="UsedMovementCardId"
+              className="object-cover w-full h-full"
+              />
             ) : (
               <img
                 src={cardImg(card.type)}

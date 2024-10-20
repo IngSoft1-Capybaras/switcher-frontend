@@ -4,7 +4,7 @@ import { calculateFigures, pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 import {FaCheck} from 'react-icons/fa'
 
-const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, resetMovement }) => {
+const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, resetMovement, setLoadingFig }) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const { playerId } = useGameContext();
@@ -25,6 +25,7 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, 
     resetFigureSelection();
     resetMovement();
     setLoading(true);
+    setLoadingFig(true);
     
      pathEndTurn(gameId).then((res) => {
 
@@ -33,16 +34,15 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, 
        }
        if (res.reverted_movements) {
           console.log(res.reverted_movements)
-          calculateFigures(gameId);
+          return calculateFigures(gameId);
        }
        // console.log("Turno finalizado", res);
        setIsButtonActive(false); // Desactiva el botón después de terminar el turno
      }).catch(error => {
-
        console.error("Error al terminar el turno", error);
-       
       }).finally(() => {
-       setLoading(false);
+        setLoading(false);
+        setLoadingFig(false);
      })
 
   };

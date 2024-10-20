@@ -9,6 +9,7 @@ vi.mock('@/services/services', () => ({
 
 describe('ConfirmButton Component', () => {
   const mockResetMov = vi.fn(); // Mock para la función resetMov
+  const mockSetLoading = vi.fn(); // Mock para la función setLoading
 
   afterEach(() => {
     vi.clearAllMocks(); // Limpia los mocks después de cada prueba
@@ -24,6 +25,7 @@ describe('ConfirmButton Component', () => {
         playerId="player1"
         currentTurn="player1"
         resetMov={mockResetMov}
+        setLoading={mockSetLoading}
       />
     );
 
@@ -41,6 +43,7 @@ describe('ConfirmButton Component', () => {
         playerId="player1"
         currentTurn="player2"
         resetMov={mockResetMov}
+        setLoading={mockSetLoading}
       />
     );
 
@@ -58,6 +61,7 @@ describe('ConfirmButton Component', () => {
                 playerId="player1"
                 currentTurn="player1"
                 resetMov={mockResetMov}
+                setLoading={mockSetLoading}
             />
         );
     
@@ -78,6 +82,7 @@ describe('ConfirmButton Component', () => {
         playerId="player1"
         currentTurn="player1"
         resetMov={mockResetMov}
+        setLoading={mockSetLoading}
       />
     );
 

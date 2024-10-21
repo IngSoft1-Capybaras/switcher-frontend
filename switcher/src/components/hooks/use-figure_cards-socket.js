@@ -11,7 +11,7 @@ export function useFigureCardsSocket(gameId, getFigureCards) {
             const data = JSON.parse(event.data);
 
             
-            if (data.type === `${gameId}:FIGURE_UPDATE`) {
+            if (data.type === `${gameId}:FIGURE_UPDATE` || data.type === `${gameId}:NEXT_TURN`) {
                 getFigureCards();
             }
         };

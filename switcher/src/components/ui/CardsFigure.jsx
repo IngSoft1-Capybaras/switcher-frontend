@@ -52,23 +52,26 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
               className={cn(
                 "relative size-32 aspect-square rounded-lg overflow-hidden transition-transform",
                 isSelected ? 'scale-125 ' : 'hover:scale-110',
-                !card.show ? "opacity-50" : ""
+                !card.show ? "opacity-100" : ""
               )}
               onClick={() => handleSelectedFigure(card)}
             >
-              <img data-testid='figureCard'
-                src={cardImg(card.type)}
-                alt={`Figure card ${card.type}`}
-                className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
-              />
-              {!card.show && (
+              
+             
+              {!card.show ? 
                 <img data-testid='blockedCard'
                 src={cardImg("DORSO_FIG")}
                 alt={`Dorso de carta de movimiento`}
-                className="absolute inset-0 bg-gray-800 opacity-70 flex items-center justify-center"
+                className="absolute inset-0  opacity-100 flex items-center justify-center"
                 // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
               />
-              )}
+            : 
+              <img data-testid='figureCard'
+              src={cardImg(card.type)}
+              alt={`Figure card ${card.type}`}
+              className={cn("object-contain w-full h-full", !card.show && "opacity-0")}
+            />
+          }
             </button>
           )
         })}

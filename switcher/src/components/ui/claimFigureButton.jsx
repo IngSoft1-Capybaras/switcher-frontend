@@ -28,13 +28,14 @@ export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureS
         }
         try {
             console.log(`Voy a jugar la carta ${cardId} con la figura del tablero ${JSON.stringify(figure)}`);
-            await claimFigure(gameId, playerId, cardId, figure);
+            const res = await claimFigure(gameId, playerId, cardId, figure);
 
             resetFigureSelection(); // Llama a resetMov si la jugada es exitosa
 
-            // if(!res.ok){
-            //     handleError('Figura inválida');
-            // }
+            if(res.message === 'Invalid figure'){
+                console.log(JSON.stringify(res))
+                handleError('Figura inválida');
+            }
         }
         catch (error) {
             handleError(error.message);

@@ -21,7 +21,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 export default function ActiveGame() {
-  const { gameId, host } = useParams();
+  const { gameId } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
@@ -112,8 +112,8 @@ export default function ActiveGame() {
   
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId, setSyncEffect, setLoadingFig);
-  useTurnInfoSocket(gameId, setCurrentTurn, fetchBoard);
+  useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
+  useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
   
 
   const otherPlayers = players.filter(p => p.id !== playerId);

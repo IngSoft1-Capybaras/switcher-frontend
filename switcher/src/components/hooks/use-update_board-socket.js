@@ -3,8 +3,9 @@ import { useSocketContext } from "@/context/SocketContext";
 import { calculateFigures } from "@/services/services";
 import {useEffect} from "react";
 
-export function useUpdateBoardSocket(activeGameId, fetchBoard, currentTurn, playerId, setSyncEffect, setLoadingFig) {
+export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, setLoadingFig) {
     const {socket} = useSocketContext();
+    const { currentTurn, playerId } = useGameContext();
 
     useEffect(() => {
         if (!socket || !activeGameId || !fetchBoard) return;
@@ -31,7 +32,11 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, currentTurn, play
             }
             if (((data.type === `${activeGameId}:BOARD_UPDATE`) && (currentTurn === playerId))) {
                 console.log("FETCHING BOARD FIG CALC")
-                await fetchBoard();
+                console.log(`current Turn board update: ${currentTurn}`)
+                fetchBoard().then((res) => {
+                    setLoadingFig(false);
+                    setSyncEffect(true);
+                })
             }
 
         }

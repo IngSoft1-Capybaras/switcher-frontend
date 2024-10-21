@@ -33,7 +33,7 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, 
          console.error("Error actualizando el turno");
        }
        if (res.reverted_movements) {
-          console.log(res.reverted_movements)
+          // console.log(res.reverted_movements)
           calculateFigures(gameId);
        }
        // console.log("Turno finalizado", res);

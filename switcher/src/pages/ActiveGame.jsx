@@ -63,7 +63,7 @@ export default function ActiveGame() {
 
   const fetchBoard = useCallback(async () => {
     try {
-      console.log("fetchBoard ejecutado");
+      // console.log("fetchBoard ejecutado");
       const res = await getBoard(gameId);
       console.log(res);
       setBoxes(res.boxes);
@@ -112,7 +112,7 @@ export default function ActiveGame() {
   
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId);
+  useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId, setSyncEffect, setLoadingFig);
   useTurnInfoSocket(gameId, setCurrentTurn, fetchBoard);
   
 

@@ -3,12 +3,11 @@ import { calculateFigures, playMovementCard } from "@/services/services";
 import { IoMdMove } from "react-icons/io";
 
 
-export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov, setLoadingFig, setSyncEffect }) {
+export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov }) {
     const [error, setError] = useState(null);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showError, setShowError] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);  
-    // const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Habilita el botón solo si es el turno del jugador actual y hay una carta seleccionada y dos posiciones.
@@ -26,7 +25,6 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
 
         // Se asume que playMovementCard maneja errores internamente
         if (gameId && playerId && selectedCard && selectedPositions.length >= 2) {
-            setSyncEffect(false); // reset del effecto shiny de las figuras formadas, porque pueden no estar mas
             playMovementCard({
                 gameId: gameId,
                 playerId: playerId,
@@ -34,17 +32,6 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                 posFrom: posFrom,
                 posTo: posTo,
             
-            })
-            .then((res) => {
-                setLoadingFig(true);
-                calculateFigures(gameId)
-                .then((res) => {
-                    setLoadingFig(false);
-                    setSyncEffect(true);
-                    return;
-                })
-                 // Espera la respuesta de calculateFigures
-                return;
             })
             .then((res) => {
                 resetMov();
@@ -63,10 +50,6 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
 
                 return;
             })
-            // .then((res) => {
-            //     setLoadingFig(false);
-            //     return;
-            // }) // Espera la respuesta de calculateFigures
         }
     };
     

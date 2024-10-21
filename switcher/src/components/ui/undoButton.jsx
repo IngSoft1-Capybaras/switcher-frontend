@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaUndo } from 'react-icons/fa';
 import { useGameContext } from "@/context/GameContext";
 import { undoMovement } from "@/services/services";
-import { calculateFigures } from "@/services/services";
 
-export default function UndoButton({ gameId, currentTurn, setLoadingFig, resetFigureSelection,setSyncEffect,resetMov}) {
+export default function UndoButton({ gameId, currentTurn, resetFigureSelection, resetMov}) {
     const { playerId } = useGameContext();
     const [error, setError] = useState(null);
     const [showError, setShowError] = useState(false);
@@ -37,17 +36,10 @@ export default function UndoButton({ gameId, currentTurn, setLoadingFig, resetFi
             handleError(`Error al deshacer movimiento: (!gameId || !playerId)`);
             return;
         }
-        setSyncEffect(false); // reset del effecto shiny de las figuras formadas, porque pueden no estar mas
-        setLoadingFig(true);
         
-        undoMovement(gameId, playerId).then((res) => {
-            return calculateFigures(gameId);
-        }).catch(err=> {
+        undoMovement(gameId, playerId).catch(err=> {
             handleError(`Error al deshacer movimiento: ${err.message}`);
-        }).finally(() => {
-            setLoadingFig(false);
-            setSyncEffect(true);
-        });
+        })
         
     };
     

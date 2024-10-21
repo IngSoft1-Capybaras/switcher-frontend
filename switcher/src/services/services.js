@@ -1,5 +1,5 @@
 const apiUrl = import.meta.env.VITE_API_URL;
-console.log(import.meta.env);
+// console.log(import.meta.env);
 
 export async function getGames(currentPage, data, isFiltering) {
 
@@ -212,7 +212,7 @@ export async function getGameStatus(gameId) {
 
     try {
       const response = await fetch(url);
-      console.log("BOARD services: ",response);
+      // console.log("BOARD services: ",response);
       if (!response.ok) {
         throw new Error('Error al obtener tablero');
       }
@@ -262,6 +262,7 @@ export const playMovementCard = async ({gameId, playerId, cardId, posFrom, posTo
       const errorMessage = await response.text();
       throw new Error(`Error al jugar la carta: ${errorMessage}`);
     }
+    return await response.json();
     // console.log('La Carta fue jugada exitosamente!');
   }   catch (error) {
     throw new Error(`Error al jugar la carta: ${error.message}`);
@@ -324,7 +325,7 @@ export const leaveGame = async (playerId, gameId) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
-    console.log(response)
+    // console.log(response)
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(`Error al abandonar la partida: ${errorMessage}`);
@@ -344,7 +345,7 @@ export const claimFigure = async (gameId, playerId, cardId, figure) => {
     card_id: cardId,
     figure: figure
   };
-  console.log(`body sent to claim figure: ${JSON.stringify(body)}`);
+  // console.log(`body sent to claim figure: ${JSON.stringify(body)}`);
 
   try {
     const response = await fetch(url, {

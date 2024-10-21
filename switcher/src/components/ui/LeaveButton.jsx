@@ -14,7 +14,7 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
   const onAbandon = async () => {
     
       leaveGame(playerId, gameId).then((res) => {
-        console.log(res)
+        // console.log(res)
         if (res.reverted_movements) {
           setLoadingOut(true);
           return calculateFigures(gameId);

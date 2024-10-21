@@ -5,26 +5,34 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameContext } from '@/context/GameContext';
 import { joinGame } from '../services/services';
+import { PageFilter } from '@/components/ui/pageFilter';
 
 const Games = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null); // Store selected game
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
   const [loading, setLoading] = useState(true);
   const { setPlayerId, username } = useGameContext();
+  const [formData, setFormData] = useState({name:'', players:''})
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const handleCreateGame = () => {
     navigate('/games/create');
   };
 
-  const fetchGames = async (page) => {
+  const handleRemoveFilter =  async () => {
+    setIsFiltering(false);
+  }
+
+  const fetchGames = async (page, formData) => {
     try {
-      const data = await getGames(page);
+      const data = await getGames(page, formData, isFiltering);
+
       setGames(data.games);
       setTotalPages(data.total_pages);
+
     } catch (error) {
       console.error("Couldn't fetch games");
     } finally {
@@ -36,7 +44,6 @@ const Games = () => {
     if (selectedGame) {
       joinGame(selectedGame.id, username)
         .then((res) => {
-          // console.log(res)
           setPlayerId(res.player_id);
           navigate(`/games/lobby/${selectedGame.id}`);
         })
@@ -45,12 +52,14 @@ const Games = () => {
   };
 
   // games socket connection
-  useGameSocket(fetchGames, currentPage);
+  useGameSocket(fetchGames, currentPage, isFiltering, formData);
 
   // initial fetch
   useEffect(() => {
-    fetchGames(currentPage);
-  }, [currentPage]);
+    if (!isFiltering) {
+      fetchGames(currentPage);
+    }
+  }, [currentPage, isFiltering]);
 
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center bg-black space-y-20 text-white">
@@ -64,6 +73,7 @@ const Games = () => {
           >
             Crear partida
           </button>
+
           <button
                 onClick={handleJoinGame}
                 disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
@@ -77,6 +87,19 @@ const Games = () => {
               >
                 Jugar
           </button>
+
+          <div className="flex flex-col space-y-4">
+            <PageFilter setGames={setGames} setTotalPages={setTotalPages} setIsFiltering={setIsFiltering} formData={formData} setFormData={setFormData} fetchGames={fetchGames}/>
+            <button
+              disabled={!isFiltering}
+              onClick={handleRemoveFilter}
+              className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-400 transition-all duration-200"
+            >
+              Deshacer Filtros
+            </button>
+            </div>
+
+
         </div>
         <GamesList
           games={games}

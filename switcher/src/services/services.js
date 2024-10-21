@@ -1,17 +1,52 @@
 const apiUrl = import.meta.env.VITE_API_URL;
-
 console.log(import.meta.env);
-export async function getGames(currentPage) {
-    const url = `${apiUrl}/games?page=${currentPage}&limit=5`;
-    const response = await fetch(url);
-    if (!response.ok) {
+
+export async function getGames(currentPage, data, isFiltering) {
+
+    if (!isFiltering) {
+      const url = `${apiUrl}/games?page=${currentPage}&limit=5`;
+      const response = await fetch(url);
+      if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data;
     }
+    else{
+      const url = new URL(`${apiUrl}/games`);
+      url.searchParams.append('page', 1);
+      url.searchParams.append('limit', 5);
 
-    const data = await response.json();
+      const name = data.name;
+      const players = data.players;
 
-    return data;
+      if (name) {
+        url.searchParams.append('name', name);
+      }
+
+      if (players) {
+        url.searchParams.append('num_players', players);
+      }
+
+      try {
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Error al filtrar partidas: ${errorMessage}`);
+        }
+        return await response.json();
+      }
+      catch (error) {
+        throw new Error(`Error al filtrar partidas: ${error.message}`);
+      }
+    }
 }
+
 
 // Obtener jugadores
 export async function getPlayers(gameId) {

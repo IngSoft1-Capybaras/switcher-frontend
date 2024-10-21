@@ -3,7 +3,7 @@ import { calculateFigures, playMovementCard } from "@/services/services";
 import { IoMdMove } from "react-icons/io";
 
 
-export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov, setLoadingFig }) {
+export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov, setLoadingFig, setSyncEffect }) {
     const [error, setError] = useState(null);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -20,13 +20,13 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
     }, [currentTurn, playerId, selectedCard, selectedPositions]);
 
     const onConfirmMove = async () => {
+
         // Aquí puedes manejar la lógica para confirmar el movimiento
         const [posFrom, posTo] = selectedPositions;
 
         // Se asume que playMovementCard maneja errores internamente
         if (gameId && playerId && selectedCard && selectedPositions.length >= 2) {
-            setLoadingFig(true);
-
+            setSyncEffect(false); // reset del effecto shiny de las figuras formadas, porque pueden no estar mas
             playMovementCard({
                 gameId: gameId,
                 playerId: playerId,
@@ -35,20 +35,23 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                 posTo: posTo,
             
             })
-            // .then( (res) => {
-            //     calculateFigures(gameId); 
-            //     resetMov();
-            //     setError(null);
-
-            // })
-            .then(res => {
-                return calculateFigures(gameId); // Espera la respuesta de calculateFigures
+            .then((res) => {
+                setLoadingFig(true);
+                calculateFigures(gameId)
+                .then((res) => {
+                    setLoadingFig(false);
+                    setSyncEffect(true);
+                    return;
+                })
+                 // Espera la respuesta de calculateFigures
+                return;
             })
-            .then(() => {
+            .then((res) => {
                 resetMov();
                 setError(null);
+                return;
             })
-            .catch(err=>{
+            .catch(error=>{
                 console.error("Error al confirmar el movimiento:", error.message);
                 setError("Movimiento invalido. Por favor, intenta de nuevo."); // Muestra un mensaje de error al usuario
                 setShowError(true); // Muestra el mensaje de error
@@ -57,9 +60,13 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                     setShowError(false);
                     setError(null); // Limpiar el mensaje de error
                 }, 1000)
-            }) .finally(() => {
-                setLoadingFig(false);
-            });
+
+                return;
+            })
+            // .then((res) => {
+            //     setLoadingFig(false);
+            //     return;
+            // }) // Espera la respuesta de calculateFigures
         }
     };
     

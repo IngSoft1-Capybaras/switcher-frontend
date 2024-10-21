@@ -34,13 +34,14 @@ const EndTurnButton = ({gameId, currentTurn, getTurnInfo, resetFigureSelection, 
        }
        if (res.reverted_movements) {
           console.log(res.reverted_movements)
-          return calculateFigures(gameId);
+          calculateFigures(gameId);
        }
        // console.log("Turno finalizado", res);
        setIsButtonActive(false); // Desactiva el botón después de terminar el turno
      }).catch(error => {
        console.error("Error al terminar el turno", error);
-      }).finally(() => {
+      })
+      .finally(() => {
         setLoading(false);
         setLoadingFig(false);
      })

@@ -5,7 +5,7 @@ import { getPlayers, getBoard, calculateFigures } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
-import { motion } from 'framer-motion';
+import { motion, sync } from 'framer-motion';
 import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
 import PlayerPanel from '../components/ui/PlayerPanel';
@@ -33,6 +33,7 @@ export default function ActiveGame() {
   const [fetchedTurn, setFetchedTurn] = useState(null);
   const [loadingFig, setLoadingFig] = useState(false);
   const [loadingOut, setLoadingOut] = useState(false);
+  const [syncEffect, setSyncEffect] = useState(true);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -62,10 +63,13 @@ export default function ActiveGame() {
 
   const fetchBoard = useCallback(async () => {
     try {
+      console.log("fetchBoard ejecutado");
       const res = await getBoard(gameId);
       console.log(res);
       setBoxes(res.boxes);
       setFiguresFormed(res.formed_figures);
+      // setSyncEffect(true);
+      // return;
     } catch (err) {
       console.error("Error fetching board:", err);
     }
@@ -74,15 +78,15 @@ export default function ActiveGame() {
   
 
   const resetFigureSelection = useCallback(() => {
-    console.log('reset cardFigureSelect:', selectedCardFigure);
-    console.log('reset boardFigureSelect:', selectedBoardFigure);
+    // console.log('reset cardFigureSelect:', selectedCardFigure);
+    // console.log('reset boardFigureSelect:', selectedBoardFigure);
     setSelectedBoardFigure([]);
     setSelectedCardFigure(null);
   }, [setSelectedBoardFigure, setSelectedCardFigure]); // Ensure this only depends on relevant state
   
   const resetMovement = useCallback(() => {
-    console.log('reset cardMovementSelect:', selectedMovementCard);
-    console.log('reset cardPositionsSelect:', selectedMovementPositions);
+    // console.log('reset cardMovementSelect:', selectedMovementCard);
+    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
@@ -90,7 +94,7 @@ export default function ActiveGame() {
   
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
-      console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
+      // console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
       if (fetchedTurn === playerId) {
         // console.log("HOLLAAAAdsfsdf");
         calculateFigures(gameId); // highlight board figures
@@ -170,6 +174,7 @@ export default function ActiveGame() {
              setSelectMovementPosition={setSelectedMovementPositions}
              selectedMovementPositions={selectedMovementPositions}
              figuresFormed={figuresFormed}
+             syncEffect={syncEffect}
              />
 
 
@@ -228,10 +233,10 @@ export default function ActiveGame() {
 
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
         <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure} resetFigureSelection={resetFigureSelection}/>
-        <UndoButton gameId={gameId} currentTurn={currentTurn} setLoadingFig={setLoadingFig}/>
+        <UndoButton gameId={gameId} currentTurn={currentTurn} setLoadingFig={setLoadingFig} resetFigureSelection={resetFigureSelection} setSyncEffect={setSyncEffect} resetMov={resetMovement}/>
         <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
-          resetMov={resetMovement} setLoadingFig={setLoadingFig} // agrgue el setLoading
+          resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
         <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} />
       </motion.div>

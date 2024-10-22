@@ -18,7 +18,7 @@ import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import {Loading} from "./Loading";
 
 export default function ActiveGame() {
   const { gameId } = useParams();

@@ -1,53 +1,49 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useState } from "react";
+import { FaFilter } from "react-icons/fa";
 
-export function PageFilter( {setIsFiltering, formData, setFormData, fetchGames}) {
+export function PageFilter({ setIsFiltering, formData, setFormData, fetchGames }) {
   const [isOpen, setIsOpen] = useState(false);
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFilterInfoSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setIsFiltering(true);
     const name = formData.name || null;
     const players = formData.players || null;
 
-    if(!name && !players){
+    if (!name && !players) {
       setIsFiltering(false);
-    }
-    else{
+    } else {
       try {
         await fetchGames(1, formData);
-      }
-      catch (error) {
-        console.log('hubo un error');
+      } catch (error) {
+        console.log('Error occurred while filtering');
       }
     }
     setIsOpen(false);
-  }
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
-          data-testid='triggerButton'
           onClick={() => setIsOpen(true)}
-          className="bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-500 transition duration-200"
-          variant="outline"
+          className="bg-transparent text-white rounded-md hover:text-gray-400 hover:bg-transparent transition duration-200"
+          variant="default"
+          data-testid="triggerButton" // Added test ID here
         >
-          Filtrar Partida
+          <FaFilter className="mr-2" /> {/* Icon for the trigger */}
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent data-testid='popOverId' className="w-90 bg-zinc-800 p-6 rounded-md shadow-lg">
+      <PopoverContent className="w-90 bg-zinc-800 p-6 rounded-md shadow-lg" data-testid="popOverId">
         <form onSubmit={handleFilterInfoSubmit} className="grid gap-6">
           <div className="space-y-2 text-white">
             <h4 className="font-semibold text-lg">Filtrar Partida</h4>
@@ -68,6 +64,7 @@ export function PageFilter( {setIsFiltering, formData, setFormData, fetchGames})
                 onChange={handleInputChange}
               />
             </div>
+
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="jugadoresPartida" className="text-white font-medium">N° jugadores</Label>
               <Input
@@ -81,16 +78,15 @@ export function PageFilter( {setIsFiltering, formData, setFormData, fetchGames})
             </div>
           </div>
 
-          <Button
-            data-testid='submitButtonId'
-            type="submit"
+          <Button 
+            type="submit" 
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition duration-200"
+            data-testid="submitButtonId" // Added test ID here
           >
             Filtrar
           </Button>
         </form>
       </PopoverContent>
     </Popover>
-
-  )
+  );
 }

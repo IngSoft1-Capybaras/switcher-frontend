@@ -1,28 +1,35 @@
-import GamesList from '../components/ui/GamesList';
-import { useGameSocket } from '../components/hooks/use-games-socket';
-import { getGames } from '../services/services';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaPlus, FaPlay, FaUndo, FaFilter } from 'react-icons/fa';
+import GamesList from '../components/ui/GamesList';
+import { useGameSocket } from '../components/hooks/use-games-socket';
+import { getGames, joinGame } from '../services/services';
 import { useGameContext } from '@/context/GameContext';
-import { joinGame } from '../services/services';
+import { PageFilter } from '@/components/ui/pageFilter';
 
 const Games = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
-  const [selectedGame, setSelectedGame] = useState(null); // Store selected game
-
+  const [selectedGame, setSelectedGame] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
   const [loading, setLoading] = useState(true);
   const { setPlayerId, username } = useGameContext();
+  const [formData, setFormData] = useState({ name: '', players: '' });
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const handleCreateGame = () => {
     navigate('/games/create');
   };
 
-  const fetchGames = async (page) => {
+  const handleRemoveFilter = async () => {
+    setIsFiltering(false);
+    fetchGames(currentPage, {});
+  };
+
+  const fetchGames = async (page, formData) => {
     try {
-      const data = await getGames(page);
+      const data = await getGames(page, formData, isFiltering);
       setGames(data.games);
       setTotalPages(data.total_pages);
     } catch (error) {
@@ -36,7 +43,6 @@ const Games = () => {
     if (selectedGame) {
       joinGame(selectedGame.id, username)
         .then((res) => {
-          console.log(res)
           setPlayerId(res.player_id);
           navigate(`/games/lobby/${selectedGame.id}`);
         })
@@ -44,40 +50,73 @@ const Games = () => {
     }
   };
 
-  // games socket connection
-  useGameSocket(fetchGames, currentPage);
+  useGameSocket(fetchGames, currentPage, isFiltering, formData);
 
-  // initial fetch
   useEffect(() => {
-    fetchGames(currentPage);
-  }, [currentPage]);
+    fetchGames(currentPage, formData);
+  }, [currentPage, isFiltering]);
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-black space-y-20 text-white">
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-black space-y-8 text-white">
       <h1 className="text-5xl font-bold text-white mb-6">Lista de partidas</h1>
 
       <div className="w-1/3">
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-4 items-center">
+          {/* Create Game Button */}
           <button
             onClick={handleCreateGame}
-            className="bg-blue-600 text-white py-2 px-4 rounded mb-6 hover:bg-blue-500 transition-all duration-200"
+            className="text-white py-2 px-4 rounded hover:text-gray-500 transition-all duration-200 flex items-center"
           >
-            Crear partida
+            <FaPlus className="mr-2" /> Crear
           </button>
+
+          {/* Join Game Button */}
           <button
-                onClick={handleJoinGame}
-                disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
-                className={`text-white py-3 px-8 rounded mb-6 transition-all duration-200 ${
-                  selectedGame
-                    ? selectedGame.players_count >= selectedGame.max_players
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-green-600 hover:bg-green-500'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
-              >
-                Jugar
+            onClick={handleJoinGame}
+            disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
+            className={`text-white rounded transition-all duration-200 flex items-center ${
+              selectedGame
+                ? selectedGame.players_count >= selectedGame.max_players
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-green-600 hover:text-green-700'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            <FaPlay className="mr-2" /> Jugar
           </button>
+
+          <div className="flex space-x-4 items-center">
+            {/* Filter Button */}
+            <PageFilter
+              setGames={setGames}
+              setTotalPages={setTotalPages}
+              setIsFiltering={setIsFiltering}
+              formData={formData}
+              setFormData={setFormData}
+              fetchGames={fetchGames}
+            />
+
+            {/* Filter Icon
+            <button
+              onClick={() => setIsFiltering(true)}
+              className="text-white rounded hover:text-gray-400 transition-all duration-200 flex items-center"
+            >
+              <FaFilter className="mr-2" />
+            </button> */}
+
+            {/* Undo Filter Button */}
+            <button
+              disabled={!isFiltering}
+              onClick={handleRemoveFilter}
+              className={`text-white rounded hover:text-gray-500 transition-all duration-200 flex items-center ${
+                !isFiltering ? 'cursor-not-allowed' : ''
+              }`}
+            >
+              <FaUndo className="mr-2" />
+            </button>
+          </div>
         </div>
+
         <GamesList
           games={games}
           currentPage={currentPage}

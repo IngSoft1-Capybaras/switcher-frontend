@@ -1,35 +1,74 @@
 export const cardImg = (caseImg) => {
-    switch (caseImg) {
-      // Casos para las cartas de figuras
-        case "TYPE_1":
-          return '/src/assets/images/fige01.svg';
-        case "TYPE_2":
-          return '/src/assets/images/fige02.svg';
-        case "TYPE_3":
-          return '/src/assets/images/fige03.svg';
-        case "TYPE_4":
-          return '/src/assets/images/fig01.svg';
-        case "TYPE_5":
-          return '/src/assets/images/fig02.svg';
-        case "TYPE_6":
-          return '/src/assets/images/fig03.svg';
-
-      // Casos para las cartas de movimiento
-        case "LINEAL_CONT":
-          return '/src/assets/images/cruceLinealContiguo.svg';
-        case "LINEAL_ESP":
-          return '/src/assets/images/cruceLinealEspaciado.svg';
-        case "DIAGONAL_CONT":
-          return '/src/assets/images/cruceDiagonalContiguo.svg';
-        case "DIAGONAL_ESP":
-          return '/src/assets/images/cruceDiagonalEspaciado.svg';
-        case "EN_L_DER":
-          return '/src/assets/images/cruceEnLDerecha.svg';
-        case "EN_L_IZQ":
-          return '/src/assets/images/cruceEnLIzquierda.svg';
-        case "LINEAL_AL_LAT":
-          return '/src/assets/images/cruceLinealLateral.svg';
-        default:
-          throw new Error('Tipo de carta no válido');
-      }
+  switch (caseImg) {
+      case "FIGE01":
+        return '/src/assets/images/fige01.svg';
+      case "FIGE02":
+        return '/src/assets/images/fige02.svg';
+      case "FIGE03":
+        return '/src/assets/images/fige03.svg';
+      case "FIGE04":
+        return '/src/assets/images/fige04.svg';
+      case "FIGE05":
+        return '/src/assets/images/fige05.svg';
+      case "FIGE06":
+        return '/src/assets/images/fige06.svg';
+      case "FIGE07":
+        return '/src/assets/images/fige07.svg';
+      case "FIG01":
+        return '/src/assets/images/fig01.svg';
+      case "FIG02":
+        return '/src/assets/images/fig02.svg';
+      case "FIG03":
+        return '/src/assets/images/fig03.svg';
+      case "FIG04":
+        return '/src/assets/images/fig04.svg';
+      case "FIG05":
+        return '/src/assets/images/fig05.svg';
+      case "FIG06":
+        return '/src/assets/images/fig06.svg';
+      case "FIG07":
+        return '/src/assets/images/fig07.svg';
+      case "FIG08":
+        return '/src/assets/images/fig08.svg';
+      case "FIG09":
+        return '/src/assets/images/fig09.svg';
+      case "FIG10":
+        return '/src/assets/images/fig10.svg';
+      case "FIG11":
+        return '/src/assets/images/fig11.svg';
+      case "FIG12":
+        return '/src/assets/images/fig12.svg';
+      case "FIG13":
+        return '/src/assets/images/fig13.svg';
+      case "FIG14":
+        return '/src/assets/images/fig14.svg';
+      case "FIG15":
+        return '/src/assets/images/fig15.svg';
+      case "FIG16":
+        return '/src/assets/images/fig16.svg';
+      case "FIG17":
+        return '/src/assets/images/fig17.svg';
+      case "FIG18":
+        return '/src/assets/images/fig18.svg';
+      case "DORSO_FIG":
+        return '/src/assets/images/back-fig.svg';
+      case "LINEAL_CONT":
+        return '/src/assets/images/cruceLinealContiguo.svg';
+      case "LINEAL_ESP":
+        return '/src/assets/images/cruceLinealEspaciado.svg';
+      case "DIAGONAL_CONT":
+        return '/src/assets/images/cruceDiagonalContiguo.svg';
+      case "DIAGONAL_ESP":
+        return '/src/assets/images/cruceDiagonalEspaciado.svg';
+      case "EN_L_DER":
+        return '/src/assets/images/cruceEnLDerecha.svg';
+      case "EN_L_IZQ":
+        return '/src/assets/images/cruceEnLIzquierda.svg';
+      case "LINEAL_AL_LAT":
+        return '/src/assets/images/cruceLinealLateral.svg';
+      case "DORSO_MOV":
+        return '/src/assets/images/back-mov.svg';
+      default:
+        throw new Error('Tipo de carta no válido');
+    }
 }

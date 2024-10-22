@@ -3,10 +3,7 @@ import React from "react";
 export default function GamesList({ games, currentPage, setCurrentPage, totalPages, loading, selectedGame, setSelectedGame,  }) {
 
   const handleGameSelect = (game) => {
-    // if (game.playersCount < game.maxPlayers) { 
-      console.log("set")
       setSelectedGame(game); // Select the game if it's not full
-    // }
   };
 
   return (

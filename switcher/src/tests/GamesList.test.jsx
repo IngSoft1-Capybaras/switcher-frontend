@@ -45,13 +45,5 @@ describe('Listado de partidas', ()=> {
         
         const listItems = screen.getAllByRole('listitem');
         expect(listItems.length).toBe(mockGames.length); // Ensure the correct number of list items
-        // mockGames.forEach(game => {
-        //     const link = screen.getByRole('listitem');
-        //     expect(link).toBeInTheDocument();
-        //     expect(link).toContain(`${game.name}`);
-        //     expect(link).toContain(`${game.currentPlayers}`);
-        //     expect(link).toContain(`${game.maxPlayers}`);
-        //     expect(link).toContain(`${game.isPrivate}`);
-        // });
     })
 });

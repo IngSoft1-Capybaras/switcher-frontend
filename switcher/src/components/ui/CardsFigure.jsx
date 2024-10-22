@@ -1,74 +1,81 @@
-import React, { useEffect, useState } from 'react';
-import { cn } from "@/lib/utils"; // Asegúrate de que "cn" esté en utils
-import { cardImg } from '../utils/getCardImg';
-import { getDeckFigure } from '@/services/services'; // Asegúrate de importar tu función para obtener las cartas
-import { mockFigureCards } from '@/lib/mockGameState';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useCallback} from 'react'
+import { cn } from "@/lib/utils"
+import { cardImg } from '../utils/getCardImg'
+import { getDeckFigure } from '@/services/services'
+import { AnimatedGroup } from './animated-group'
+import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
 
-/* Componente que representa las cartas de figura */
-const CardsFigure = ({gameId, playerId}) => {
-  const [figureCards, setFigureCards] = useState([]); // Estado para las cartas de figura
-  const [loading, setLoading] = useState(true); // Estado para la carga
-  const [error, setError] = useState(null); // Estado para errores
-  console.log("gameId: ", gameId);
-  console.log("cardsFIGplayerId: ", playerId);
+export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name, resetMovement}) {
 
-  // Efecto que se ejecuta al montar el componente y cuando cambian las dependencias
+  const [loading, setLoading] = useState(true)
+  const [figureCards, setFigureCards] = useState([])
+
+  const handleSelectedFigure = (figure) => {
+    // console.log(figure);
+    console.log('CartaFigure seleccionada:', figure);
+    setSelectedCardFigure(figure);
+    resetMovement();
+  }
+
+  const fetchFigureCards = useCallback(async () => {
+    try {
+      const cards = await getDeckFigure(gameId, playerId)
+      setFigureCards(cards)
+    } catch (error) {
+      console.error('Error fetching figure cards', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [gameId, playerId, getDeckFigure, setFigureCards, setLoading]);
+
   useEffect(() => {
-    const fetchFigureCards = async () => {
-      try {                 
-        const cards = await getDeckFigure(gameId, playerId); // Obtiene las cartas de figura getDeckFigure(gameId, playerId)
-        setFigureCards(cards); // Actualiza el estado con las cartas
-        // setFigureCards(mockFigureCards); // Actualiza el estado con las cartas
-      } catch (error) {
-        // setError("Error al obtener las cartas de figura");
-        console.error('Error al obtener las cartas de figura', error); // Loguea el error
-      } finally {
-        setLoading(false); // Cambia el estado de carga a false
-      }
-    };
+    fetchFigureCards()
+  }, [])
 
-    fetchFigureCards();
-  }, [gameId, playerId]); // Dependencias para volver a ejecutar el efecto si cambian
-  
-  // Renderizado condicional según el estado de carga y errores
-  if (loading) return <div>Cargando cartas de movimiento...</div>; // Mensaje de carga
-  // if (error) return <div>{error}</div>; // Muestra error si hay
+  useFigureCardsSocket(gameId, fetchFigureCards);
+
+  if (loading) return <div data-testid='loadingDiv'>Loading figure cards...</div>
 
   return (
-    <div className="flex space-x-4"> {/* Cambia esto para el layout según tu diseño */}
-      {figureCards.slice(0, 3).map((card) => { // Solo toma las primeras 3 cartas
-        // Asignar un color o borde según la dificultad
-        const difficultyStyle = card.difficulty === "HARD" ? "border-red-500" : "border-green-500";
-        
-        return (
-          <div key={card.id} className={cn(
-            "relative w-full h-full aspect-[3/3] border rounded overflow-hidden",
-            !card.show ? "opacity-50" : "", // Si no se muestra (show es false), aplicar opacidad
-            difficultyStyle // Agregar estilo basado en dificultad
-          )}>
-            <img 
-              src={cardImg(card.type)} 
-              alt={`Carta de figura ${card.type}`} 
-              className={`object-cover w-full h-full ${!card.show ? "opacity-50" : ""}`} 
+    <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10`}>
+      {name && <h2 className="text-m text-center mb-5">{name}'s figures</h2>}
+      <AnimatedGroup
+        className="flex justify-center items-center space-x-5 w-full"
+        preset="scale"
+      >
+        {figureCards.slice(0, 3).map((card) => {
+          const isSelected = selectedCardFigure && selectedCardFigure.id === card.id
+
+          return (
+            <button
+              key={card.id}
+              className={cn(
+                "relative size-32 aspect-square rounded-lg overflow-hidden transition-transform",
+                isSelected ? 'scale-125 ' : 'hover:scale-110',
+                !card.show ? "opacity-100" : ""
+              )}
+              onClick={() => handleSelectedFigure(card)}
+            >
+              
+             
+              {!card.show ? 
+                <img data-testid='blockedCard'
+                src={cardImg("DORSO_FIG")}
+                alt={`Dorso de carta de movimiento`}
+                className="absolute inset-0  opacity-100 flex items-center justify-center"
+                // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
+              />
+            : 
+              <img data-testid='figureCard'
+              src={cardImg(card.type)}
+              alt={`Figure card ${card.type}`}
+              className={cn("object-contain w-full h-full", !card.show && "opacity-0")}
             />
-            
-            {/* Mostrar la superposición de bloqueado si la carta está oculta */}
-            {!card.show && (
-              <div className="absolute inset-0 bg-gray-800 opacity-70 flex items-center justify-center">
-                <span className="text-white">Bloqueada</span>
-              </div>
-            )}
-
-            {/* Mostrar la dificultad si es necesario */}
-            <div className="absolute bottom-0 left-0 bg-white text-black px-2 py-1 text-xs">
-              {card.difficulty}
-            </div>
-          </div>
-        );
-      })}
+          }
+            </button>
+          )
+        })}
+      </AnimatedGroup>
     </div>
-  );
-};
-
-export default CardsFigure;
+  )
+}

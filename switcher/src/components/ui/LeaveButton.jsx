@@ -1,44 +1,55 @@
-import { Button } from "@/components/ui/button"
-import { useGameContext } from '../../context/GameContext'
-import { useNavigate } from 'react-router-dom'
+import { useGameContext } from '../../context/GameContext';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { calculateFigures, leaveGame } from "@/services/services";
+import { MdLogout } from "react-icons/md";
 
-export default function LeaveButton({gameId}) {
+
+export default function LeaveButton({ gameId, setLoadingOut }) {
   const { playerId } = useGameContext();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const onAbandon = async () => {
-    try {
-      console.log(playerId);
-      console.log(gameId);
-      // recordatorio, cambiar localhost:8000 por variable de entorno.
-      const response = await fetch(`http://localhost:8000/players/${playerId}/leave?game_id=${gameId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // body: JSON.stringify({ gameId: gameId })
-      });
-
-      if (response.ok) {
-        console.log('Haz abandonado la partida');
+    
+      leaveGame(playerId, gameId).then((res) => {
+        // console.log(res)
+        if (res.reverted_movements) {
+          setLoadingOut(true);
+          return calculateFigures(gameId);
+        }
         navigate('/games');
-      } 
-      else {
-        const errorMessage = await response.text();
-        setError(`Error al abandonar la partida: ${errorMessage}`);
-      }
-    } 
-    catch (error) {
-      setError(`Error al abandonar la partida: ${error.message}`);
-    }
+      }).catch(error => {
+        setError(error.message);
+        console.error(error);
+      }). finally(() => {
+        setLoadingOut(false);
+        navigate('/games');
+      })
+
   }
 
   return (
-    <div>
-      <Button variant="destructive" onClick={onAbandon}>
-        Abandonar
-      </Button>
-      {error && <p>{error}</p>} 
+    <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
+      <button
+        data-testid='leaveButtonId'
+        onClick={onAbandon}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        className="text-white hover:scale-110 transition-transform"
+
+      >
+        <MdLogout size={28} />
+      </button>
+
+      {showTooltip && (
+        <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">
+            Abandonar
+        </div>
+      )}
+
+      {error && <p>{error}</p>}
     </div>
   );
 }

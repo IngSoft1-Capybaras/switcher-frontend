@@ -1,88 +1,93 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, expect, it, describe, afterEach } from 'vitest'; // Importa vi de Vitest
-import ConfirmButton from '@/components/ui/ConfirmButton'; // Asegúrate de que esta importación sea correcta.
-import { playMovementCard } from '@/services/services'; // Importa la función
+import { vi, expect, it, describe, afterEach } from 'vitest';
+import ConfirmButton from '@/components/ui/ConfirmButton';
+import { playMovementCard } from '@/services/services';
 
 vi.mock('@/services/services', () => ({
-  playMovementCard: vi.fn(), // Mockea la función playMovementCard
+  playMovementCard: vi.fn(),
 }));
 
 describe('ConfirmButton Component', () => {
-  const mockResetMov = vi.fn(); // Mock para la función resetMov
+  const mockResetMov = vi.fn();
+  const mockSetLoading = vi.fn();
 
   afterEach(() => {
-    vi.clearAllMocks(); // Limpia los mocks después de cada prueba
+    vi.clearAllMocks();
   });
 
-  // Test para verificar que el botón esté habilitado cuando es el turno del jugador actual, hay una carta y dos posiciones seleccionadas
+  // Test para verificar que el botón se renderiza correctamente
   it('should enable the button when it is the current player\'s turn and there are selected card and positions', () => {
     render(
-      <ConfirmButton 
+      <ConfirmButton
         gameId="game1"
         selectedCard={{ id: 'card1' }}
         selectedPositions={['A1', 'B2']}
         playerId="player1"
         currentTurn="player1"
         resetMov={mockResetMov}
+        setLoading={mockSetLoading}
       />
     );
 
-    const button = screen.getByRole('button', { name: /Hacer movimiento/i });
-    expect(button).toBeEnabled(); // Verifica que el botón esté habilitado
+    const button = screen.getByTestId('claimButtonTestId');
+    expect(button).toBeEnabled();
   });
 
-    // Test para verificar que el botón esté deshabilitado cuando no es el turno del jugador actual
+  // Test para verificar que el botón se deshabilita cuando no es el turno del jugador
   it('should disable the button when it is not the current player\'s turn', () => {
     render(
-      <ConfirmButton 
+      <ConfirmButton
         gameId="game1"
         selectedCard={{ id: 'card1' }}
         selectedPositions={['A1', 'B2']}
         playerId="player1"
         currentTurn="player2"
         resetMov={mockResetMov}
+        setLoading={mockSetLoading}
       />
     );
 
-    const button = screen.getByRole('button', { name: /Hacer movimiento/i });
-    expect(button).toBeDisabled(); // Verifica que el botón esté deshabilitado
+    const button = screen.getByTestId('claimButtonTestId');
+    expect(button).toBeDisabled();
   });
 
-    // Test para verificar que el botón esté deshabilitado cuando no hay una carta seleccionada
-    it('should not display an error message when information is missing', async () => {
-        render(
-            <ConfirmButton 
-                gameId="game1"
-                selectedCard={null} // Sin carta seleccionada
-                selectedPositions={[]} // Sin posiciones seleccionadas
-                playerId="player1"
-                currentTurn="player1"
-                resetMov={mockResetMov}
-            />
-        );
-    
-        const button = screen.getByRole('button', { name: /Hacer movimiento/i });
-        fireEvent.click(button); // Simula el clic en el botón
-    
-        // Verifica que el mensaje de error no aparezca
-        expect(screen.queryByText(/Error al confirmar el movimiento: falta información necesaria/i)).not.toBeInTheDocument();
-    });
-      
-    // Test para verificar que se llame a playMovementCard con los parámetros correctos al hacer clic en el botón
+  // Test para verificar que se muestra un mensaje de error cuando falta información
+  it('should not display an error message when information is missing', async () => {
+      render(
+          <ConfirmButton
+              gameId="game1"
+              selectedCard={null}
+              selectedPositions={[]}
+              playerId="player1"
+              currentTurn="player1"
+              resetMov={mockResetMov}
+              setLoading={mockSetLoading}
+          />
+      );
+      const button = screen.getByTestId('claimButtonTestId');
+      fireEvent.click(button);
+      expect(screen.queryByText(/Error al confirmar el movimiento: falta información necesaria/i)).not.toBeInTheDocument();
+  });
+
+  // Test para verificar que se llama a playMovementCard con los parámetros correctos al hacer clic en el botón
   it('should call playMovementCard with correct parameters on button click', async () => {
+    // Asegúro de que `playMovementCard` devuelva una promesa.
+    playMovementCard.mockResolvedValueOnce({ success: true }); // Mockea la respuesta
+
     render(
-      <ConfirmButton 
+      <ConfirmButton
         gameId="game1"
         selectedCard={{ id: 'card1' }}
         selectedPositions={['A1', 'B2']}
         playerId="player1"
         currentTurn="player1"
         resetMov={mockResetMov}
+        setLoading={mockSetLoading}
       />
     );
 
-    const button = screen.getByRole('button', { name: /Hacer movimiento/i });
-    fireEvent.click(button); // Simula el clic en el botón
+    const button = screen.getByTestId('claimButtonTestId');
+    fireEvent.click(button);
 
     await waitFor(() => {
       expect(playMovementCard).toHaveBeenCalledWith({
@@ -91,7 +96,7 @@ describe('ConfirmButton Component', () => {
         cardId: 'card1',
         posFrom: 'A1',
         posTo: 'B2',
-      }); // Verifica que playMovementCard fue llamado con los parámetros correctos
+      });
     });
-  });
+  });  
 });

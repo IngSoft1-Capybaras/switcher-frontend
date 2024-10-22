@@ -5,7 +5,7 @@ import { getPlayers, getBoard, calculateFigures } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
-import { motion } from 'framer-motion';
+import { motion, sync } from 'framer-motion';
 import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
 import PlayerPanel from '../components/ui/PlayerPanel';
@@ -17,22 +17,23 @@ import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import {Loading} from "./Loading";
 
 export default function ActiveGame() {
-  const { gameId, host } = useParams();
+  const { gameId } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
   const [boxes, setBoxes] = useState();
-  // const [loading, setLoading] = useState(false);
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
-  const [figuresFormed, setFiguresFormed] = useState([]);
-  
+  const [figuresFormed, setFiguresFormed] = useState([]);  
   const [fetchedTurn, setFetchedTurn] = useState(null);
-
+  const [loadingFig, setLoadingFig] = useState(false);
+  const [loadingOut, setLoadingOut] = useState(false);
+  const [syncEffect, setSyncEffect] = useState(true);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -62,10 +63,13 @@ export default function ActiveGame() {
 
   const fetchBoard = useCallback(async () => {
     try {
+      // console.log("fetchBoard ejecutado");
       const res = await getBoard(gameId);
       console.log(res);
       setBoxes(res.boxes);
       setFiguresFormed(res.formed_figures);
+      // setSyncEffect(true);
+      // return;
     } catch (err) {
       console.error("Error fetching board:", err);
     }
@@ -74,15 +78,15 @@ export default function ActiveGame() {
   
 
   const resetFigureSelection = useCallback(() => {
-    console.log('reset cardFigureSelect:', selectedCardFigure);
-    console.log('reset boardFigureSelect:', selectedBoardFigure);
+    // console.log('reset cardFigureSelect:', selectedCardFigure);
+    // console.log('reset boardFigureSelect:', selectedBoardFigure);
     setSelectedBoardFigure([]);
     setSelectedCardFigure(null);
   }, [setSelectedBoardFigure, setSelectedCardFigure]); // Ensure this only depends on relevant state
   
   const resetMovement = useCallback(() => {
-    console.log('reset cardMovementSelect:', selectedMovementCard);
-    console.log('reset cardPositionsSelect:', selectedMovementPositions);
+    // console.log('reset cardMovementSelect:', selectedMovementCard);
+    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
@@ -90,9 +94,9 @@ export default function ActiveGame() {
   
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
-      console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
+      // console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
       if (fetchedTurn === playerId) {
-        console.log("HOLLAAAAdsfsdf");
+        // console.log("HOLLAAAAdsfsdf");
         calculateFigures(gameId); // highlight board figures
       }
     });
@@ -108,14 +112,27 @@ export default function ActiveGame() {
   
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard, fetchedTurn, playerId);
-  useTurnInfoSocket(gameId, setCurrentTurn, fetchBoard);
+  useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
+  useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
   
 
   const otherPlayers = players.filter(p => p.id !== playerId);
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
+      {loadingFig && currentTurn === playerId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
+          <h2 className="text-white text-2xl ml-4">Calculando figuras formadas...</h2>
+        </div>
+      )}
+      {loadingOut && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
+          <h2 className="text-white text-2xl ml-4">Redirigiendo...</h2>
+        </div>
+      )}
+      
       {/* Other Player Panels */}
       <div className="flex flex-row w-full text-white  justify-center ">
         {otherPlayers.map((player) => (
@@ -157,6 +174,7 @@ export default function ActiveGame() {
              setSelectMovementPosition={setSelectedMovementPositions}
              selectedMovementPositions={selectedMovementPositions}
              figuresFormed={figuresFormed}
+             syncEffect={syncEffect}
              />
 
 
@@ -213,14 +231,14 @@ export default function ActiveGame() {
         transition={{ duration: 0.5 }}
       >
 
-        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement}/>
+        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
         <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure} resetFigureSelection={resetFigureSelection}/>
-        <UndoButton gameId={gameId} currentTurn={currentTurn} />
-        <LeaveButton gameId={gameId} />
+        <UndoButton gameId={gameId} currentTurn={currentTurn} setLoadingFig={setLoadingFig} resetFigureSelection={resetFigureSelection} setSyncEffect={setSyncEffect} resetMov={resetMovement}/>
         <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
-          resetMov={resetMovement}
+          resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
+        <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} />
       </motion.div>
     </div>
   );

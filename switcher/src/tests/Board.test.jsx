@@ -63,28 +63,46 @@ const mockData = {
   ]
 };
 
+const mockBlockedColor = null;
+const mockCurrentTurn = 1;
+const mockPlayerId = 1;
+const mockSelectedCardFigure = null;
+const mockSetSelectedBoardFigure = vi.fn();
+const mockSelectedMovementCard = null;
+const mockSetSelectMovementPosition = vi.fn();
+const mockSelectedMovementPositions = [];
+const mockFiguresFormed = mockData.figuresFormed;
+const mockSyncEffect = true;
 
 describe('Creación del tablero', () => {
   it('Si le llegan 36 casillas en el formato pactado, las renderiza', () => {
     render(
       <MemoryRouter>
-        <GameBoard boxes={mockData.boxes} selectedBoardFigure={mockData.figuresFormed[0]}/>
+        <GameBoard
+          boxes={mockData.boxes}
+          blockedColor={mockBlockedColor}
+          currentTurn={mockCurrentTurn}
+          playerId={mockPlayerId}
+          selectedCardFigure={mockSelectedCardFigure}
+          selectedBoardFigure={mockFiguresFormed[0]}
+          setSelectedBoardFigure={mockSetSelectedBoardFigure}
+          selectedMovementCard={mockSelectedMovementCard}
+          setSelectMovementPosition={mockSetSelectMovementPosition}
+          selectedMovementPositions={mockSelectedMovementPositions}
+          figuresFormed={mockFiguresFormed}
+          syncEffect={mockSyncEffect}
+        />
       </MemoryRouter>
     );
 
-    mockData.boxes.flat().forEach((box, i) => {
+    mockData.boxes.flat().forEach((box) => {
       const boxElement = screen.getByTestId(`box-${box.pos_x}-${box.pos_y}`);
 
-      // verifico que se haya renderizado
+      // Verifico que se haya renderizado
       expect(boxElement).toBeInTheDocument();
 
-      // verifico que si esta highlighted -> tenga la className 'shine-effect'
-      if(boxElement.highlighted){
-        expect(boxElement).toHaveClass('shine-effect');
-      }
-
-       // verifico que si esta no esta highlighted -> no tenga la className 'shine-effect'
-       if(boxElement.highlighted){
+      // Verifico que si no está highlighted -> no tenga la className 'shine-effect'
+      if (!box.highlighted) {
         expect(boxElement).not.toHaveClass('shine-effect');
       }
     });

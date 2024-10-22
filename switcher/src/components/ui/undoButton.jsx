@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaUndo } from 'react-icons/fa';
 import { useGameContext } from "@/context/GameContext";
 import { undoMovement } from "@/services/services";
-import { calculateFigures } from "@/services/services";
 
-export default function UndoButton({ gameId, currentTurn }) {
+export default function UndoButton({ gameId, currentTurn, resetFigureSelection, resetMov}) {
     const { playerId } = useGameContext();
     const [error, setError] = useState(null);
     const [showError, setShowError] = useState(false);
@@ -30,20 +29,20 @@ export default function UndoButton({ gameId, currentTurn }) {
     }
 
     const onUndoMovement = async () => {
+        resetFigureSelection();
+        resetMov();
+        
         if (!gameId || !playerId) {
             handleError(`Error al deshacer movimiento: (!gameId || !playerId)`);
             return;
         }
-
-        undoMovement(gameId, playerId).then((res) => {
-                calculateFigures(gameId);
-        }).catch(err=> {
+        
+        undoMovement(gameId, playerId).catch(err=> {
             handleError(`Error al deshacer movimiento: ${err.message}`);
         })
-    
         
     };
-
+    
     return (
         <div className="relative">
             <button

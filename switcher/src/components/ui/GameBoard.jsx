@@ -1,67 +1,5 @@
 import React, {useState, useEffect} from "react";
 
-const mockData = {
-  boxes: [
-    [
-      { pos_x: 0, pos_y: 0, color: "RED", highlighted: true },
-      { pos_x: 1, pos_y: 0, color: "RED", highlighted: true },
-      { pos_x: 2, pos_y: 0, color: "RED", highlighted: true },
-      { pos_x: 3, pos_y: 0, color: "BLUE", highlighted: false },
-      { pos_x: 4, pos_y: 0, color: "YELLOW", highlighted: false },
-      { pos_x: 5, pos_y: 0, color: "GREEN", highlighted: false }
-    ],
-    [
-      { pos_x: 0, pos_y: 1, color: "GREEN", highlighted: false },
-      { pos_x: 1, pos_y: 1, color: "YELLOW", highlighted: false },
-      { pos_x: 2, pos_y: 1, color: "RED", highlighted: true },
-      { pos_x: 3, pos_y: 1, color: "BLUE", highlighted: false },
-      { pos_x: 4, pos_y: 1, color: "GREEN", highlighted: false },
-      { pos_x: 5, pos_y: 1, color: "RED", highlighted: false }
-    ],
-    [
-      { pos_x: 0, pos_y: 2, color: "BLUE", highlighted: true },
-      { pos_x: 1, pos_y: 2, color: "YELLOW", highlighted: false },
-      { pos_x: 2, pos_y: 2, color: "GREEN", highlighted: false },
-      { pos_x: 3, pos_y: 2, color: "RED", highlighted: false },
-      { pos_x: 4, pos_y: 2, color: "YELLOW", highlighted: false },
-      { pos_x: 5, pos_y: 2, color: "GREEN", highlighted: false }
-    ],
-    [
-      { pos_x: 0, pos_y: 3, color: "BLUE", highlighted: true },
-      { pos_x: 1, pos_y: 3, color: "RED", highlighted: false },
-      { pos_x: 2, pos_y: 3, color: "GREEN", highlighted: false },
-      { pos_x: 3, pos_y: 3, color: "YELLOW", highlighted: false },
-      { pos_x: 4, pos_y: 3, color: "BLUE", highlighted: false },
-      { pos_x: 5, pos_y: 3, color: "RED", highlighted: false }
-    ],
-    [
-      { pos_x: 0, pos_y: 4, color: "BLUE", highlighted: true },
-      { pos_x: 1, pos_y: 4, color: "BLUE", highlighted: true },
-      { pos_x: 2, pos_y: 4, color: "RED", highlighted: false },
-      { pos_x: 3, pos_y: 4, color: "YELLOW", highlighted: false },
-      { pos_x: 4, pos_y: 4, color: "GREEN", highlighted: false },
-      { pos_x: 5, pos_y: 4, color: "YELLOW", highlighted: false }
-    ],
-    [
-      { pos_x: 0, pos_y: 5, color: "GREEN", highlighted: false },
-      { pos_x: 1, pos_y: 5, color: "YELLOW", highlighted: false },
-      { pos_x: 2, pos_y: 5, color: "RED", highlighted: false },
-      { pos_x: 3, pos_y: 5, color: "BLUE", highlighted: false },
-      { pos_x: 4, pos_y: 5, color: "GREEN", highlighted: false },
-      { pos_x: 5, pos_y: 5, color: "RED", highlighted: false }
-    ]
-  ],
-  figuresFormed: [
-    [
-      { pos_x: 0, pos_y: 2, color: "BLUE", highlighted: true },
-      { pos_x: 0, pos_y: 3, color: "BLUE", highlighted: true },
-      { pos_x: 0, pos_y: 4, color: "BLUE", highlighted: true },
-      { pos_x: 1, pos_y: 4, color: "BLUE", highlighted: true }
-    ],
-  ]
-};
-
-
 const getColorBox = (color) => {
   switch (color) {
     case 'GREEN':
@@ -80,12 +18,11 @@ const getColorBox = (color) => {
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
-                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed}) {
+                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
-    console.log(figuresFormed)
 
     figuresFormed.find((figure, index) => {
       boxFound = figure.find(
@@ -94,7 +31,6 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
           elem.pos_y === box.pos_y &&
           elem.color === box.color;
 
-          console.log(`Comparing box->${JSON.stringify(box)} with \nelem->${JSON.stringify(elem)} from figure->${index} \nisMatch->${isMatch}\n`)
           return isMatch;
         }
       );
@@ -107,26 +43,21 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
       console.error("Box does not belong to a valid formed figure");
       return;
     }
-    console.log("FIGURA SELECCIONADA:", figuresFormed[indexFigureFound]);
     setSelectedBoardFigure(figuresFormed[indexFigureFound]);
   };
-  
-  // Manejo de clic en las casillas
+
   const handleSelectMovement = (box) => {
     if (!selectedMovementCard) {
-      // console.log("Debes seleccionar una carta de movimiento primero");
       return;
     }
-    console.log("CASILLA SELECCIONADA:", box);
-    // Obtener la posición de la casilla seleccionada
+
     const position = { x: box.pos_x, y: box.pos_y };
 
-    // Verificar si la casilla ya está seleccionada
     const isAlreadySelected = selectedMovementPositions.some(
       (pos) => pos.x === position.x && pos.y === position.y
     );
 
-    let newSelectedMovementPositions; // Nuevas posiciones seleccionadas
+    let newSelectedMovementPositions;
 
     if (isAlreadySelected) {
       // Si la casilla ya está seleccionada, removerla
@@ -143,7 +74,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
         position                      // nueva posicion seleccionada
       ];
     }
-    // console.log("Casillas seleccionadas:", newSelectedMovementPositions);
+
     setSelectMovementPosition(newSelectedMovementPositions); // Pasar las posiciones seleccionadas a ActiveGame
   };
 
@@ -205,7 +136,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                   key={`${rowIndex}-${colIndex}`}
                   className={`relative overflow-hidden rounded w-full h-full
                     ${blockedColor == box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)}
-                    ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId) ? 'shine-effect' : ''}
+                    ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId && syncEffect) ? 'shine-effect' : ''}
                     ${isSelectedFigure ? 'animate-pulse' : ''}
                     ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
                     ${(!selectedCardFigure && !selectedMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}

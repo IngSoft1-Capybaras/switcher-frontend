@@ -50,6 +50,8 @@ export const cardImg = (caseImg) => {
         return '/src/assets/images/fig17.svg';
       case "FIG18":
         return '/src/assets/images/fig18.svg';
+      case "DORSO_FIG":
+        return '/src/assets/images/back-fig.svg';
       case "LINEAL_CONT":
         return '/src/assets/images/cruceLinealContiguo.svg';
       case "LINEAL_ESP":
@@ -64,6 +66,8 @@ export const cardImg = (caseImg) => {
         return '/src/assets/images/cruceEnLIzquierda.svg';
       case "LINEAL_AL_LAT":
         return '/src/assets/images/cruceLinealLateral.svg';
+      case "DORSO_MOV":
+        return '/src/assets/images/back-mov.svg';
       default:
         throw new Error('Tipo de carta no válido');
     }

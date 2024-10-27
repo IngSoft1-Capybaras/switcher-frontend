@@ -2,6 +2,7 @@ import React, { useEffect, useState} from 'react'
 import { useSocketContext } from '@/context/SocketContext';
 import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
+import { Button } from './button';
 
 export default function Chat ({gameId}) {
   const [message, setMessage] = useState('');
@@ -46,9 +47,9 @@ export default function Chat ({gameId}) {
           onChange={(e) => setMessage(e.target.value)}
         />
 
-        <button onClick={handleSendMessage}>
+        <Button onClick={handleSendMessage}>
           Enviar
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -10,14 +10,16 @@ export default function Chat ({gameId}) {
   const {username} = useGameContext();
 
   const handleSendMessage = () => {
-    const formattedMessage = `${username}: ${message}`;
-    const formattedType = `${gameId}:CHAT_MESSAGE`;
-    socket.send(JSON.stringify(
-      {
-        type: formattedType,
-        message: formattedMessage
-      }
-    ))
+    if(message.trim()){
+      const formattedMessage = `${username}: ${message}`;
+      const formattedType = `${gameId}:CHAT_MESSAGE`;
+      socket.send(JSON.stringify(
+        {
+          type: formattedType,
+          message: formattedMessage
+        }
+      ))
+    }
     setMessage('');
   }
 

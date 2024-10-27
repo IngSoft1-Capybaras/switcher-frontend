@@ -3,7 +3,7 @@ import { useSocketContext } from '@/context/SocketContext';
 import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
 
-export default function Chat (gameId) {
+export default function Chat ({gameId}) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const {socket} = useSocketContext();
@@ -11,10 +11,10 @@ export default function Chat (gameId) {
 
   const handleSendMessage = () => {
     const formattedMessage = `${username}: ${message}`;
-
+    const formattedType = `${gameId}:CHAT_MESSAGE`;
     socket.send(JSON.stringify(
       {
-        type: `${gameId}:CHAT_MESSAGE`,
+        type: formattedType,
         message: formattedMessage
       }
     ))

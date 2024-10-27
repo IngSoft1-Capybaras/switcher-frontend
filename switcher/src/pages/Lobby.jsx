@@ -92,7 +92,7 @@ export default function Lobby() {
       </div>
 
       {/* Chat Section */}
-      <Chat/>
+      <Chat gameId={gameId}/>
     </div>
   </div>
 

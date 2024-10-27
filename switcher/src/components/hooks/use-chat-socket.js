@@ -10,7 +10,7 @@ export function useChatSocket(gameId, chat, setChat) {
         const handleNextTurnEvent = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === `${gameId}:CHAT_MESSAGE`) {
-              setChat(chat => [data.message, ...chat])
+              setChat(chat => [...chat, data.message])
             }
         };
 

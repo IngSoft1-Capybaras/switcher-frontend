@@ -6,6 +6,7 @@ import { useGameContext } from '@/context/GameContext';
 import { getPlayers, getGameInfo, getPlayer, startGame, calculateFigures } from '../services/services';
 import { useLobbySocket } from '@/components/hooks/use-lobby-socket';
 import BotonAbandonar from '@/components/ui/LeaveButton';
+import Chat from '@/components/ui/chat';
 
 // The improved lobby component
 export default function Lobby() {
@@ -14,7 +15,7 @@ export default function Lobby() {
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
-  
+
   const [host, setHost] = useState(false);
   // const { socket } = useSocketContext();  // Get WebSocket instance
 
@@ -30,7 +31,7 @@ export default function Lobby() {
     // navigate(`/games/ongoing/${gameId}`);
     // await manager.broadcast(message)
     // socket.send(JSON.stringify({"type":`${gameId}:GAME_STARTED`}));
-    
+
     await startGame(gameId);
   };
 
@@ -70,7 +71,7 @@ export default function Lobby() {
 
   {/* Outer Container for status, player list, and chat */}
   <div className="max-w-4xl w-full bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
-    
+
     {/* Status Box occupying full row within the container */}
     <div className="w-full mb-4 p-4">
       {/* <h3 className="text-xl text-center font-bold text-white mb-2">Estado del Juego</h3> */}
@@ -91,20 +92,10 @@ export default function Lobby() {
       </div>
 
       {/* Chat Section */}
-      <div className="w-full md:w-2/3 md:ml-4 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800">
-        <h3 className="text-xl font-bold text-white mb-2">Chat</h3>
-        <div className="h-64 overflow-y-auto mb-2 border border-zinc-800 p-2 rounded bg-zinc-900">
-          <p className="text-zinc-400">Tus mensajes aparecerán aquí...</p>
-        </div>
-        <input
-          type="text"
-          className="w-full p-2 bg-zinc-900 text-zinc-300 rounded"
-          placeholder="Escribe tu mensaje..."
-        />
-      </div>
+      <Chat/>
     </div>
   </div>
-  
+
 
   {/* Start Button */}
   <div className="flex justify-center mt-8 space-x-3">

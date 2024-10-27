@@ -1,14 +1,28 @@
 import React, { useEffect, useState} from 'react'
+import { useSocketContext } from '@/context/SocketContext';
+import { useGameContext } from '@/context/GameContext';
+import { useChatSocket } from '../hooks/use-chat-socket';
 
-
-export default function Chat () {
+export default function Chat (gameId) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
+  const {socket} = useSocketContext();
+  const {username} = useGameContext();
 
   const handleSendMessage = () => {
-    setChat(prevChat => [message, ...prevChat]);
+    const formattedMessage = `${username}: ${message}`;
+
+    socket.send(JSON.stringify(
+      {
+        type: `${gameId}:CHAT_MESSAGE`,
+        message: formattedMessage
+      }
+    ))
     setMessage('');
   }
+
+
+  useChatSocket(gameId, chat, setChat);
 
 
   return (

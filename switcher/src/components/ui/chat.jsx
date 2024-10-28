@@ -3,6 +3,8 @@ import { useSocketContext } from '@/context/SocketContext';
 import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
 import { Button } from './button';
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 
 export default function Chat ({gameId}) {
   const [message, setMessage] = useState('');
@@ -32,7 +34,7 @@ export default function Chat ({gameId}) {
     <div className="w-full md:w-2/3 md:ml-4 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800">
       <h3 className="text-xl font-bold text-white mb-2">Chat</h3>
 
-      <div className="h-60 overflow-y-auto mb-2">
+      <ScrollArea className="h-60 mb-2 pr-3">
         {chat.map((msg, index) => {
           const isCurrentUser = msg.startsWith(`${username}:`);
           return (
@@ -44,7 +46,7 @@ export default function Chat ({gameId}) {
             </div>
           );
         })}
-      </div>
+      </ScrollArea>
 
       <div className='flex'>
         <input

@@ -40,7 +40,9 @@ export default function Chat ({gameId}) {
           return (
             <div key={index} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}>
               <div
-                className={` text-zinc-300 p-2 rounded-lg ${isCurrentUser ? 'bg-blue-600' : 'bg-zinc-800'}` }>
+                className={` text-zinc-300 p-2 rounded-lg max-w-[75%] overflow-wrap break-words
+                              ${isCurrentUser ? 'bg-blue-600' : 'bg-zinc-800'}
+                          `}>
                 {isCurrentUser ? msg.split(': ')[1] : msg}
               </div>
             </div>

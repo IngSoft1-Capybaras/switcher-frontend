@@ -32,7 +32,7 @@ export default function Chat ({gameId}) {
     <div className="w-full md:w-2/3 md:ml-4 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800">
       <h3 className="text-xl font-bold text-white mb-2">Chat</h3>
 
-      <div className="max-h-60 overflow-y-auto mb-2">
+      <div className="h-60 overflow-y-auto mb-2">
         {chat.map((msg, index) => {
           const isCurrentUser = msg.startsWith(`${username}:`);
           return (
@@ -46,10 +46,10 @@ export default function Chat ({gameId}) {
         })}
       </div>
 
-      <div>
+      <div className='flex'>
         <input
           type="text"
-          className="w-full p-2 bg-zinc-900 text-zinc-300 rounded"
+          className="flex-1 p-2 bg-zinc-900 text-zinc-300 rounded-l-lg border border-zinc-800 focus:outline-none"
           placeholder="Escribe tu mensaje..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}

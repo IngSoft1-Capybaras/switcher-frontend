@@ -36,7 +36,12 @@ export default function Chat ({gameId}) {
         {chat.map((msg, index) => {
           const isCurrentUser = msg.startsWith(`${username}:`);
           return (
-            <div key={index} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}>{msg}</div>
+            <div key={index} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}>
+              <div
+                className={` text-zinc-300 p-2 rounded-lg ${isCurrentUser ? 'bg-blue-600' : 'bg-zinc-800'}` }>
+                {isCurrentUser ? msg.split(': ')[1] : msg}
+              </div>
+            </div>
           );
         })}
       </div>

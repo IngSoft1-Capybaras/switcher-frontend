@@ -7,6 +7,7 @@ import { getPlayers, getGameInfo, getPlayer, startGame, calculateFigures } from 
 import { useLobbySocket } from '@/components/hooks/use-lobby-socket';
 import BotonAbandonar from '@/components/ui/LeaveButton';
 import Chat from '@/components/ui/chat';
+import { useSocketContext } from '@/context/SocketContext';
 
 // The improved lobby component
 export default function Lobby() {
@@ -17,16 +18,54 @@ export default function Lobby() {
   const [minPlayers, setMinPlayers] = useState(Infinity);
 
   const [host, setHost] = useState(false);
-  // const { socket } = useSocketContext();  // Get WebSocket instance
+  const { socket } = useSocketContext();
+
+  const [previousPlayers, setPreviousPlayers] = useState(players);
 
   const fetchPlayersInfo = async () => {
-    getPlayers(gameId).then((fetchedPlayers) => {
+    try {
+      const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
-    }).catch((err) => {
-      console.error("Error al obtener jugadores");
-    });
-  };
 
+      // Verifica si el usuario actual es el host
+      const isHost = fetchedPlayers.some(player => player.host && player.id === playerId);
+
+      if (isHost) {
+        // Compara jugadores por ID para encontrar nuevos y los que se fueron
+        const newPlayers = fetchedPlayers.filter(
+          newPlayer => !previousPlayers.some(prevPlayer => prevPlayer.id === newPlayer.id)
+        );
+
+        const leftPlayers = previousPlayers.filter(
+          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
+        );
+
+        // Envía mensajes para nuevos jugadores
+        newPlayers.forEach(newPlayer => {
+          if (socket) {
+            socket.send(JSON.stringify({
+              type: `${gameId}:CHAT_MESSAGE`,
+              message: `${newPlayer.name} se ha unido al juego.`
+            }));
+          }
+        });
+
+        // Envía mensajes para jugadores que se fueron
+        leftPlayers.forEach(leftPlayer => {
+          if (socket) {
+            socket.send(JSON.stringify({
+              type: `${gameId}:CHAT_MESSAGE`,
+              message: `${leftPlayer.name} se ha ido del juego.`
+            }));
+          }
+        });
+
+        setPreviousPlayers(fetchedPlayers);
+      }
+    } catch (err) {
+      console.error("Error al obtener jugadores", err);
+    }
+  };
   const onStartClick = async () => {
     // navigate(`/games/ongoing/${gameId}`);
     // await manager.broadcast(message)

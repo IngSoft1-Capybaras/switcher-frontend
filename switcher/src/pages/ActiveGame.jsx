@@ -18,10 +18,12 @@ import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useSocketContext } from '@/context/SocketContext';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
+  const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
@@ -33,6 +35,7 @@ export default function ActiveGame() {
   const [loadingFig, setLoadingFig] = useState(false);
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
+  const [previousPlayers, setPreviousPlayers] = useState(players);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -52,11 +55,29 @@ export default function ActiveGame() {
 
   const fetchPlayers = useCallback(async () => {
     try {
-
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
+
+      const isHost = fetchedPlayers.some(player => player.host && player.id === playerId);
+
+      if (isHost) {
+        // verifo que jugadores salieron
+        const leftPlayers = previousPlayers.filter(
+          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
+        );
+        leftPlayers.forEach(leftPlayer => {
+          if (socket) {
+            socket.send(JSON.stringify({
+              type: `${gameId}:CHAT_MESSAGE`,
+              message: `${leftPlayer.name} se ha ido del juego.`
+            }));
+          }
+        });
+
+        setPreviousPlayers(fetchedPlayers);
+      }
     } catch (err) {
-      console.error("Error fetching players:", err);
+      console.error("Error al obtener jugadores", err);
     }
   }, [gameId, setPlayers]);
 

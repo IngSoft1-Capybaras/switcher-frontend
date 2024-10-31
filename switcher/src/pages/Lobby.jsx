@@ -27,20 +27,20 @@ export default function Lobby() {
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
 
-      // Verifica si el usuario actual es el host
       const isHost = fetchedPlayers.some(player => player.host && player.id === playerId);
 
       if (isHost) {
-        // Compara jugadores por ID para encontrar nuevos y los que se fueron
+        // verifo que jugadores entraron
         const newPlayers = fetchedPlayers.filter(
           newPlayer => !previousPlayers.some(prevPlayer => prevPlayer.id === newPlayer.id)
         );
 
+        // verifo que jugadores salieron
         const leftPlayers = previousPlayers.filter(
           prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
         );
 
-        // Envía mensajes para nuevos jugadores
+        // envio mensajes por socket
         newPlayers.forEach(newPlayer => {
           if (socket) {
             socket.send(JSON.stringify({
@@ -49,8 +49,6 @@ export default function Lobby() {
             }));
           }
         });
-
-        // Envía mensajes para jugadores que se fueron
         leftPlayers.forEach(leftPlayer => {
           if (socket) {
             socket.send(JSON.stringify({

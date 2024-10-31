@@ -3,12 +3,14 @@ import { useGameContext } from "@/context/GameContext";
 import { calculateFigures, pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 import {FaCheck} from 'react-icons/fa'
+import { useSocketContext } from "@/context/SocketContext";
 
 const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement }) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { playerId } = useGameContext();
+  const { playerId, username } = useGameContext();
   const [showTooltip, setShowTooltip] = useState(false);
+  const {socket} = useSocketContext();
 
   useEffect(() => {
     if (currentTurn===playerId) {
@@ -26,7 +28,7 @@ const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement
     resetMovement();
     setLoading(true);
     // setLoadingFig(true);
-    
+
      pathEndTurn(gameId).then((res) => {
 
        if (!res) {
@@ -34,6 +36,16 @@ const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement
        }
        // console.log("Turno finalizado", res);
        setIsButtonActive(false); // Desactiva el botón después de terminar el turno
+
+      // logica para msg action
+      socket.send(JSON.stringify(
+        {
+          type: `${gameId}:CHAT_MESSAGE`,
+          message: `${username} paso de turno.`
+        }
+      ))
+
+
      }).catch(error => {
        console.error("Error al terminar el turno", error);
       })

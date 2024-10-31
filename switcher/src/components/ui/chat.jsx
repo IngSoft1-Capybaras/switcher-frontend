@@ -1,16 +1,23 @@
-import React, { useEffect, useState} from 'react'
+import React, { useState } from 'react'
 import { useSocketContext } from '@/context/SocketContext';
 import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
 import { Button } from './button';
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+const colors = ["bg-red-400", "bg-blue-400", "bg-green-400", "bg-yellow-400"];
+
 
 export default function Chat ({gameId}) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const {socket} = useSocketContext();
-  const {username} = useGameContext();
+  const {username, players} = useGameContext();
+
+  const getPlayerColor = (index) => {
+    return colors[index % colors.length];
+  };
+
 
   const handleSendMessage = () => {
     if(message.trim()){
@@ -36,13 +43,16 @@ export default function Chat ({gameId}) {
 
       <ScrollArea className="h-60 mb-2 pr-3">
         {chat.map((msg, index) => {
-          const isCurrentUser = msg.startsWith(`${username}:`);
+          const sender = msg.split(':')[0];
+          const playerIndex = players.findIndex((player) => player.name === sender);
+          const isCurrentUser = sender === username;
+
           return (
             <div key={index} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}>
               <div
-                className={` text-zinc-300 p-2 rounded-lg max-w-[75%] overflow-wrap break-words
-                              ${isCurrentUser ? 'bg-blue-600' : 'bg-zinc-800'}
-                          `}>
+                className={`text-zinc-300 p-2 rounded-lg max-w-[75%] overflow-wrap break-words
+                            ${getPlayerColor(playerIndex)}`}
+              >
                 {isCurrentUser ? msg.split(': ')[1] : msg}
               </div>
             </div>

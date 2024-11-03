@@ -62,17 +62,20 @@ export default function Chat ({gameId}) {
         })}
       </ScrollArea>
 
-      <div className='flex'>
+      <div className='flex items-stretch'>
         <input
           type="text"
-          className="flex-1 p-2 bg-zinc-900 text-zinc-300 rounded-l-lg border border-zinc-800 focus:outline-none"
+          className="flex-1 bg-zinc-800 text-white rounded-l-full px-4 py-2 focus:outline-none "
           placeholder="Escribe tu mensaje..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
 
-        <Button onClick={handleSendMessage}>
-          <IoIosSend />
+        <Button
+          onClick={handleSendMessage}
+          className={`rounded-r-full p-3 bg-blue-500 hover:bg-blue-600 transition-colors h-auto`}
+        >
+          <IoIosSend className='w-5 h-5'/>
         </Button>
       </div>
     </div>

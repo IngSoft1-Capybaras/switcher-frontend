@@ -131,7 +131,7 @@ export default function Lobby() {
       </div>
 
       {/* Chat Section */}
-      <Chat gameId={gameId} forciblyOpened={true}/>
+      <Chat gameId={gameId}/>
     </div>
   </div>
 

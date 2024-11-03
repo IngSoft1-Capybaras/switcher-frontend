@@ -5,12 +5,13 @@ import { useChatSocket } from '../hooks/use-chat-socket';
 import { Button } from './button';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { IoIosSend } from "react-icons/io";
+import { FaMinus } from "react-icons/fa";
 import { motion, AnimatePresence } from 'framer-motion';
 
 const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"];
 
 
-export default function Chat ({gameId, forciblyOpened}) {
+export default function Chat ({gameId}) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const {socket} = useSocketContext();
@@ -22,7 +23,7 @@ export default function Chat ({gameId, forciblyOpened}) {
   };
 
   const handleChatClick = () => {
-    if (!forciblyOpened) setIsMinimized(false);
+    setIsMinimized(false);
   };
 
 
@@ -52,6 +53,15 @@ export default function Chat ({gameId, forciblyOpened}) {
 
         {!isMinimized ?
         (<motion.div>
+          <div className="flex items-center justify-between p-2 border-b border-zinc-800">
+              <h3 className="text-lg font-semibold text-white">Chat</h3>
+              <button
+                onClick={() => setIsMinimized(true)}
+                className="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
+              >
+                <FaMinus />
+              </button>
+            </div>
           <ScrollArea className="h-60 mb-2 pr-3">
             {chat.map((msg, index) => {
               const isChatMessage = msg.includes(':');

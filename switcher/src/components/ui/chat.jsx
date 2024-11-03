@@ -5,7 +5,7 @@ import { useChatSocket } from '../hooks/use-chat-socket';
 import { Button } from './button';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { IoIosSend } from "react-icons/io";
-
+import { motion, AnimatePresence } from 'framer-motion';
 
 const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"];
 
@@ -40,12 +40,14 @@ export default function Chat ({gameId}) {
 
 
   return (
+    <AnimatePresence>
     <div className="w-full md:w-2/3 md:ml-4 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800">
-      <h3 className="text-xl font-bold text-white mb-2">Chat</h3>
 
       <ScrollArea className="h-60 mb-2 pr-3">
         {chat.map((msg, index) => {
+          const isChatMessage = msg.includes(':');
           const sender = msg.split(':')[0];
+          const msgContent = msg.split(':')[1];
           const playerIndex = players.findIndex((player) => player.name === sender);
           const isCurrentUser = sender === username;
 
@@ -55,7 +57,12 @@ export default function Chat ({gameId}) {
                 className={`text-zinc-300 p-2 rounded-lg max-w-[75%] overflow-wrap break-words
                             ${getPlayerColor(playerIndex)}`}
               >
-                {isCurrentUser ? msg.split(': ')[1] : msg}
+                {!isCurrentUser && isChatMessage && (
+                          <span className="text-sm text-zinc-400 block mb-1">
+                            {sender}
+                          </span>
+                        )}
+                <p className="text-white">{msgContent || msg}</p>
               </div>
             </div>
           );
@@ -79,5 +86,6 @@ export default function Chat ({gameId}) {
         </Button>
       </div>
     </div>
+    </AnimatePresence>
   );
 }

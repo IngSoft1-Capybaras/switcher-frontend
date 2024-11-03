@@ -21,7 +21,7 @@ export function useLobbySocket(gameId, fetchGameInfo) {
       }
 
       // si el owner abandona el lobby, redirigir a los jugadores a la pantalla de juegos
-      if (data.type === `OWNER_LEFT`) {
+      if (data.type === `${gameId}:OWNER_LEFT`) {
         navigate('/games');
       }
     };

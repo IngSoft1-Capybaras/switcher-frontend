@@ -16,11 +16,9 @@ export default function Lobby() {
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
-
   const [host, setHost] = useState(false);
   const { socket } = useSocketContext();
-
-  const [previousPlayers, setPreviousPlayers] = useState(players);
+  const [previousPlayers, setPreviousPlayers] = useState([]);
 
   const fetchPlayersInfo = async () => {
     try {
@@ -35,11 +33,14 @@ export default function Lobby() {
           newPlayer => !previousPlayers.some(prevPlayer => prevPlayer.id === newPlayer.id)
         );
 
+        console.log('new players');
+        console.log(newPlayers);
         // verifo que jugadores salieron
         const leftPlayers = previousPlayers.filter(
           prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
         );
-
+        console.log('left players');
+        console.log(leftPlayers);
         // envio mensajes por socket
         newPlayers.forEach(newPlayer => {
           if (socket) {
@@ -77,6 +78,7 @@ export default function Lobby() {
       setMaxPlayers(res.max_players);
       setMinPlayers(res.min_players);
       setGameName(res.name);
+      setPreviousPlayers([]);
     }).catch((err) =>
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );

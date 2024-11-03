@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { IoIosSend } from "react-icons/io";
 
 
-const colors = ["bg-red-400", "bg-blue-400", "bg-green-400", "bg-yellow-400"];
+const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"];
 
 
 export default function Chat ({gameId}) {
@@ -73,7 +73,7 @@ export default function Chat ({gameId}) {
 
         <Button
           onClick={handleSendMessage}
-          className={`rounded-r-full p-3 bg-blue-500 hover:bg-blue-600 transition-colors h-auto`}
+          className={`rounded-r-full p-3 bg-gray-500 hover:bg-gray-700 transition-colors h-auto`}
         >
           <IoIosSend className='w-5 h-5'/>
         </Button>

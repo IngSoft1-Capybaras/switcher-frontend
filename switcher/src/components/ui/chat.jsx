@@ -55,12 +55,12 @@ export default function Chat ({gameId}) {
         (<motion.div>
           <div className="flex items-center justify-between p-2 border-b border-zinc-800">
               <h3 className="text-lg font-semibold text-white">Chat</h3>
-              <button
+              <Button
                 onClick={() => setIsMinimized(true)}
                 className="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
               >
                 <FaMinus />
-              </button>
+              </Button>
             </div>
           <ScrollArea className="h-60 mb-2 pr-3">
             {chat.map((msg, index) => {

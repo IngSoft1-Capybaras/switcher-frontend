@@ -4,6 +4,8 @@ import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
 import { Button } from './button';
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { IoIosSend } from "react-icons/io";
+
 
 const colors = ["bg-red-400", "bg-blue-400", "bg-green-400", "bg-yellow-400"];
 
@@ -70,7 +72,7 @@ export default function Chat ({gameId}) {
         />
 
         <Button onClick={handleSendMessage}>
-          Enviar
+          <IoIosSend />
         </Button>
       </div>
     </div>

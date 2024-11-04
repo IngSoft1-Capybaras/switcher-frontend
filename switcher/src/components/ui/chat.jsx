@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useSocketContext } from '@/context/SocketContext';
 import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
@@ -17,6 +17,8 @@ export default function Chat ({gameId}) {
   const {socket} = useSocketContext();
   const {username, players} = useGameContext();
   const [isMinimized, setIsMinimized] = useState(true);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // por ahora siempre true, la usare para frenar el auto scoll
+  const viewportRef = useRef(null);
 
   const getPlayerColor = (index) => {
     return colors[index % colors.length];
@@ -24,7 +26,31 @@ export default function Chat ({gameId}) {
 
   const handleChatClick = () => {
     setIsMinimized(false);
+    setShouldAutoScroll(true);
   };
+
+
+  // efecto para obtener la referencia al viewport mientras se scrollea
+  useEffect(() => {
+        if (!isMinimized) {
+          // buscamos la ref a el viewport del scrollarea a traves de su data-attribute (identificador), el id no me funciona
+          const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
+          if (viewport) {
+            viewportRef.current = viewport;
+          }
+        }
+  }, [isMinimized]);
+
+  // efecto para auto scrollear si debemos
+  useEffect(() => {
+    const scrollIfNewMessage = () => {
+    if (!viewportRef.current || !shouldAutoScroll) return;
+      const viewport = viewportRef.current;
+      viewport.scrollTop = viewport.scrollHeight;
+    }
+
+    scrollIfNewMessage();
+  }, [chat, isMinimized]) // se ejecuta cada vez que el chat se abre o llegan nuevos mensajes
 
 
   const handleSendMessage = (e) => {
@@ -68,7 +94,7 @@ export default function Chat ({gameId}) {
                 <FaMinus />
               </Button>
             </div>
-          <ScrollArea className="h-60 mb-2 pr-3">
+          <ScrollArea id='chatScrollArea' className="h-60 mb-2 pr-3">
             {chat.map((msg, index) => {
               const isChatMessage = msg.includes(':');
               const sender = msg.split(':')[0];

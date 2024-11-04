@@ -4,7 +4,7 @@ import { useGameContext } from '@/context/GameContext';
 import { useChatSocket } from '../hooks/use-chat-socket';
 import { Button } from './button';
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { IoIosSend } from "react-icons/io";
+import { IoIosSend, IoIosChatboxes } from "react-icons/io";
 import { FaMinus } from "react-icons/fa";
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -108,11 +108,25 @@ export default function Chat ({gameId}) {
         )
         :
         (
-          <Button
-            onClick={handleChatClick}
+          <motion.div
+            key="minimized"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
           >
-            Enviar mensaje
-          </Button>
+            <Button
+              onClick={handleChatClick}
+              className="w-full md:w-96 p-4 justify-between hover:bg-zinc-800 rounded-lg bg-zinc-900 border border-zinc-800"
+            >
+              <div className="flex items-center gap-2 overflow-hidden">
+                <IoIosChatboxes className="w-5 h-5 shrink-0" />
+                <span className="text-sm truncate">
+                  {chat.length > 0 ? (chat[chat.length - 1]) : "Abrir chat"}
+                </span>
+              </div>
+            </Button>
+          </motion.div>
         )
         }
 

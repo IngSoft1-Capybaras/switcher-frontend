@@ -52,7 +52,13 @@ export default function Chat ({gameId}) {
       <div className="w-full md:w-2/3 md:ml-4 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800">
 
         {!isMinimized ?
-        (<motion.div>
+        (<motion.div
+          key="expanded"
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ duration: 0.25 }}
+        >
           <div className="flex items-center justify-between p-2 border-b border-zinc-800">
               <h3 className="text-lg font-semibold text-white">Chat</h3>
               <Button
@@ -71,7 +77,12 @@ export default function Chat ({gameId}) {
               const isCurrentUser = sender === username;
 
               return (
-                <div key={index} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}>
+                <motion.div key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}
+                >
                   <div
                     className={`text-zinc-300 p-2 rounded-lg max-w-[75%] overflow-wrap break-words
                                 ${getPlayerColor(playerIndex)}`}
@@ -83,7 +94,7 @@ export default function Chat ({gameId}) {
                             )}
                     <p className="text-white">{msgContent || msg}</p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </ScrollArea>
@@ -113,7 +124,7 @@ export default function Chat ({gameId}) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.25 }}
           >
             <Button
               onClick={handleChatClick}

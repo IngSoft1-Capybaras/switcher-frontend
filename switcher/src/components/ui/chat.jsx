@@ -99,15 +99,12 @@ export default function Chat ({gameId}) {
 
   return (
     <AnimatePresence>
-
-      <div className="w-full md:w-2/3 md:ml-4 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800">
-
         {!isMinimized ?
         (<motion.div
+          className="w-full md:w-96 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800"
           key="expanded"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.25 }}
         >
           <div className="flex items-center justify-between p-2 border-b border-zinc-800">
@@ -172,9 +169,8 @@ export default function Chat ({gameId}) {
         (
           <motion.div
             key="minimized"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20}}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.25 }}
           >
             <Button
@@ -191,8 +187,6 @@ export default function Chat ({gameId}) {
           </motion.div>
         )
         }
-
-      </div>
     </AnimatePresence>
   );
 }

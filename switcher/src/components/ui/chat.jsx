@@ -17,7 +17,7 @@ export default function Chat ({gameId}) {
   const {socket} = useSocketContext();
   const {username, players} = useGameContext();
   const [isMinimized, setIsMinimized] = useState(true);
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(true); // por ahora siempre true, la usare para frenar el auto scoll
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
   const viewportRef = useRef(null);
 
   const getPlayerColor = (index) => {
@@ -29,6 +29,26 @@ export default function Chat ({gameId}) {
     setShouldAutoScroll(true);
   };
 
+  const handleScroll = () => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    // scrollTop representa el número de píxeles que el contenido de un elemento se ha desplazado hacia arriba. (es 0 si esta en el tope)
+    // es decir, es la distancia desde la parte superior de viewport hasta el punto donde empieza el área visible.
+    // clientHeight es la altura de esa área visible.
+
+    // para calcular la position sumamos desde donde empieza el area visible, para tener en cuenta todo lo que esta por encima
+    // la altura total de lo visible
+    const position = viewport.scrollTop + viewport.clientHeight;
+
+    // scrollHeight incluye la altura total (visible + overflow)
+    const height = viewport.scrollHeight;
+
+    // verificamos que el area que queda por desplazar sea menor que el delta*
+    // tomamos un delta arbitrario ya que height toma todo el tamano del elemento, incluyendo padding, border, etc*
+    const enableAutoScroll = height - position <= 50;
+
+    enableAutoScroll ? setShouldAutoScroll(true) : setShouldAutoScroll(false);
+  }
 
   // efecto para obtener la referencia al viewport mientras se scrollea
   useEffect(() => {
@@ -37,8 +57,13 @@ export default function Chat ({gameId}) {
           const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
           if (viewport) {
             viewportRef.current = viewport;
+            viewport.addEventListener('scroll', handleScroll);
           }
         }
+
+        return () => {
+          if (viewportRef.current) viewportRef.current.removeEventListener('scroll', handleScroll);
+         };
   }, [isMinimized]);
 
   // efecto para auto scrollear si debemos

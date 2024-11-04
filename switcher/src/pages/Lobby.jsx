@@ -106,54 +106,56 @@ export default function Lobby() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-  <h1 className="text-5xl font-extrabold text-center mb-8 text-white">{gameName}</h1>
+      <h1 className="text-5xl font-extrabold text-center mb-8 text-white">{gameName}</h1>
 
-  {/* Outer Container for status, player list, and chat */}
-  <div className="max-w-4xl w-full bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
+      {/* Outer Container for status, player list, and chat */}
+      <div className="max-w-4xl w-full bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
 
-    {/* Status Box occupying full row within the container */}
-    <div className="w-full mb-4 p-4">
-      {/* <h3 className="text-xl text-center font-bold text-white mb-2">Estado del Juego</h3> */}
-      {players.length >= minPlayers ? (
-        <p className="mt-4 text-center text-green-400">Todo listo para empezar!</p>
-      ) : (
-        <p className="mt-4 text-center text-gray-400">
-          Deben entrar por lo menos {minPlayers} jugadores para empezar
-        </p>
-      )}
-    </div>
+        {/* Status Box occupying full row within the container */}
+        <div className="w-full mb-4 p-4">
+          {/* <h3 className="text-xl text-center font-bold text-white mb-2">Estado del Juego</h3> */}
+          {players.length >= minPlayers ? (
+            <p className="mt-4 text-center text-green-400">Todo listo para empezar!</p>
+          ) : (
+            <p className="mt-4 text-center text-gray-400">
+              Deben entrar por lo menos {minPlayers} jugadores para empezar
+            </p>
+          )}
+        </div>
 
-    {/* Container for player list and chat in columns */}
-    <div className="flex flex-col md:flex-row">
-      {/* Player List Section */}
-      <div className="w-full md:w-1/3 mb-4 md:mb-0">
-        <PlayersList players={players} minPlayers={minPlayers} maxPlayers={maxPlayers} />
+        {/* Container for player list and chat in columns */}
+        <div className="flex flex-col md:flex-row">
+          {/* Player List Section */}
+          <div className="w-full md:w-1/3 mb-4 md:mb-0">
+            <PlayersList players={players} minPlayers={minPlayers} maxPlayers={maxPlayers} />
+          </div>
+
+          {/* Chat Section */}
+          <div className='pl-4'>
+            <Chat gameId={gameId}/>
+          </div>
+
+        </div>
       </div>
 
-      {/* Chat Section */}
-      <Chat gameId={gameId}/>
+
+      {/* Start Button */}
+      <div className="flex justify-center mt-8 space-x-3">
+      <BotonAbandonar gameId={gameId} />
+      {host && (
+          <StartButton
+            isActive={iniciateActive}
+            onClick={onStartClick}
+            className={`${
+              iniciateActive
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-zinc-500 cursor-not-allowed"
+            } px-6 py-2 text-white font-bold rounded-md transition-all duration-300 ease-in-out`}
+          >
+            Comenzar partida
+          </StartButton>
+      )}
+      </div>
     </div>
-  </div>
-
-
-  {/* Start Button */}
-  <div className="flex justify-center mt-8 space-x-3">
-  <BotonAbandonar gameId={gameId} />
-  {host && (
-      <StartButton
-        isActive={iniciateActive}
-        onClick={onStartClick}
-        className={`${
-          iniciateActive
-            ? "bg-green-600 hover:bg-green-700"
-            : "bg-zinc-500 cursor-not-allowed"
-        } px-6 py-2 text-white font-bold rounded-md transition-all duration-300 ease-in-out`}
-      >
-        Comenzar partida
-      </StartButton>
-  )}
-  </div>
-</div>
-
-  );
-}
+    );
+  }

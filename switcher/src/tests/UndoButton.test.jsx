@@ -13,7 +13,6 @@ describe('Undo Button', () => {
     const mockNextPlayerId = '2';
     const mockUsername = 'Player1';
 
-    // Mock de GameContext y SocketContext
     vi.mock('@/context/GameContext', async () => {
         const original = await vi.importActual('@/context/GameContext');
         return {
@@ -30,13 +29,11 @@ describe('Undo Button', () => {
         };
     });
 
-    // Mock del servicio de deshacer movimiento
     vi.mock('@/services/services', () => ({
         undoMovement: vi.fn(),
     }));
 
     beforeEach(() => {
-        // Mock del contexto del juego
         useGameContext.mockReturnValue({ playerId: mockPlayerId, username: mockUsername });
 
         // Mock del socket y su método send

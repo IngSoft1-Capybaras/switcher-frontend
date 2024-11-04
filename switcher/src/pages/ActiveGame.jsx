@@ -180,6 +180,9 @@ export default function ActiveGame() {
 
       {/* Board and Turn Info */}
       <div className="flex flex-col md:flex-row w-full text-white p-4 justify-center space-y-4 md:space-y-0">
+        <div>
+          <Chat gameId={gameId}/>
+        </div>
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">
@@ -231,10 +234,6 @@ export default function ActiveGame() {
               />
             </div>
           </div>
-        </div>
-
-        <div>
-          <Chat gameId={gameId}/>
         </div>
       </div>
 

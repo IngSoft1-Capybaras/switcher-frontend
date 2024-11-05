@@ -25,6 +25,7 @@ export function PageFilter({ setIsFiltering, formData, setFormData, fetchGames }
         await fetchGames(1, formData);
       } catch (error) {
         console.log('Error occurred while filtering');
+        setIsFiltering(false);
       }
     }
     setIsOpen(false);

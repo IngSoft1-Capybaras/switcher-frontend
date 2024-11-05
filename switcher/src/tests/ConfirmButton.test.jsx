@@ -2,14 +2,34 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, expect, it, describe, afterEach } from 'vitest';
 import ConfirmButton from '@/components/ui/ConfirmButton';
 import { playMovementCard } from '@/services/services';
+import { useSocketContext } from '@/context/SocketContext';
+import { useGameContext } from '@/context/GameContext';
 
 vi.mock('@/services/services', () => ({
   playMovementCard: vi.fn(),
 }));
 
+const mockSocketSend = vi.fn();
+
+vi.mock('@/context/SocketContext', () => ({
+  useSocketContext: () => ({
+    socket: { send: mockSocketSend }
+  })
+}));
+
+// Mock para el contexto de Game
+vi.mock("@/context/GameContext", () => ({
+  useGameContext: () => ({
+      playerId: "player1",
+      username: "Player1",
+  })
+}));
+
 describe('ConfirmButton Component', () => {
   const mockResetMov = vi.fn();
   const mockSetLoading = vi.fn();
+
+
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -98,5 +118,36 @@ describe('ConfirmButton Component', () => {
         posTo: 'B2',
       });
     });
-  });  
+  });
+
+  it("should send a socket message when confirming a move", async () => {
+    // Configuramos el mock de playMovementCard para que resuelva exitosamente
+    playMovementCard.mockResolvedValueOnce({ success: true });
+
+    render(<ConfirmButton
+      gameId="game1"
+        selectedCard={{ id: 'card1' }}
+        selectedPositions={['A1', 'B2']}
+        playerId="player1"
+        currentTurn="player1"
+        resetMov={mockResetMov}
+        setLoading={mockSetLoading}
+     />);
+
+    const button = screen.getByTestId("claimButtonTestId");
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockSocketSend).toHaveBeenCalledWith(
+        JSON.stringify({
+          type: "game1:CHAT_MESSAGE",
+          message: "Player1 realizo un movimiento."
+        })
+      );
+    });
+
+    // Verificamos que también se llamó a resetMov
+    expect(mockResetMov).toHaveBeenCalled();
+  });
+
 });

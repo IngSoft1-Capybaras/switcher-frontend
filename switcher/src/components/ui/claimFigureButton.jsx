@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useGameContext } from "@/context/GameContext";
 import { claimFigure } from "@/services/services";
 import { FiCheckSquare } from 'react-icons/fi';
+import { useSocketContext } from "@/context/SocketContext";
 
 
 export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureSelection }) {
@@ -9,7 +10,8 @@ export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureS
     const [showTooltip, setShowTooltip] = useState(false);
     const [showError, setShowError] = useState(false);
     const [error, setError] = useState(null);
-
+    const {username} = useGameContext();
+    const {socket} = useSocketContext();
     const handleError = (errorMessage) => {
         console.error(errorMessage);
         setError(errorMessage);
@@ -35,6 +37,15 @@ export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureS
             if(res.message === 'Invalid figure'){
                 console.log(JSON.stringify(res))
                 handleError('Figura inválida');
+            }
+            else{
+                // logica para msg action
+                socket.send(JSON.stringify(
+                    {
+                      type: `${gameId}:CHAT_MESSAGE`,
+                      message: `${username} reclamo una figura.`
+                    }
+                  ))
             }
         }
         catch (error) {

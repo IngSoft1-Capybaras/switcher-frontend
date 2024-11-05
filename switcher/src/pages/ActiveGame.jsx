@@ -11,28 +11,31 @@ import CardsFigure from '../components/ui/CardsFigure';
 import PlayerPanel from '../components/ui/PlayerPanel';
 import Board from '../components/ui/GameBoard';
 import { useTurnInfoSocket } from '@/components/hooks/use-turn_info-socket';
-
+import Chat from '@/components/ui/chat';
 import EndTurnButton from '@/components/ui/EndShiftButton';
 import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useSocketContext } from '@/context/SocketContext';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
   const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
+  const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
   const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
-  const [figuresFormed, setFiguresFormed] = useState([]);  
+  const [figuresFormed, setFiguresFormed] = useState([]);
   const [fetchedTurn, setFetchedTurn] = useState(null);
   const [loadingFig, setLoadingFig] = useState(false);
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
+  const [previousPlayers, setPreviousPlayers] = useState(players);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -52,11 +55,29 @@ export default function ActiveGame() {
 
   const fetchPlayers = useCallback(async () => {
     try {
-      
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
+
+      const isHost = fetchedPlayers.some(player => player.host && player.id === playerId);
+
+      if (isHost) {
+        // verifo que jugadores salieron
+        const leftPlayers = previousPlayers.filter(
+          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
+        );
+        leftPlayers.forEach(leftPlayer => {
+          if (socket) {
+            socket.send(JSON.stringify({
+              type: `${gameId}:CHAT_MESSAGE`,
+              message: `${leftPlayer.name} se ha ido del juego.`
+            }));
+          }
+        });
+
+        setPreviousPlayers(fetchedPlayers);
+      }
     } catch (err) {
-      console.error("Error fetching players:", err);
+      console.error("Error al obtener jugadores", err);
     }
   }, [gameId, setPlayers]);
 
@@ -73,8 +94,8 @@ export default function ActiveGame() {
       console.error("Error fetching board:", err);
     }
   }, [gameId]);
-  
-  
+
+
 
   const resetFigureSelection = useCallback(() => {
     // console.log('reset cardFigureSelect:', selectedCardFigure);
@@ -82,15 +103,15 @@ export default function ActiveGame() {
     setSelectedBoardFigure([]);
     setSelectedCardFigure(null);
   }, [setSelectedBoardFigure, setSelectedCardFigure]); // Ensure this only depends on relevant state
-  
+
   const resetMovement = useCallback(() => {
     // console.log('reset cardMovementSelect:', selectedMovementCard);
     // console.log('reset cardPositionsSelect:', selectedMovementPositions);
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
-  
-  
+
+
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
       // console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
@@ -100,20 +121,20 @@ export default function ActiveGame() {
       }
     });
   }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
-  
-  
+
+
   // Existing effect for resetting movement on turn change
   useEffect(() => {
     if (currentTurn !== playerId && gameId) {
       resetMovement();  // Reset if turn changes
     }
   }, [gameId, currentTurn, playerId, resetMovement]);
-  
+
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
   useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
-  
+
 
   const otherPlayers = players.filter(p => p.id !== playerId);
 
@@ -131,7 +152,7 @@ export default function ActiveGame() {
           <h2 className="text-white text-2xl ml-4">Redirigiendo...</h2>
         </div>
       )}
-      
+
       {/* Other Player Panels */}
       <div className="flex flex-row w-full text-white  justify-center ">
         {otherPlayers.map((player) => (
@@ -159,6 +180,9 @@ export default function ActiveGame() {
 
       {/* Board and Turn Info */}
       <div className="flex flex-col md:flex-row w-full text-white p-4 justify-center space-y-4 md:space-y-0">
+        <div>
+          <Chat gameId={gameId}/>
+        </div>
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">

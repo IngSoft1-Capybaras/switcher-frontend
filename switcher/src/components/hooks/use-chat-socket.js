@@ -12,6 +12,9 @@ export function useChatSocket(gameId, chat, setChat) {
             if (data.type === `${gameId}:CHAT_MESSAGE`) {
               setChat(chat => [...chat, data.message])
             }
+            if (data.type === `${gameId}:OWNER_LEFT`) {
+              setChat([]);
+            }
         };
 
 

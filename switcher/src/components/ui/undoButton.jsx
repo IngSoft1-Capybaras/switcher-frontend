@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaUndo } from 'react-icons/fa';
 import { useGameContext } from "@/context/GameContext";
 import { undoMovement } from "@/services/services";
+import { useSocketContext } from "@/context/SocketContext";
 
 export default function UndoButton({ gameId, currentTurn, resetFigureSelection, resetMov}) {
     const { playerId } = useGameContext();
@@ -9,6 +10,8 @@ export default function UndoButton({ gameId, currentTurn, resetFigureSelection, 
     const [showError, setShowError] = useState(false);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
+    const { socket } = useSocketContext();
+    const { username } = useGameContext();
 
     useEffect(() => {
         if (currentTurn === playerId) {
@@ -31,18 +34,25 @@ export default function UndoButton({ gameId, currentTurn, resetFigureSelection, 
     const onUndoMovement = async () => {
         resetFigureSelection();
         resetMov();
-        
+
         if (!gameId || !playerId) {
             handleError(`Error al deshacer movimiento: (!gameId || !playerId)`);
             return;
         }
-        
+
         undoMovement(gameId, playerId).catch(err=> {
             handleError(`Error al deshacer movimiento: ${err.message}`);
         })
-        
+        // logica para msg action
+        socket.send(JSON.stringify(
+            {
+            type: `${gameId}:CHAT_MESSAGE`,
+            message: `${username} deshizo un movimiento.`
+            }
+        ))
+
     };
-    
+
     return (
         <div className="relative">
             <button

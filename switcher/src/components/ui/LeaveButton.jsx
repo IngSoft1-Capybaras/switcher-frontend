@@ -31,7 +31,7 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
   }
 
   return (
-    <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
+    <div className="relative"> 
       <button
         data-testid='leaveButtonId'
         onClick={onAbandon}

@@ -6,11 +6,10 @@ import CreateGameForm from "@/components/ui/CreateGameForm";
 
 vi.mock('@/context/GameContext', () => ({
   useGameContext: vi.fn(() => ({
-    username: 'test123', // Replace with your desired username
+    username: 'test123', 
   })),
 }));
 
-// Mock useNavigate from react-router-dom
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
@@ -19,7 +18,6 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-// Mock the toast notification
 vi.mock("@/components/hooks/use-toast", () => ({
   toast: vi.fn(),
 }));
@@ -35,8 +33,7 @@ describe("CreateForm", () => {
     const nameInput = screen.getByPlaceholderText("Ingrese el nombre de la partida");
     const submitButton = screen.getByText("Crear");
 
-    // fireEvent.change(nameInput, { target: { value: "ab" } });
-    // no lleno campo nombre
+   
     fireEvent.click(submitButton);
 
     await waitFor(() => {

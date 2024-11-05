@@ -36,7 +36,7 @@ const mockedData = {
 describe('Page Filter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    fetchGamesMock.mockResolvedValue(mockedData); // Mock the API response
+    fetchGamesMock.mockResolvedValue(mockedData); 
   });
 
   it('renders filter component, opens and closes Popover on click', () => {

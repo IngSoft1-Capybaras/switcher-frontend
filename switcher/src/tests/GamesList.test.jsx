@@ -1,8 +1,7 @@
 import {render, screen} from "@testing-library/react"
 import GamesList from "@/components/ui/GamesList";
-import { MemoryRouter } from "react-router-dom"; // Import MemoryRouter
+import { MemoryRouter } from "react-router-dom"; 
 
-// testeo lo que renderiza el componente
 describe('Listado de partidas', ()=> {
     it('Deberia mostrar "No hay partidas creadas aun" cuando llega un arreglo vacio y loading esta en false', ()=> {
         render(<MemoryRouter><GamesList games={[]}  setCurrentPage={1} totalPages={1} loading={false}/></MemoryRouter>);
@@ -44,6 +43,6 @@ describe('Listado de partidas', ()=> {
         render(<MemoryRouter><GamesList games={mockGames} currentPage="" setCurrentPage="" totalPages="" loading=""/></MemoryRouter>);
         
         const listItems = screen.getAllByRole('listitem');
-        expect(listItems.length).toBe(mockGames.length); // Ensure the correct number of list items
+        expect(listItems.length).toBe(mockGames.length);
     })
 });

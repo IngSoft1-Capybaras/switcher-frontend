@@ -98,10 +98,8 @@ describe('Creación del tablero', () => {
     mockData.boxes.flat().forEach((box) => {
       const boxElement = screen.getByTestId(`box-${box.pos_x}-${box.pos_y}`);
 
-      // Verifico que se haya renderizado
       expect(boxElement).toBeInTheDocument();
 
-      // Verifico que si no está highlighted -> no tenga la className 'shine-effect'
       if (!box.highlighted) {
         expect(boxElement).not.toHaveClass('shine-effect');
       }

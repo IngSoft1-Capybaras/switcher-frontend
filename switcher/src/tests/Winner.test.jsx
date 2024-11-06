@@ -25,31 +25,27 @@ vi.mock('../assets/images/cruceEnLIzquierda.svg', () => ({
   default: 'mocked-cruceEnLIzquierda.svg',
 }));
 
-// Mockear el hook useGameContext
 vi.mock('../context/GameContext', () => ({
   useGameContext: vi.fn(),
 }));
 
-// Mock parcial de react-router-dom
 vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal(); // Importa la versión original
+  const actual = await importOriginal(); 
   return {
-    ...actual, // Retorna todo lo original
-    useNavigate: vi.fn(), // Mockea useNavigate
+    ...actual, 
+    useNavigate: vi.fn(), 
   };
 });
 
 describe('Winner Component', () => {
   const mockGameContext = {
-    gameName: 'Game 1', // Corregir a gameName según el código
-    winnerName: 'Jugador 2', // Corregir a winnerName según el código
+    gameName: 'Game 1', 
+    winnerName: 'Jugador 2', 
   };
 
   beforeEach(() => {
-    // Limpiar mocks antes de cada prueba
     vi.clearAllMocks();
 
-    // Simular el uso de los hooks
     useGameContext.mockReturnValue(mockGameContext);
   });
 
@@ -60,12 +56,10 @@ describe('Winner Component', () => {
       </MemoryRouter>
     );
 
-    // Verifica que el texto del ganador se renderiza correctamente
     expect(screen.getByText(/Winner/i)).toBeInTheDocument();
     expect(screen.getByText(/Partida: Game 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Ganador: Jugador 2/i)).toBeInTheDocument();
 
-    // Verifica que las imágenes se renderizan correctamente
     expect(screen.getByAltText('TYPE_1')).toBeInTheDocument();
     expect(screen.getByAltText('Lizquierda')).toBeInTheDocument();
     expect(screen.getByAltText('digonalContiguo')).toBeInTheDocument();
@@ -73,22 +67,18 @@ describe('Winner Component', () => {
   });
 
   it('should navigate to /games when button is clicked', () => {
-    const mockNavigate = vi.fn(); // Mock de useNavigate
+    const mockNavigate = vi.fn(); 
 
-    // Asegúrate de que useNavigate devuelve el mock cuando se llama
     useNavigate.mockReturnValue(mockNavigate);
 
-    // Renderiza el componente
     render(
       <MemoryRouter>
         <Winner />
       </MemoryRouter>
     );
 
-    // Simular clic en el botón
     fireEvent.click(screen.getByRole('button', { name: /Volver al inicio/i }));
 
-    // Verificar que el mockNavigate fue llamado con la ruta correcta
     expect(mockNavigate).toHaveBeenCalledWith('/games');
   });
 });

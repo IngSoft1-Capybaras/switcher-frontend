@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { MdLogout } from "react-icons/md";
+import React, { useState, useEffect } from 'react';
 import { startGame } from '@/services/services';
 import { FaPlay } from 'react-icons/fa';
 
@@ -7,12 +6,19 @@ import { FaPlay } from 'react-icons/fa';
 export default function StartButton({ gameId, isActive }) {
     const [showTooltip, setShowTooltip] = useState(false);
     const [error, setError] = useState('');
+    const [showError, setShowError] = useState(false);
+
+    useEffect(() => {
+        setTimeout(() => setShowError(false), [1000])
+    }, [showError, setShowError])
+    
 
     const onStartClick = () => {
         if (isActive) {
             startGame(gameId).catch(error => {
                 setError(error.message);
                 console.error(error);
+                setShowError(true);
             });
         }
     };
@@ -29,7 +35,7 @@ export default function StartButton({ gameId, isActive }) {
                 disabled={!isActive}
                 data-testid="startButtonId"
             >
-                <FaPlay size={28} color={`${isActive ? '' : ''}`}/>
+                <FaPlay size={40} color={`${isActive ? '' : ''}`}/>
             </button>
 
             {showTooltip && (
@@ -38,7 +44,11 @@ export default function StartButton({ gameId, isActive }) {
                 </div>
             )}
 
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {showError && (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white p-4 rounded shadow-md z-50">
+                    {error}
+                </div>
+            )}
         </div>
     );
 }

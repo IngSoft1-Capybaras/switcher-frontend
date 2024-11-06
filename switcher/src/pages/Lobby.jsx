@@ -98,12 +98,10 @@ export default function Lobby() {
   useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-      <h1 className="text-5xl font-extrabold text-center mb-8 text-white">{gameName}</h1>
+    <div className="flex flex-col w-100 h-100 items-center justify-center min-h-screen bg-black text-white">
+      <h1 className="w-full text-8xl text-center mb-8 text-white">{gameName}</h1>
 
-      <div className="max-w-4xl w-full bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
-
-        <div className="w-full mb-4 p-4">
+        <div className="w-full mb-4 p-4 text-2xl">
           {players.length >= minPlayers ? (
             <p className="mt-4 text-center text-green-400">Todo listo para empezar!</p>
           ) : (
@@ -112,9 +110,11 @@ export default function Lobby() {
             </p>
           )}
         </div>
+      <div className="max-w-4xl w-full  p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
+
 
         <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-1/3 mb-4 md:mb-0">
+          <div className="w-full  mb-4 md:mb-0">
             <PlayersList players={players} minPlayers={minPlayers} maxPlayers={maxPlayers} />
           </div>
 
@@ -126,7 +126,7 @@ export default function Lobby() {
       </div>
 
 
-      <div className="flex justify-center m-8 space-x-3">
+      <div className="flex w-full justify-evenly m-8 space-x-3">
         <BotonAbandonar gameId={gameId} />
         {host && (
             <StartButton

@@ -119,7 +119,7 @@ export default function Lobby() {
           </div>
 
           <div className='pl-4'>
-            <Chat gameId={gameId}/>
+            <Chat gameId={gameId} lobby={true}/>
           </div>
 
         </div>

@@ -36,7 +36,9 @@ export default function ActiveGame() {
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
-
+  
+  
+  
   const getTurnInfo = useCallback(async () => {
     try {
       const newTurnData = await fetchTurnInfo(gameId);
@@ -140,6 +142,7 @@ export default function ActiveGame() {
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
+      
       {loadingFig && currentTurn === playerId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
@@ -180,9 +183,7 @@ export default function ActiveGame() {
 
       {/* Board and Turn Info */}
       <div className="flex flex-col md:flex-row w-full text-white p-4 justify-center space-y-4 md:space-y-0">
-        <div>
-          <Chat gameId={gameId}/>
-        </div>
+        
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">
@@ -204,7 +205,7 @@ export default function ActiveGame() {
             :<>Loading board...</>}
             {currentTurn !== playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
-               {`${players.find(p => p.id === currentTurn)?.name}'s Turn`}
+               {`Turno de ${players.find(p => p.id === currentTurn)?.name}`}
              </div>
            )}
           </div>
@@ -212,8 +213,10 @@ export default function ActiveGame() {
 
         {/* Right-side Panel: Turn Info and Your Cards */}
         <div className="md:w-1/2 h-full flex flex-col p-4 justify-center items-start ml-5">
-          <div className="border-2 border-zinc-700 bg-zinc-900 text-white p-4 rounded-md flex flex-col h-full w-[600px]">
-            <h2 className="text-xl text-center mb-10">Tus cartas</h2>
+        
+          <Chat gameId={gameId}/>
+          <div className="rounded-lg bg-zinc-900 border border-zinc-800 text-white p-4 flex flex-col h-full w-[600px]">
+            <h2 className="text-2xl text-center mb-10">Tus cartas</h2>
             <div className="flex-grow">
               <CardsMovement
                 gameId={gameId}
@@ -254,14 +257,15 @@ export default function ActiveGame() {
         transition={{ duration: 0.5 }}
       >
 
-        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
+        <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} />
         <ClaimFigureButton gameId={gameId} cardId={selectedCardFigure ? selectedCardFigure.id : null} figure={selectedBoardFigure} resetFigureSelection={resetFigureSelection}/>
         <UndoButton gameId={gameId} currentTurn={currentTurn} setLoadingFig={setLoadingFig} resetFigureSelection={resetFigureSelection} setSyncEffect={setSyncEffect} resetMov={resetMovement}/>
         <ConfirmMovementButton gameId={gameId} playerId={playerId} currentTurn={currentTurn}
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
           resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
-        <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} />
+        <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
+        
       </motion.div>
     </div>
   );

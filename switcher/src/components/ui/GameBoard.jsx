@@ -79,7 +79,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
   };
 
   return (
-    <div className="relative flex h-[600px] w-[600px] flex-col items-center justify-center rounded-md shadow-xl border-4 border-zinc-700 bg-zinc-800 p-4">
+    <div className="relative flex h-[600px] w-[600px] flex-col items-center justify-center rounded-lg shadow-xl border-4 border-zinc-700 bg-zinc-800 p-4">
       <style jsx global>{`
         @keyframes glass-shine {
           0% {

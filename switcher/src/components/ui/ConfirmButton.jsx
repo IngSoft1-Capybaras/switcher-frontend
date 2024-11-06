@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { calculateFigures, playMovementCard } from "@/services/services";
+import { playMovementCard } from "@/services/services";
 import { IoMdMove } from "react-icons/io";
+
 import { useSocketContext } from "@/context/SocketContext";
 import { useGameContext } from "@/context/GameContext";
 
@@ -75,7 +76,7 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
             >
-                <IoMdMove size={28}/>
+                <IoMdMove size={40}/>
             </button>
 
             {showTooltip && (

@@ -38,7 +38,7 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
 
   return (
     <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10`}>
-      {name && <h2 className="text-m text-center mb-5">{name}'s figures</h2>}
+      {name && <span className="text-xl text-center mb-5">{name}</span>}
       <AnimatedGroup
         className="flex justify-center items-center space-x-5 w-full"
         preset="scale"

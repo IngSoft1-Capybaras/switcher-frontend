@@ -43,8 +43,8 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
   // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
   useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards);
 
-  if (loading) return <div>Cargando cartas de movimiento...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
+  if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
   return (
     // <div className="">

@@ -36,6 +36,7 @@ export default function ActiveGame() {
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
+  const [isWaitingBoard, setIsWaitingBoard] = useState(false);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -133,15 +134,15 @@ export default function ActiveGame() {
 
   // timer
   useEffect(() => {
-    setTimeout(() => {
-      if (currentTurn == playerId) {
-        pathEndTurn(gameId);
+    setTimeout(async () => {
+      if (currentTurn == playerId && !isWaitingBoard) {
+        await pathEndTurn(gameId);
       }
-    }, 10000);
-  },[gameId, currentTurn]);
+    }, 120000); // 2min
+  },[gameId, currentTurn, isWaitingBoard]);
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
+  useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig, setIsWaitingBoard);
   useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
 
 

@@ -3,7 +3,7 @@ import { useSocketContext } from "@/context/SocketContext";
 import { calculateFigures } from "@/services/services";
 import {useEffect} from "react";
 
-export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, setLoadingFig) {
+export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, setLoadingFig, setIsWaitingBoard) {
     const {socket} = useSocketContext();
     const { currentTurn, playerId } = useGameContext();
 
@@ -22,19 +22,22 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, se
                     if (currentTurn===playerId) {
                         setSyncEffect(false);
                         setLoadingFig(true);
+                        setIsWaitingBoard(true);
                         calculateFigures(activeGameId).then((res) => {
                             setSyncEffect(true)
                             setLoadingFig(false);
+                            //setIsWaitingBoard(false);
                         })
                     }
                 })
-                
+
             }
             if (((data.type === `${activeGameId}:BOARD_UPDATE`) && (currentTurn === playerId))) {
                 console.log("FETCHING BOARD FIG CALC")
                 console.log(`current Turn board update: ${currentTurn}`)
                 fetchBoard().then((res) => {
                     setLoadingFig(false);
+                    setIsWaitingBoard(false);
                     setSyncEffect(true);
                 })
             }
@@ -43,6 +46,6 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, se
         socket.addEventListener("message", handleUptadeBoard);
         return () => {
             socket.removeEventListener("message", handleUptadeBoard);
-        };    
+        };
     }, [socket, activeGameId, fetchBoard, playerId, currentTurn])
 }

@@ -27,7 +27,7 @@ export default function ActiveGame() {
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
-  const [blockedColor, setBlockedColor] = useState(null);
+  const [blockedColor, setBlockedColor] = useState("RED");
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
   const [figuresFormed, setFiguresFormed] = useState([]);
@@ -45,7 +45,7 @@ export default function ActiveGame() {
       if (newTurnData.current_player_id) {
         setCurrentTurn(newTurnData.current_player_id);
         setFetchedTurn(newTurnData.current_player_id); // Store fetched value
-        setBlockedColor(newTurnData.blocked_color);
+        // setBlockedColor(newTurnData.blocked_color);
       } else {
         console.error("Received an undefined player ID.");
       }

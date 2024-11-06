@@ -11,13 +11,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500"];
 
 
-export default function Chat ({gameId, lobby}) {
+export default function Chat({ gameId, lobby }) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
-  const {socket} = useSocketContext();
-  const {username, players} = useGameContext();
+  const { socket } = useSocketContext();
+  const { username, players } = useGameContext();
   const [isMinimized, setIsMinimized] = useState(true);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+  const [newMessageReceived, setNewMessageReceived] = useState(false);
   const viewportRef = useRef(null);
 
   const getPlayerColor = (index) => {
@@ -27,74 +28,58 @@ export default function Chat ({gameId, lobby}) {
   const handleChatClick = () => {
     setIsMinimized(false);
     setShouldAutoScroll(true);
+    setNewMessageReceived(false); // Reset new message indicator when chat is opened
   };
 
   const handleScroll = () => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-    // scrollTop representa el número de píxeles que el contenido de un elemento se ha desplazado hacia arriba. (es 0 si esta en el tope)
-    // es decir, es la distancia desde la parte superior de viewport hasta el punto donde empieza el área visible.
-    // clientHeight es la altura de esa área visible.
-
-    // para calcular la position sumamos desde donde empieza el area visible, para tener en cuenta todo lo que esta por encima
-    // la altura total de lo visible
     const position = viewport.scrollTop + viewport.clientHeight;
-
-    // scrollHeight incluye la altura total (visible + overflow)
     const height = viewport.scrollHeight;
-
-    // verificamos que el area que queda por desplazar sea menor que el delta*
-    // tomamos un delta arbitrario ya que height toma todo el tamano del elemento, incluyendo padding, border, etc*
     const enableAutoScroll = height - position <= 50;
-
     enableAutoScroll ? setShouldAutoScroll(true) : setShouldAutoScroll(false);
-  }
+  };
 
-  // efecto para obtener la referencia al viewport mientras se scrollea
   useEffect(() => {
-        if (!isMinimized) {
-          // buscamos la ref a el viewport del scrollarea a traves de su data-attribute (identificador), el id no me funciona
-          const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
-          if (viewport) {
-            viewportRef.current = viewport;
-            viewport.addEventListener('scroll', handleScroll);
-          }
-        }
-
-        return () => {
-          if (viewportRef.current) viewportRef.current.removeEventListener('scroll', handleScroll);
-         };
+    if (!isMinimized) {
+      const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
+      if (viewport) {
+        viewportRef.current = viewport;
+        viewport.addEventListener('scroll', handleScroll);
+      }
+    }
+    return () => {
+      if (viewportRef.current) viewportRef.current.removeEventListener('scroll', handleScroll);
+    };
   }, [isMinimized]);
 
-  // efecto para auto scrollear si debemos
   useEffect(() => {
-    const scrollIfNewMessage = () => {
     if (!viewportRef.current || !shouldAutoScroll) return;
-      const viewport = viewportRef.current;
-      viewport.scrollTop = viewport.scrollHeight;
-    }
-
-    scrollIfNewMessage();
-  }, [chat, isMinimized]) // se ejecuta cada vez que el chat se abre o llegan nuevos mensajes
-
+    viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+  }, [chat, isMinimized]);
 
   const handleSendMessage = (e) => {
     e?.preventDefault();
-    if(message.trim()){
+    if (message.trim()) {
       const formattedMessage = `${username}: ${message}`;
       const formattedType = `${gameId}:CHAT_MESSAGE`;
-      socket.send(JSON.stringify(
-        {
-          type: formattedType,
-          message: formattedMessage
-        }
-      ))
+      socket.send(JSON.stringify({
+        type: formattedType,
+        message: formattedMessage
+      }));
     }
     setMessage('');
-  }
-
+  };
 
   useChatSocket(gameId, chat, setChat);
+
+  useEffect(() => {
+    if (isMinimized && chat.length > 0) {
+      setNewMessageReceived(true);
+      const timer = setTimeout(() => setNewMessageReceived(false), 7000);
+      return () => clearTimeout(timer); // Clear timeout on component unmount or new message
+    }
+  }, [chat, isMinimized]);
 
 
   return (
@@ -110,8 +95,9 @@ export default function Chat ({gameId, lobby}) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.25 }}
         >
+          {/* Chat Header */}
           <div className="flex items-center justify-between p-2 border-b border-zinc-800">
-          <h3 className="text-3xl  text-white">Chat</h3>
+            <h3 className="text-3xl text-white">Chat</h3>
             <Button
               onClick={() => setIsMinimized(true)}
               className="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
@@ -120,6 +106,7 @@ export default function Chat ({gameId, lobby}) {
             </Button>
           </div>
 
+          {/* Chat Messages */}
           <ScrollArea id='chatScrollArea' className="h-80 mb-2 pr-3">
             {chat.map((msg, index) => {
               const isChatMessage = msg.includes(':');
@@ -127,7 +114,7 @@ export default function Chat ({gameId, lobby}) {
               const msgContent = msg.split(':')[1];
               const playerIndex = players.findIndex((player) => player.name === sender);
               const isCurrentUser = sender === username;
-              const showSender = index===0 || (sender !== chat[index-1].split(':')[0])
+              const showSender = index === 0 || (sender !== chat[index - 1].split(':')[0]);
 
               return (
                 <motion.div
@@ -137,17 +124,13 @@ export default function Chat ({gameId, lobby}) {
                   transition={{ duration: 0.2 }}
                   className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}
                 >
-                  <div
-                    className={`text-zinc-300 rounded-lg max-w-[85%] 
-                      `}
-                      >
+                  <div className="text-zinc-300 rounded-lg max-w-[85%]">
                     {isChatMessage && showSender && (
-                        <span className="text-sm text-zinc-400 block mb-3">
-                          {!isCurrentUser ? sender : "Tú"}
-                        </span>
-                      )}
-                    
-                    <p className={`text-white  rounded-lg break-words sm:text-sm md:text-lg p-2 m-1 ${getPlayerColor(playerIndex)}`}>
+                      <span className="text-sm text-zinc-400 block mb-3">
+                        {!isCurrentUser ? sender : "Tú"}
+                      </span>
+                    )}
+                    <p className={`text-white rounded-lg break-words sm:text-sm md:text-lg p-2 m-1 ${getPlayerColor(playerIndex)}`}>
                       {msgContent || msg}
                     </p>
                   </div>
@@ -156,6 +139,7 @@ export default function Chat ({gameId, lobby}) {
             })}
           </ScrollArea>
 
+          {/* Message Input */}
           <form onSubmit={handleSendMessage} className='flex items-stretch'>
             <input
               type="text"
@@ -175,7 +159,7 @@ export default function Chat ({gameId, lobby}) {
       ) : (
         <motion.div
           key="minimized"
-          initial={{ opacity: 0, y: 20}}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25 }}
         >
@@ -186,13 +170,13 @@ export default function Chat ({gameId, lobby}) {
             <div className="flex items-center gap-2 overflow-hidden">
               <IoIosChatboxes className="w-5 h-5 shrink-0" />
               <span className="sm:text-sm md:text-lg truncate">
-                {chat.length > 0 ? (chat[chat.length - 1]) : "Abrir chat"}
+                {newMessageReceived ? chat[chat.length - 1] : "Abrir chat"}
               </span>
             </div>
           </Button>
         </motion.div>
       )}
-     </AnimatePresence>      
+    </AnimatePresence> 
     
     : // ACTIVE GAMES CHAT
 
@@ -284,7 +268,7 @@ export default function Chat ({gameId, lobby}) {
           >
             <div className="flex items-center gap-2 overflow-hidden">
               <span className="sm:text-sm md:text-lg truncate">
-                {chat.length > 0 ? (chat[chat.length - 1]) : "Abrir chat"}
+                {newMessageReceived ? (chat[chat.length - 1]) : "Abrir chat"}
               </span>
               <IoIosChatboxes className="w-5 h-5 shrink-0 ml-2" />
             </div>

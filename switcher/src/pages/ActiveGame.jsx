@@ -162,11 +162,12 @@ export default function ActiveGame() {
           <div key={player.id} className="relative w-[600px] mx-10">
             <PlayerPanel
               game={gameId}
-              player={player.id}
+              panelOwner={player.id}
+              playerId={playerId}
               name={player.name}
               setSelectedCardFigure={setSelectedCardFigure}
               selectedCardFigure={selectedCardFigure}
-
+              currentTurn={currentTurn}
             />
             {currentTurn === player.id && (
               <motion.div
@@ -234,6 +235,7 @@ export default function ActiveGame() {
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}
                 resetMovement={resetMovement}
+                currentTurn={currentTurn}
               />
             </div>
           </div>

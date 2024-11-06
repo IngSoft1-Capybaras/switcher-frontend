@@ -5,7 +5,7 @@ import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
 
-export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name, resetMovement}) {
+export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, selectedCardFigure, name, resetMovement, currentTurn, playerId}) {
 
   const [loading, setLoading] = useState(true)
   const [figureCards, setFigureCards] = useState([])
@@ -55,6 +55,8 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
                 !card.show ? "opacity-100" : ""
               )}
               onClick={() => handleSelectedFigure(card)}
+              style={{ cursor: playerId === currentTurn? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
+
             >
               
              
@@ -73,7 +75,7 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
             />
           }
             </button>
-          )
+          ) 
         })}
       </AnimatedGroup>
     </div>

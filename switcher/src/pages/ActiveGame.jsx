@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
-import { getPlayers, getBoard, calculateFigures } from '@/services/services';
+import { getPlayers, getBoard, calculateFigures, pathEndTurn } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
@@ -130,6 +130,15 @@ export default function ActiveGame() {
     }
   }, [gameId, currentTurn, playerId, resetMovement]);
 
+
+  // timer
+  useEffect(() => {
+    setTimeout(() => {
+      if (currentTurn == playerId) {
+        pathEndTurn(gameId);
+      }
+    }, 10000);
+  },[gameId, currentTurn]);
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);

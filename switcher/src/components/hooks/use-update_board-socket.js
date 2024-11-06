@@ -26,7 +26,6 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, se
                         calculateFigures(activeGameId).then((res) => {
                             setSyncEffect(true)
                             setLoadingFig(false);
-                            //setIsWaitingBoard(false);
                         })
                     }
                 })

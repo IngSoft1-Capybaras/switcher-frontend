@@ -134,11 +134,12 @@ export default function ActiveGame() {
 
   // timer
   useEffect(() => {
-    setTimeout(async () => {
+    const timer = setTimeout(async () => {
       if (currentTurn == playerId && !isWaitingBoard) {
         await pathEndTurn(gameId);
       }
     }, 120000); // 2min
+    return () => clearTimeout(timer);
   },[gameId, currentTurn, isWaitingBoard]);
 
   useActiveGameSocket(gameId, fetchPlayers);

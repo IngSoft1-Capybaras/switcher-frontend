@@ -237,19 +237,20 @@ export default function ActiveGame() {
               />
             </div>
           </div>
+          {currentTurn === playerId && (
+            <motion.div
+              className=" bg-green-500 h-2 z-40"
+              initial={{ width: '100%' }}
+              animate={{ width: '0%' }}
+              transition={{ duration: 120 }}
+            />
+          )}
+
         </div>
       </div>
 
 
-      {currentTurn === playerId && (
-        <motion.div
-          className="fixed bottom-[4rem] left-0 right-0 bg-green-500 h-2 z-40"
-          initial={{ width: '100%' }}
-          animate={{ width: '0%' }}
-          transition={{ duration: 120 }}
-        />
-      )}
-
+      
       <motion.div
         className="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-zinc-800 p-4 z-40"
         initial={{ y: 100 }}

@@ -99,18 +99,18 @@ export default function Lobby() {
 
   return (
     <div className="flex flex-col w-100 h-100 items-center justify-center min-h-screen bg-black text-white">
-      <h1 className="w-full text-8xl text-center mb-8 text-white">{gameName}</h1>
+      <h1 className="w-full text-6xl text-center mb-10 text-white">{gameName}</h1>
 
-        <div className="w-full mb-4 p-4 text-2xl">
+        <div className="w-full mb-4 text-2xl">
           {players.length >= minPlayers ? (
-            <p className="mt-4 text-center text-green-400">Todo listo para empezar!</p>
+            <p className=" text-center text-green-400">Todo listo para empezar!</p>
           ) : (
-            <p className="mt-4 text-center text-gray-400">
+            <p className=" text-center text-gray-400">
               Deben entrar por lo menos {minPlayers} jugadores para empezar
             </p>
           )}
         </div>
-      <div className="max-w-4xl w-full  p-8 rounded-lg shadow-lg border border-zinc-900 flex flex-col">
+      <div className="max-w-4xl w-full  p-8 rounded-lg shadow-lg  flex flex-col">
 
 
         <div className="flex flex-col md:flex-row">
@@ -119,7 +119,7 @@ export default function Lobby() {
           </div>
 
           <div className='pl-4'>
-            <Chat gameId={gameId}/>
+            <Chat gameId={gameId} lobby={true}/>
           </div>
 
         </div>

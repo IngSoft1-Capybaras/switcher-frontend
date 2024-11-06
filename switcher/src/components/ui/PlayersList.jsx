@@ -14,7 +14,7 @@ export default function PlayersList({ players, maxPlayers }) {
   return (
     <div className="bg-zinc-900 p-6 rounded-lg shadow-lg border border-zinc-800">
       {/* Heading with zinc color */}
-      <h2 className="text-3xl font-extrabold text-zinc-200 mb-6">
+      <h2 className="text-3xl text-zinc-200 mb-6">
         Jugadores ({players.length}/{maxPlayers})
       </h2>
 

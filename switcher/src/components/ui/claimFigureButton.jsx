@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useGameContext } from "@/context/GameContext";
 import { claimFigure } from "@/services/services";
-import { FiCheckSquare } from 'react-icons/fi';
 import { useSocketContext } from "@/context/SocketContext";
+
+import { TbLayoutGridAdd } from "react-icons/tb";
+import { BsGridFill } from "react-icons/bs";
 
 
 export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureSelection }) {
@@ -65,7 +67,7 @@ export default function ClaimFigureButton({ gameId, cardId, figure, resetFigureS
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
             >
-                <FiCheckSquare size={28} />
+                <BsGridFill size={40} />
             </button>
 
             {showTooltip && (

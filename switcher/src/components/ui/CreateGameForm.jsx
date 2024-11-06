@@ -39,15 +39,15 @@ function FormSlider({ value, onChange }) {
       max={MAX_PLAYERS}
       sx={{
         width: 250,
-        color: '#eab308',
+        color: '#22c55e',
         '& .MuiSlider-thumb': {
-          backgroundColor: '#eab308',
+          backgroundColor: '#22c55e',
         },
         '& .MuiSlider-track': {
-          backgroundColor: '#eab308',
+          backgroundColor: '#22c55e',
         },
         '& .MuiSlider-rail': {
-          backgroundColor: '#eab308',
+          backgroundColor: '#22c55e',
         },
       }}
     />
@@ -132,7 +132,7 @@ export default function CreateGameForm() {
 
       {/* Centered button */}
       <div className="flex justify-center">
-        <Button type="submit" className="bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-200 w-1/3">
+        <Button type="submit" className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition-all duration-200 w-1/3">
           Crear
         </Button>
       </div>

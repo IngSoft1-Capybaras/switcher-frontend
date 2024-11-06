@@ -40,7 +40,7 @@ export function PageFilter({ setIsFiltering, formData, setFormData, fetchGames }
           variant="default"
           data-testid="triggerButton" // Added test ID here
         >
-          <FaFilter className="mr-2" /> {/* Icon for the trigger */}
+          <FaFilter size={30} className="mr-2" /> {/* Icon for the trigger */}
         </Button>
       </PopoverTrigger>
 

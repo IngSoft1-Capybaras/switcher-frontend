@@ -192,7 +192,7 @@ export default function Chat ({gameId, lobby}) {
       )}
      </AnimatePresence>      
     
-    :
+    : // ACTIVE GAMES CHAT
 
       <AnimatePresence>
       {!isMinimized ? (
@@ -265,7 +265,7 @@ export default function Chat ({gameId, lobby}) {
         </motion.div>
       ) : (
         <motion.div
-          className='mb-2 w-full'
+          className='mb-2 w-fit  absolute bottom-20 right-0 bg-zinc-950'
           key="minimized"
           initial={{ opacity: 0, y: 20}}
           animate={{ opacity: 1, y: 0 }}
@@ -273,16 +273,16 @@ export default function Chat ({gameId, lobby}) {
         >
           <Button
             onClick={handleChatClick}
-            style={{width: 600}}
+            
 
-            className="w-[600px] md:w-[32rem] p-4 justify-between hover:bg-zinc-800 rounded-lg bg-zinc-900 border border-zinc-800"
+            className="w-full p-4 justify-end  rounded-lg  bg-zinc-950"
 
           >
             <div className="flex items-center gap-2 overflow-hidden">
-              <IoIosChatboxes className="w-5 h-5 shrink-0" />
               <span className="sm:text-sm md:text-lg truncate">
                 {chat.length > 0 ? (chat[chat.length - 1]) : "Abrir chat"}
               </span>
+              <IoIosChatboxes className="w-5 h-5 shrink-0 ml-2" />
             </div>
           </Button>
         </motion.div>

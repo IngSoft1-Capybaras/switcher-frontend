@@ -24,7 +24,7 @@ describe("EndTurnButton", () => {
   };
 
   const mockResetFigureSelection = vi.fn();
-  const mockResetMovement = vi.fn(); // Mock para resetMovement
+  const mockResetMovement = vi.fn(); 
 
   beforeEach(() => {
     vi.clearAllMocks();

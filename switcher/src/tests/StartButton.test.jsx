@@ -58,7 +58,6 @@ describe('StartButton Component', () => {
     const navigate = vi.fn();
     const gameId = '123'; 
 
-    // mock startgame y useNavigate
     const startGameMock = startGame.mockResolvedValue(); 
     useNavigate.mockReturnValue(navigate);
 
@@ -87,7 +86,6 @@ describe('StartButton Component', () => {
     const navigate = vi.fn(); 
     const startGameError = new Error('Failed to start game');
 
-    // mock startgame y useNavigate
     startGame.mockRejectedValue(startGameError);
     useNavigate.mockReturnValue(navigate);
 

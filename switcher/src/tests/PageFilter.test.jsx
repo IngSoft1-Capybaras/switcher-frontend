@@ -35,7 +35,7 @@ const mockedData = {
 describe("PageFilter Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    fetchGamesMock.mockResolvedValue(mockedData);
+    fetchGamesMock.mockResolvedValue(mockedData); 
   });
 
   // Test para verificar que se renderiza el componente de filtro, abre y cierra el Popover al hacer clic

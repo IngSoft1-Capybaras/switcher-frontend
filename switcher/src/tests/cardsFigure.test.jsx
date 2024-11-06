@@ -88,16 +88,13 @@ describe('CardsFigure', () => {
   
     render(<CardsFigure gameId={gameId} playerId={playerId}/>);
   
-    // Espera a que el componente haya dejado de estar en estado de carga
     await waitFor(() => {
       expect(screen.queryByTestId('loadingDiv')).not.toBeInTheDocument();
     });
   
-    // Verifica que las cartas de figura visibles (show: true) se renderizan correctamente
     const visibleFigureCards = screen.getAllByTestId('figureCard');
-    expect(visibleFigureCards).toHaveLength(2);  // Solo dos cartas están visibles (show: true)
+    expect(visibleFigureCards).toHaveLength(2);  
   
-    // Verifica que la carta bloqueada también se renderiza correctamente
     const blockedCard = screen.getByTestId('blockedCard');
     expect(blockedCard).toBeInTheDocument();
   });

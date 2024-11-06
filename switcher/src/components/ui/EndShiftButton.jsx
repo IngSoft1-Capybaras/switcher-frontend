@@ -4,6 +4,8 @@ import { calculateFigures, pathEndTurn } from "@/services/services";
 import { useEndTurnSocket } from "../hooks/use-end_turn-socket";
 import {FaCheck} from 'react-icons/fa'
 import { useSocketContext } from "@/context/SocketContext";
+import { GiPlayerNext } from "react-icons/gi";
+import { PiCheckFatFill } from "react-icons/pi";
 
 const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement }) => {
   const [isButtonActive, setIsButtonActive] = useState(false);
@@ -61,7 +63,7 @@ const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement
       <button data-testid='endTurnButtonId' onClick={onHandleEndTurn} onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)} className={`text-white ${isButtonActive ? 'hover:scale-110 transition-transform' : 'opacity-50'}`}
       disabled={!isButtonActive || loading}>
-            <FaCheck size={28} />
+            <PiCheckFatFill size={40} />
       </button>
       {showTooltip && (
         <div className="absolute bottom-full w-fit mb-2 z-50 p-2 text-sm bg-gray-700 text-white rounded">

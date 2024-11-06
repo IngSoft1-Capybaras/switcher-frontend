@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaPlus, FaPlay, FaUndo, FaFilter } from 'react-icons/fa';
+import { FaPlus, FaPlay } from 'react-icons/fa';
 import GamesList from '../components/ui/GamesList';
 import { useGameSocket } from '../components/hooks/use-games-socket';
 import { getGames, joinGame } from '../services/services';
 import { useGameContext } from '@/context/GameContext';
 import { PageFilter } from '@/components/ui/pageFilter';
+import { MdOutlineCleaningServices } from "react-icons/md";
 
 const Games = () => {
   const navigate = useNavigate();
@@ -57,32 +58,30 @@ const Games = () => {
   }, [currentPage, isFiltering]);
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-black space-y-8 text-white">
-      <h1 className="text-5xl font-bold text-white mb-6">Lista de partidas</h1>
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-black text-white">
+      <h1 className="w-full text-6xl text-center mb-10 text-white">Lista de partidas</h1>
 
       <div className="w-1/3">
         <div className="flex justify-between mb-4 items-center">
           {/* Create Game Button */}
           <button
             onClick={handleCreateGame}
-            className="text-white py-2 px-4 rounded hover:text-gray-500 transition-all duration-200 flex items-center"
+            className="text-white py-2 px-4 text-4xl rounded hover:text-gray-500 transition-all duration-200 flex items-center"
           >
-            <FaPlus className="mr-2" /> Crear
+            <FaPlus size={30} className="mr-2" />
           </button>
 
           {/* Join Game Button */}
           <button
             onClick={handleJoinGame}
-            disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
-            className={`text-white rounded transition-all duration-200 flex items-center ${
+            disabled={!selectedGame}
+            className={`py-2 px-4 rounded transition-all duration-200 flex items-center ${
               selectedGame
-                ? selectedGame.players_count >= selectedGame.max_players
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-green-600 hover:text-green-700'
+                ? 'text-green-600 hover:text-green-700'
                 : 'text-gray-400 cursor-not-allowed'
             }`}
           >
-            <FaPlay className="mr-2" /> Jugar
+            <FaPlay size={30} className="mr-2" />
           </button>
 
           <div className="flex space-x-4 items-center">
@@ -96,23 +95,17 @@ const Games = () => {
               fetchGames={fetchGames}
             />
 
-            {/* Filter Icon
-            <button
-              onClick={() => setIsFiltering(true)}
-              className="text-white rounded hover:text-gray-400 transition-all duration-200 flex items-center"
-            >
-              <FaFilter className="mr-2" />
-            </button> */}
-
             {/* Undo Filter Button */}
             <button
               disabled={!isFiltering}
               onClick={handleRemoveFilter}
-              className={`text-white rounded hover:text-gray-500 transition-all duration-200 flex items-center ${
-                !isFiltering ? 'cursor-not-allowed' : ''
+              className={`py-2 px-4 rounded transition-all duration-200 flex items-center ${
+                isFiltering
+                  ? 'text-red-500 hover:text-red-600'
+                  : 'text-gray-400 cursor-not-allowed'
               }`}
             >
-              <FaUndo className="mr-2" />
+              <MdOutlineCleaningServices size={30} className="mr-2" />
             </button>
           </div>
         </div>

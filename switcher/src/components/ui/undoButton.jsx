@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { FaUndo } from 'react-icons/fa';
+// import { FaUndo } from 'react-icons/fa';
+
+import { SlActionUndo } from "react-icons/sl";
+import { IoIosUndo } from "react-icons/io";
+import { ImUndo2 } from "react-icons/im";
+import { IoArrowUndoSharp } from "react-icons/io5";
+
+
 import { useGameContext } from "@/context/GameContext";
 import { undoMovement } from "@/services/services";
 import { useSocketContext } from "@/context/SocketContext";
@@ -63,7 +70,7 @@ export default function UndoButton({ gameId, currentTurn, resetFigureSelection, 
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
             >
-                <FaUndo size={28} />
+                <IoArrowUndoSharp size={40} />
             </button>
 
             {showTooltip && (

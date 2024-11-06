@@ -240,7 +240,7 @@ export default function ActiveGame() {
           {currentTurn === playerId && (
             <motion.div
               className=" bg-green-500 h-2 z-40"
-              initial={{ width: '100%' }}
+              initial={{ width: 600 }}
               animate={{ width: '0%' }}
               transition={{ duration: 120 }}
             />

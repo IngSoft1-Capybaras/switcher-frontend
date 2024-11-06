@@ -111,7 +111,7 @@ export default function Chat ({gameId, lobby}) {
           transition={{ duration: 0.25 }}
         >
           <div className="flex items-center justify-between p-2 border-b border-zinc-800">
-            <h3 className="text-2xl  text-white">Chat</h3>
+          <h3 className="text-3xl  text-white">Chat</h3>
             <Button
               onClick={() => setIsMinimized(true)}
               className="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
@@ -127,6 +127,7 @@ export default function Chat ({gameId, lobby}) {
               const msgContent = msg.split(':')[1];
               const playerIndex = players.findIndex((player) => player.name === sender);
               const isCurrentUser = sender === username;
+              const showSender = index===0 || (sender !== chat[index-1].split(':')[0])
 
               return (
                 <motion.div
@@ -137,15 +138,16 @@ export default function Chat ({gameId, lobby}) {
                   className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}
                 >
                   <div
-                    className={`text-zinc-300 p-2 rounded-lg max-w-[85%] break-words
-                      ${getPlayerColor(playerIndex)}`}
-                  >
-                    {!isCurrentUser && isChatMessage && (
-                      <span className="text-sm text-zinc-400 block mb-1">
-                        {sender}
-                      </span>
-                    )}
-                    <p className="sm:text-sm md:text-lg text-white whitespace-pre-wrap">
+                    className={`text-zinc-300 rounded-lg max-w-[85%] 
+                      `}
+                      >
+                    {isChatMessage && showSender && (
+                        <span className="text-sm text-zinc-400 block mb-3">
+                          {!isCurrentUser ? sender : "Tú"}
+                        </span>
+                      )}
+                    
+                    <p className={`text-white  rounded-lg break-words sm:text-sm md:text-lg p-2 m-1 ${getPlayerColor(playerIndex)}`}>
                       {msgContent || msg}
                     </p>
                   </div>
@@ -197,7 +199,7 @@ export default function Chat ({gameId, lobby}) {
       <AnimatePresence>
       {!isMinimized ? (
         <motion.div
-          className="absolute bottom-20 right-0 bg-zinc-900 z-50 w-[600px] p-4 rounded-lg shadow-md border border-zinc-800"
+          className="absolute bottom-20 right-0 bg-opacity-80 bg-zinc-900 z-50 w-[600px] p-4 rounded-lg shadow-md border border-zinc-800"
           key="expanded"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -240,7 +242,7 @@ export default function Chat ({gameId, lobby}) {
                         </span>
                       )}
                     
-                    <p className={`text-zinc-300  rounded-lg break-words sm:text-sm md:text-lg p-2 m-1 ${getPlayerColor(playerIndex)}`}>
+                    <p className={`text-white  rounded-lg break-words sm:text-sm md:text-lg p-2 m-1 ${getPlayerColor(playerIndex)}`}>
                       {msgContent || msg}
                     </p>
                   </div>
@@ -249,7 +251,7 @@ export default function Chat ({gameId, lobby}) {
             })}
           </ScrollArea>
 
-          <form onSubmit={handleSendMessage} className='flex items-stretch'>
+          <form onSubmit={handleSendMessage} className=' flex items-stretch'>
             <input
               type="text"
               className="flex-1 bg-zinc-800 text-white rounded-l-full px-4 py-2 focus:outline-none"
@@ -267,7 +269,7 @@ export default function Chat ({gameId, lobby}) {
         </motion.div>
       ) : (
         <motion.div
-          className='mb-2 w-fit  absolute bottom-20 right-0 bg-zinc-950'
+          className='mb-2 w-fit   absolute bottom-20 right-0 bg-zinc-950 bg-opacity-80 hover:bg-zinc-950 '
           key="minimized"
           initial={{ opacity: 0, y: 20}}
           animate={{ opacity: 1, y: 0 }}

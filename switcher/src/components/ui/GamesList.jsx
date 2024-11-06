@@ -36,7 +36,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
                       isFull
                         ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed opacity-50'
                         : isSelected
-                        ? ' border-blue-500'
+                        ? ' border-green-500'
                         : 'border-zinc-800'
                     }`}
                   >
@@ -69,7 +69,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
         <button
           onClick={() => setCurrentPage(currentPage - 1)}
           disabled={currentPage === 1}
-          className="bg-zinc-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-zinc-500 transition-all duration-200"
+          className="bg-green-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-green-500 transition-all duration-200"
         >
           Anterior
         </button>
@@ -79,7 +79,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="bg-zinc-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-zinc-500 transition-all duration-200"
+          className="bg-green-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-green-500 transition-all duration-200"
         >
           Siguiente
         </button>

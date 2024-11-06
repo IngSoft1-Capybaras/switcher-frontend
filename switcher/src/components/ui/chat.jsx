@@ -220,6 +220,7 @@ export default function Chat ({gameId, lobby}) {
               const msgContent = msg.split(':')[1];
               const playerIndex = players.findIndex((player) => player.name === sender);
               const isCurrentUser = sender === username;
+              const showSender = index===0 || (sender !== chat[index-1].split(':')[0])
 
               return (
                 <motion.div
@@ -230,15 +231,16 @@ export default function Chat ({gameId, lobby}) {
                   className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-1`}
                 >
                   <div
-                    className={`text-zinc-300 p-2 rounded-lg max-w-[85%] break-words
-                      ${getPlayerColor(playerIndex)}`}
-                  >
-                    {!isCurrentUser && isChatMessage && (
-                      <span className="text-sm text-zinc-400 block mb-1">
-                        {sender}
-                      </span>
-                    )}
-                    <p className="sm:text-sm md:text-lg text-white whitespace-pre-wrap">
+                    className={`text-zinc-300 rounded-lg max-w-[85%] 
+                      `}
+                      >
+                    {isChatMessage && showSender && (
+                        <span className="text-sm text-zinc-400 block mb-3">
+                          {!isCurrentUser ? sender : "Tú"}
+                        </span>
+                      )}
+                    
+                    <p className={`text-zinc-300  rounded-lg break-words sm:text-sm md:text-lg p-2 m-1 ${getPlayerColor(playerIndex)}`}>
                       {msgContent || msg}
                     </p>
                   </div>

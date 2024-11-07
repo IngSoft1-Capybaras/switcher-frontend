@@ -45,7 +45,7 @@ export default function BlockCardFigureButton({ gameId, playerIdBlock, cardId, f
                 socket.send(JSON.stringify(
                     {
                       type: `${gameId}:CHAT_MESSAGE`,
-                      message: `${username} reclamo una figura.`
+                      message: `${username} bloqueo una carta de figura.`
                     }
                   ))
             }

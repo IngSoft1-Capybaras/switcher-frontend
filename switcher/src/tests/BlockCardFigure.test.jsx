@@ -40,6 +40,7 @@ describe("BlockCardFigureButton", () => {
     render(
       <BlockCardFigureButton
         gameId="game1"
+        playerIdBlock="123" // Agregamos playerIdBlock aquí
         cardId="card1"
         figure={[1, 2, 3]}
         resetBlock={mockResetBlock}
@@ -59,6 +60,7 @@ describe("BlockCardFigureButton", () => {
     render(
       <BlockCardFigureButton
         gameId="game1"
+        playerIdBlock="123" // Agregamos playerIdBlock aquí
         cardId={null} // Falta cardId
         figure={[1, 2, 3]}
         resetBlock={mockResetBlock}
@@ -72,6 +74,7 @@ describe("BlockCardFigureButton", () => {
     render(
       <BlockCardFigureButton
         gameId="game1"
+        playerIdBlock="123" // Agregamos playerIdBlock aquí
         cardId="card1"
         figure={[1, 2, 3]}
         resetBlock={mockResetBlock}
@@ -96,6 +99,7 @@ describe("BlockCardFigureButton", () => {
     render(
       <BlockCardFigureButton
         gameId="game1"
+        playerIdBlock="123" // Agregamos playerIdBlock aquí
         cardId="card1"
         figure={[1, 2, 3]}
         resetBlock={mockResetBlock}
@@ -106,11 +110,11 @@ describe("BlockCardFigureButton", () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(blockCardFigure).toHaveBeenCalledWith("game1", "123", "card1");
+      expect(blockCardFigure).toHaveBeenCalledWith("game1", "123", "card1", [1, 2, 3]);
       expect(mockSocketSend).toHaveBeenCalledWith(
         JSON.stringify({
           type: "game1:CHAT_MESSAGE",
-          message: "TestUser reclamo una figura.",
+          message: "TestUser bloqueo una carta de figura.",
         })
       );
       expect(mockResetBlock).toHaveBeenCalled();
@@ -123,6 +127,7 @@ describe("BlockCardFigureButton", () => {
     render(
       <BlockCardFigureButton
         gameId="game1"
+        playerIdBlock="123" // Agregamos playerIdBlock aquí
         cardId="card1"
         figure={[1, 2, 3]}
         resetBlock={mockResetBlock}

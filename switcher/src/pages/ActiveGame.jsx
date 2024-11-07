@@ -17,6 +17,7 @@ import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
+import BlockCardFigureButton from '@/components/ui/BlockCardFigureButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
 
@@ -36,6 +37,7 @@ export default function ActiveGame() {
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
+  const [selectedBlockCard, setSelectedBlockCard] = useState(null);
   
   
   
@@ -113,6 +115,13 @@ export default function ActiveGame() {
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
 
+  const resetBlock = useCallback(() => {
+    // console.log('reset cardMovementSelect:', selectedMovementCard);
+    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
+    setSelectedBlockCard(null);
+    setSelectedBoardFigure([]);
+  }, [setSelectedBlockCard, setSelectedBoardFigure]);
+
 
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
@@ -166,7 +175,11 @@ export default function ActiveGame() {
               name={player.name}
               setSelectedCardFigure={setSelectedCardFigure}
               selectedCardFigure={selectedCardFigure}
-
+              resetMovement={resetMovement}
+              selectedBlockCard={selectedBlockCard}
+              setSelectedBlockCard={setSelectedBlockCard}
+              resetFigureSelection={resetFigureSelection}
+              resetBlock={resetBlock}
             />
             {currentTurn === player.id && (
               <motion.div
@@ -199,6 +212,7 @@ export default function ActiveGame() {
              selectedMovementPositions={selectedMovementPositions}
              figuresFormed={figuresFormed}
              syncEffect={syncEffect}
+             selectedBlockCard={selectedBlockCard}
              />
 
 
@@ -225,6 +239,7 @@ export default function ActiveGame() {
                 selectedMovementCard={selectedMovementCard}
                 currentTurn={currentTurn}
                 resetFigureSelection={resetFigureSelection}
+                resetBlock={resetBlock}
                 />
             </div>
             <div className="flex-grow">
@@ -234,6 +249,10 @@ export default function ActiveGame() {
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}
                 resetMovement={resetMovement}
+                selectedBlockCard={selectedBlockCard}
+                setSelectedBlockCard={setSelectedBlockCard}
+                resetFigureSelection={resetFigureSelection}
+                resetBlock={resetBlock}
               />
             </div>
           </div>
@@ -265,6 +284,7 @@ export default function ActiveGame() {
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
           resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
+        <BlockCardFigureButton gameId={gameId} playerId={playerId} currentTurn={currentTurn} cardId={selectedBlockCard ? selectedBlockCard.id : null} figure={selectedBoardFigure} resetBlock={resetBlock}/>
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
         
       </motion.div>

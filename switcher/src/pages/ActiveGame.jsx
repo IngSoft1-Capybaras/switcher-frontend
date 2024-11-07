@@ -284,7 +284,7 @@ export default function ActiveGame() {
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
           resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
-        <BlockCardFigureButton gameId={gameId} playerId={playerId} currentTurn={currentTurn} cardId={selectedBlockCard ? selectedBlockCard.id : null} figure={selectedBoardFigure} resetBlock={resetBlock}/>
+        <BlockCardFigureButton gameId={gameId} playerIdBlock={selectedBlockCard ? selectedBlockCard.player_id : null} currentTurn={currentTurn} cardId={selectedBlockCard ? selectedBlockCard.id : null} figure={selectedBoardFigure} resetBlock={resetBlock}/>
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
         
       </motion.div>

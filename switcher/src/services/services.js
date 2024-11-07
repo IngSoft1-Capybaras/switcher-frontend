@@ -383,12 +383,20 @@ export const calculateFigures = async (gameId) => {
   }
 }
 
-export const blockCardFigure = async (gameId, playerId, cardId) => {
-  const url = `${apiUrl}/deck/figure/${gameId}/${playerId}/${cardId}/block_card`;
+export const blockCardFigure = async (gameId, playerId, cardId, figure) => {
+  const url = `${apiUrl}/deck/figure/block_card`;
+  const body = {
+    game_id: gameId,
+    player_id: playerId,
+    card_id: cardId,
+    figure: figure
+  };
+  console.log(`body sent to block card: ${JSON.stringify(body)}`);
 
   try {
     const response = await fetch(url, {
       method: 'POST',
+      body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) {

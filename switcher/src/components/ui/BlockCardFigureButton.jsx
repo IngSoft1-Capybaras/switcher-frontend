@@ -5,7 +5,7 @@ import { blockCardFigure } from "@/services/services";
 import { PiLockKeyDuotone } from "react-icons/pi";
 
 
-export default function BlockCardFigureButton({ gameId, cardId, figure, resetBlock }) {
+export default function BlockCardFigureButton({ gameId, playerIdBlock, cardId, figure, resetBlock }) {
     const { playerId, currentTurn } = useGameContext();
     const [showTooltip, setShowTooltip] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -31,7 +31,8 @@ export default function BlockCardFigureButton({ gameId, cardId, figure, resetBlo
         }
         try {
             console.log(`Voy a jugar la carta ${cardId} con la figura del tablero ${JSON.stringify(figure)}`);
-            const res = await blockCardFigure(gameId, playerId, cardId);
+            console.log("playerId", playerId);
+            const res = await blockCardFigure(gameId, playerIdBlock, cardId, figure);
 
             resetBlock(); // Llama a resetMov si la jugada es exitosa
 

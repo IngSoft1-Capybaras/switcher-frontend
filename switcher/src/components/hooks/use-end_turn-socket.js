@@ -11,7 +11,7 @@ export function useEndTurnSocket(gameId, playerId, setIsButtonActive) {
         const handleNextTurnEvent = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === `${gameId}:NEXT_TURN`) {
-                data.nextPlayerId ? setIsButtonActive(true) : setIsButtonActive(false);
+                data.nextPlayerId == playerId ? setIsButtonActive(true) : setIsButtonActive(false);
             }
         };
 

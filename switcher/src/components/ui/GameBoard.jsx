@@ -18,7 +18,7 @@ const getColorBox = (color) => {
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
-                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect}) {
+                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect, selectedBlockCard}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
@@ -130,7 +130,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
               return (
                 <button
                   onClick={
-                    (selectedCardFigure && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
+                    ((selectedCardFigure || selectedBlockCard) && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
                   }
                   data-testid={`box-${box.pos_x}-${box.pos_y}`}
                   key={`${rowIndex}-${colIndex}`}

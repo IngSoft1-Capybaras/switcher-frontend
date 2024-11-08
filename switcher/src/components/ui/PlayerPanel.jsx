@@ -1,8 +1,7 @@
 import React from 'react'
 import CardsFigure from './CardsFigure'
-import { CarouselItem } from './carousel'
 
-export default function PlayerPanel({ game, player, name, setSelectedCardFigure, selectedCardFigure, turnBorder}) {
+export default function PlayerPanel({ game, player, name, setSelectedCardFigure, selectedCardFigure, turnBorder, selectedBlockCard, setSelectedBlockCard, resetMovement, resetFigureSelection, resetBlock }) {
   return (
     <>
     {/* <h2 className="text-xl text-center mb-5">{name}'s figures</h2> */}
@@ -12,7 +11,11 @@ export default function PlayerPanel({ game, player, name, setSelectedCardFigure,
           playerId={player} 
           setSelectedCardFigure={setSelectedCardFigure} 
           selectedCardFigure={selectedCardFigure} 
-          turnBorder={turnBorder}
+          resetMovement={resetMovement}
+          selectedBlockCard={selectedBlockCard}
+          setSelectedBlockCard={setSelectedBlockCard}
+          resetFigureSelection={resetFigureSelection}
+          resetBlock={resetBlock}
         />
     </>
   )

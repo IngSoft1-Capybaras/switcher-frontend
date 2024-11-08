@@ -37,7 +37,7 @@ const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement
          console.error("Error actualizando el turno");
        }
        // console.log("Turno finalizado", res);
-       setIsButtonActive(false); // Desactiva el botón después de terminar el turno
+       //setIsButtonActive(false); // Desactiva el botón después de terminar el turno
 
       // logica para msg action
       socket.send(JSON.stringify(

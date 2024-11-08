@@ -18,12 +18,12 @@ const getColorBox = (color) => {
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
-                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect}) {
+                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect, selectedBlockCard}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
-
+    
     figuresFormed.find((figure, index) => {
       boxFound = figure.find(
         (elem) => {
@@ -130,13 +130,13 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
               return (
                 <button
                   onClick={
-                    (selectedCardFigure && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
+                    ((selectedCardFigure || selectedBlockCard) && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
                   }
                   data-testid={`box-${box.pos_x}-${box.pos_y}`}
                   key={`${rowIndex}-${colIndex}`}
                   className={`relative overflow-hidden rounded w-full h-full
                     ${blockedColor == box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)}
-                    ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId && syncEffect) ? 'shine-effect' : ''}
+                    ${(box.highlighted && blockedColor != box.color  && currentTurn == playerId && syncEffect) ? 'shine-effect' : ''}
                     ${isSelectedFigure ? 'animate-pulse' : ''}
                     ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
                     ${(!selectedCardFigure && !selectedMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}

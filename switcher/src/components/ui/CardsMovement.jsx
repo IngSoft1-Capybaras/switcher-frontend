@@ -6,7 +6,7 @@ import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-car
 import { AnimatedGroup } from './animated-group';
 
 // Componente que representa las cartas de movimiento
-export default function CardsMovement ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn, resetFigureSelection}) {
+export default function CardsMovement ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn, resetFigureSelection, resetBlock}) {
 
   const [movementCards, setMovementCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +38,7 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
     console.log('CartaMovement seleccionada:', card);
     setSelectedMovementCard(card);
     resetFigureSelection();
+    resetBlock();
   };
 
   // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)

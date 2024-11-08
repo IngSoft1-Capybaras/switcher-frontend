@@ -17,6 +17,7 @@ import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
+import BlockCardFigureButton from '@/components/ui/BlockCardFigureButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
 
@@ -36,6 +37,9 @@ export default function ActiveGame() {
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
+  const [selectedBlockCard, setSelectedBlockCard] = useState(null);
+
+
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -88,7 +92,7 @@ export default function ActiveGame() {
       console.log(res);
       setBoxes(res.boxes);
       setFiguresFormed(res.formed_figures);
-      // setSyncEffect(true);
+      setSyncEffect(true);
       // return;
     } catch (err) {
       console.error("Error fetching board:", err);
@@ -106,6 +110,13 @@ export default function ActiveGame() {
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
+
+  const resetBlock = useCallback(() => {
+    // console.log('reset cardMovementSelect:', selectedMovementCard);
+    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
+    setSelectedBlockCard(null);
+    setSelectedBoardFigure([]);
+  }, [setSelectedBlockCard, setSelectedBoardFigure]);
 
 
   useEffect(() => {
@@ -167,7 +178,11 @@ export default function ActiveGame() {
               name={player.name}
               setSelectedCardFigure={setSelectedCardFigure}
               selectedCardFigure={selectedCardFigure}
-
+              resetMovement={resetMovement}
+              selectedBlockCard={selectedBlockCard}
+              setSelectedBlockCard={setSelectedBlockCard}
+              resetFigureSelection={resetFigureSelection}
+              resetBlock={resetBlock}
             />
             {currentTurn === player.id && (
               <motion.div
@@ -200,6 +215,7 @@ export default function ActiveGame() {
              selectedMovementPositions={selectedMovementPositions}
              figuresFormed={figuresFormed}
              syncEffect={syncEffect}
+             selectedBlockCard={selectedBlockCard}
              />
 
 
@@ -226,6 +242,7 @@ export default function ActiveGame() {
                 selectedMovementCard={selectedMovementCard}
                 currentTurn={currentTurn}
                 resetFigureSelection={resetFigureSelection}
+                resetBlock={resetBlock}
                 />
             </div>
             <div className="flex-grow">
@@ -235,6 +252,10 @@ export default function ActiveGame() {
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}
                 resetMovement={resetMovement}
+                selectedBlockCard={selectedBlockCard}
+                setSelectedBlockCard={setSelectedBlockCard}
+                resetFigureSelection={resetFigureSelection}
+                resetBlock={resetBlock}
               />
             </div>
           </div>
@@ -266,6 +287,7 @@ export default function ActiveGame() {
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
           resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
+        <BlockCardFigureButton gameId={gameId} playerIdBlock={selectedBlockCard ? selectedBlockCard.player_id : null} currentTurn={currentTurn} cardId={selectedBlockCard ? selectedBlockCard.id : null} figure={selectedBoardFigure} resetBlock={resetBlock}/>
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
 
       </motion.div>

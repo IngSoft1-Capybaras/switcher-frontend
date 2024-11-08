@@ -383,11 +383,12 @@ export const calculateFigures = async (gameId) => {
   }
 }
 
-export const blockCardFigure = async (gameId, playerId, cardId, figure) => {
+export const blockCardFigure = async (gameId, blockerPlayerId, blockedPlayerId, cardId, figure) => {
   const url = `${apiUrl}/deck/figure/block_card`;
   const body = {
     game_id: gameId,
-    player_id: playerId,
+    blocker_player_id: blockerPlayerId,
+    blocked_player_id: blockedPlayerId,
     card_id: cardId,
     figure: figure
   };

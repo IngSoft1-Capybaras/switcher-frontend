@@ -12,8 +12,6 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, se
 
         const handleUptadeBoard = async (event) => {
             const data = JSON.parse(event.data);
-            // console.log(playerId);
-            // console.log(currentTurn);
 
             if (data.type === `${activeGameId}:MOVEMENT_UPDATE`) {
                 console.log("FETCHING BOARD MOV")
@@ -28,7 +26,7 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, se
                         })
                     }
                 })
-                
+
             }
             if (((data.type === `${activeGameId}:BOARD_UPDATE`) && (currentTurn === playerId))) {
                 console.log("FETCHING BOARD FIG CALC")
@@ -43,6 +41,6 @@ export function useUpdateBoardSocket(activeGameId, fetchBoard, setSyncEffect, se
         socket.addEventListener("message", handleUptadeBoard);
         return () => {
             socket.removeEventListener("message", handleUptadeBoard);
-        };    
+        };
     }, [socket, activeGameId, fetchBoard, playerId, currentTurn])
 }

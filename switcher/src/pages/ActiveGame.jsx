@@ -36,7 +36,6 @@ export default function ActiveGame() {
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
-  const [isWaitingBoard, setIsWaitingBoard] = useState(false);
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -99,15 +98,11 @@ export default function ActiveGame() {
 
 
   const resetFigureSelection = useCallback(() => {
-    // console.log('reset cardFigureSelect:', selectedCardFigure);
-    // console.log('reset boardFigureSelect:', selectedBoardFigure);
     setSelectedBoardFigure([]);
     setSelectedCardFigure(null);
-  }, [setSelectedBoardFigure, setSelectedCardFigure]); // Ensure this only depends on relevant state
+  }, [setSelectedBoardFigure, setSelectedCardFigure]);
 
   const resetMovement = useCallback(() => {
-    // console.log('reset cardMovementSelect:', selectedMovementCard);
-    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
@@ -115,16 +110,13 @@ export default function ActiveGame() {
 
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
-      // console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
       if (fetchedTurn === playerId) {
-        // console.log("HOLLAAAAdsfsdf");
         calculateFigures(gameId); // highlight board figures
       }
     });
   }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
 
 
-  // Existing effect for resetting movement on turn change
   useEffect(() => {
     if (currentTurn !== playerId && gameId) {
       resetMovement();  // Reset if turn changes
@@ -138,12 +130,12 @@ export default function ActiveGame() {
       if (currentTurn == playerId) {
         await pathEndTurn(gameId);
       }
-    }, 20000); // 2min
+    }, 120000); // 2min
     return () => clearTimeout(timer);
   },[currentTurn]);
 
   useActiveGameSocket(gameId, fetchPlayers);
-  useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig, setIsWaitingBoard);
+  useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
   useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
 
 

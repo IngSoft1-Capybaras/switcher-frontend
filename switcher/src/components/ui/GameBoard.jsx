@@ -23,7 +23,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
-
+    
     figuresFormed.find((figure, index) => {
       boxFound = figure.find(
         (elem) => {
@@ -136,7 +136,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                   key={`${rowIndex}-${colIndex}`}
                   className={`relative overflow-hidden rounded w-full h-full
                     ${blockedColor == box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)}
-                    ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId && syncEffect) ? 'shine-effect' : ''}
+                    ${(box.highlighted && blockedColor != box.color  && currentTurn == playerId && syncEffect) ? 'shine-effect' : ''}
                     ${isSelectedFigure ? 'animate-pulse' : ''}
                     ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
                     ${(!selectedCardFigure && !selectedMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}

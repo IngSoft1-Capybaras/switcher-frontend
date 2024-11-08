@@ -92,7 +92,7 @@ export default function ActiveGame() {
       console.log(res);
       setBoxes(res.boxes);
       setFiguresFormed(res.formed_figures);
-      // setSyncEffect(true);
+      setSyncEffect(true);
       // return;
     } catch (err) {
       console.error("Error fetching board:", err);

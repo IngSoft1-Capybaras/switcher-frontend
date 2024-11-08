@@ -4,6 +4,7 @@ import { cardImg } from '../utils/getCardImg'
 import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
+import { useBlockCardsFigureSocket } from "../hooks/use-block_cards_figure-socket";
 import { useGameContext } from "@/context/GameContext";
 
 export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name, resetMovement, selectedBlockCard, setSelectedBlockCard, resetFigureSelection, resetBlock}) {
@@ -47,6 +48,7 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
   }, [])
 
   useFigureCardsSocket(gameId, fetchFigureCards);
+  useBlockCardsFigureSocket(gameId, fetchFigureCards);
 
   if (loading) return <div data-testid='loadingDiv'>Loading figure cards...</div>
 
@@ -68,27 +70,33 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
                 "relative size-32 aspect-square rounded-lg overflow-hidden transition-transform",
                 isSelected ? "scale-125" : "hover:scale-110",
                 isBlocked ? "scale-125" : "hover:scale-110",
-                !card.show ? "opacity-100" : ""
+                !card.show ? "opacity-100" : "",
+                !card.blocked ? "opacity-100" : "opacity-50"
               )}
               onClick={() =>
-                card.player_id === currentTurn ? handleSelectedFigure(card): handleBlockCardFigure(card)}
+                !card.blocked && card.player_id === currentTurn ? handleSelectedFigure(card): handleBlockCardFigure(card)}
+                disabled={card.blocked}
             >
-              
-             
-              {!card.show ? 
-                <img data-testid='showCard'
-                src={cardImg("DORSO_FIG")}
-                alt={`Dorso de carta de movimiento`}
-                className="absolute inset-0  opacity-100 flex items-center justify-center"
-                // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
+            {!card.show ? 
+              <img data-testid='showCard'
+              src={cardImg("DORSO_FIG")}
+              alt={`Dorso de carta de movimiento`}
+              className="absolute inset-0  opacity-100 flex items-center justify-center"
+              // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
               />
-            : 
+              : 
               <img data-testid='figureCard'
               src={cardImg(card.type)}
               alt={`Figure card ${card.type}`}
               className={cn("object-contain w-full h-full", !card.show && "opacity-0")}
-            />
-          }
+              />
+            }
+            {/* Capa de bloqueo */}
+            {card.blocked && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <span className="text-white text-6xl">🔒</span>
+                </div>
+              )}
             </button>
           )
         })}

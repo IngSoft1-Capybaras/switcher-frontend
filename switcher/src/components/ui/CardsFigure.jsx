@@ -19,7 +19,11 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
 
   const fetchFigureCards = useCallback(async () => {
     try {
-      const cards = await getDeckFigure(gameId, playerId)
+      let playerCardsId = playerId;
+      if (playerId!==panelOwner) {
+        playerCardsId = panelOwner;
+      }
+      const cards = await getDeckFigure(gameId, playerCardsId)
       setFigureCards(cards)
     } catch (error) {
       console.error('Error fetching figure cards', error)

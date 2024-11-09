@@ -23,6 +23,7 @@ describe('CardsMovement Component', () => {
   const mocksetSelectedMovementCard = vi.fn();
   const mockCurrentTurn = mockPlayer.id;
   const mockResetFigureSelection = vi.fn();
+  const mockResetBlock = vi.fn();
 
   it('renders loading state initially', async () => {
     getDeckMovement.mockImplementationOnce(() => new Promise(() => {}));
@@ -34,6 +35,7 @@ describe('CardsMovement Component', () => {
         setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn}
         resetFigureSelection={mockResetFigureSelection}
+        resetBlock={mockResetBlock}
       />
     );
 
@@ -52,6 +54,7 @@ describe('CardsMovement Component', () => {
         setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn} 
         resetFigureSelection={mockResetFigureSelection}
+        resetBlock={mockResetBlock}
       />
     );
     
@@ -71,6 +74,7 @@ describe('CardsMovement Component', () => {
         setSelectedMovementCard={mocksetSelectedMovementCard} 
         currentTurn={mockCurrentTurn}
         resetFigureSelection={mockResetFigureSelection}
+        resetBlock={mockResetBlock}
       />
     );
 
@@ -97,6 +101,7 @@ describe('CardsMovement Component', () => {
         currentTurn={'2'} 
         setSelectedMovementCard={mocksetSelectedMovementCard}
         resetFigureSelection={mockResetFigureSelection}
+        resetBlock={mockResetBlock}
       />
     );
   
@@ -123,6 +128,7 @@ describe('CardsMovement Component', () => {
         currentTurn={'2'} // No es el turno del jugador
         setSelectedMovementCard={mocksetSelectedMovementCard}
         resetFigureSelection={mockResetFigureSelection}
+        resetBlock={mockResetBlock}
       />
     );
   
@@ -147,6 +153,7 @@ it('displays the back of a card if it has the used property set to true', async 
       setSelectedMovementCard={mocksetSelectedMovementCard} 
       currentTurn={mockCurrentTurn}
       resetFigureSelection={mockResetFigureSelection}
+      resetBlock={mockResetBlock}
     />
   );
 

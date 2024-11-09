@@ -17,6 +17,12 @@ vi.mock('@/context/SocketContext', () => ({
   }),
 }));
 
+vi.mock('@/context/GameContext', () => ({
+  useGameContext: () => ({
+    currentTurn: '123',
+  }),
+}));
+
 
 describe('CardsFigure', () => {
   const gameId = 'testGameId';
@@ -95,7 +101,7 @@ describe('CardsFigure', () => {
     const visibleFigureCards = screen.getAllByTestId('figureCard');
     expect(visibleFigureCards).toHaveLength(2);  
   
-    const blockedCard = screen.getByTestId('blockedCard');
+    const blockedCard = screen.getByTestId('showCard');
     expect(blockedCard).toBeInTheDocument();
   });
 });

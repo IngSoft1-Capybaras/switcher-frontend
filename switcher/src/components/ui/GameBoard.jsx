@@ -33,12 +33,12 @@ const getColorForbiddenIcon = (color) => {
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
-                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect}) {
+                                  selectedMovementCard, setSelectMovementPosition, selectedMovementPositions, figuresFormed, syncEffect, selectedBlockCard}) {
 
   const handleSelectFigure = (box) => {
     let boxFound = null;
     let indexFigureFound = -1;
-
+    
     figuresFormed.find((figure, index) => {
       boxFound = figure.find(
         (elem) => {
@@ -138,7 +138,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                 <button
                   disabled={blockedColor === box.color && selectedCardFigure !== null}
                   onClick={
-                    (selectedCardFigure && !selectedMovementCard)
+                    ((selectedCardFigure || selectedBlockCard) && !selectedMovementCard)
                       ? () => handleSelectFigure(box)
                       : () => handleSelectMovement(box)
                   }
@@ -148,7 +148,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                     ${getColorBox(box.color)}
                     ${isSelectedFigure ? 'animate-pulse' : ''}
                     ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
-                    ${(!selectedCardFigure && !selectedMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}
+                    ${(!selectedCardFigure && !selectedMovementCard && !selectedBlockCard) ? 'cursor-default' : 'cursor-pointer'}`}
                   style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
                 >
                   {/* Blocked Overlay */}

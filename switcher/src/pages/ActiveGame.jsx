@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
-import { getPlayers, getBoard, calculateFigures } from '@/services/services';
+import { getPlayers, getBoard, calculateFigures, pathEndTurn } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
@@ -17,6 +17,7 @@ import LeaveButton from '@/components/ui/LeaveButton';
 import UndoButton from '@/components/ui/undoButton';
 import ClaimFigureButton from '@/components/ui/claimFigureButton';
 import ConfirmMovementButton from '@/components/ui/ConfirmButton';
+import BlockCardFigureButton from '@/components/ui/BlockCardFigureButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
 
@@ -36,9 +37,10 @@ export default function ActiveGame() {
   const [loadingOut, setLoadingOut] = useState(false);
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
-  
-  
-  
+  const [selectedBlockCard, setSelectedBlockCard] = useState(null);
+
+
+
   const getTurnInfo = useCallback(async () => {
     try {
       const newTurnData = await fetchTurnInfo(gameId);
@@ -91,7 +93,7 @@ export default function ActiveGame() {
       console.log(res);
       setBoxes(res.boxes);
       setFiguresFormed(res.formed_figures);
-      // setSyncEffect(true);
+      setSyncEffect(true);
       // return;
     } catch (err) {
       console.error("Error fetching board:", err);
@@ -101,38 +103,48 @@ export default function ActiveGame() {
 
 
   const resetFigureSelection = useCallback(() => {
-    // console.log('reset cardFigureSelect:', selectedCardFigure);
-    // console.log('reset boardFigureSelect:', selectedBoardFigure);
     setSelectedBoardFigure([]);
     setSelectedCardFigure(null);
-  }, [setSelectedBoardFigure, setSelectedCardFigure]); // Ensure this only depends on relevant state
+  }, [setSelectedBoardFigure, setSelectedCardFigure]);
 
   const resetMovement = useCallback(() => {
-    // console.log('reset cardMovementSelect:', selectedMovementCard);
-    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
     setSelectedMovementCard(null);
     setSelectedMovementPositions([]);
   }, [setSelectedMovementCard, setSelectedMovementPositions]);
 
+  const resetBlock = useCallback(() => {
+    // console.log('reset cardMovementSelect:', selectedMovementCard);
+    // console.log('reset cardPositionsSelect:', selectedMovementPositions);
+    setSelectedBlockCard(null);
+    setSelectedBoardFigure([]);
+  }, [setSelectedBlockCard, setSelectedBoardFigure]);
+
 
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
-      // console.log(fetchedTurn); // Use fetchedTurn instead of currentTurn
       if (fetchedTurn === playerId) {
-        // console.log("HOLLAAAAdsfsdf");
         calculateFigures(gameId); // highlight board figures
       }
     });
   }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
 
 
-  // Existing effect for resetting movement on turn change
   useEffect(() => {
     if (currentTurn !== playerId && gameId) {
       resetMovement();  // Reset if turn changes
     }
   }, [gameId, currentTurn, playerId, resetMovement]);
 
+
+  // timer
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (currentTurn == playerId) {
+        await pathEndTurn(gameId);
+      }
+    }, 120000); // 2min
+    return () => clearTimeout(timer);
+  },[currentTurn]);
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
@@ -143,7 +155,7 @@ export default function ActiveGame() {
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
-      
+
       {loadingFig && currentTurn === playerId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
@@ -170,6 +182,11 @@ export default function ActiveGame() {
               selectedCardFigure={selectedCardFigure}
               currentTurn={currentTurn}
               getTurnInfo={getTurnInfo}
+              resetMovement={resetMovement}
+              selectedBlockCard={selectedBlockCard}
+              setSelectedBlockCard={setSelectedBlockCard}
+              resetFigureSelection={resetFigureSelection}
+              resetBlock={resetBlock}
             />
             {currentTurn === player.id && (
               <motion.div
@@ -186,7 +203,7 @@ export default function ActiveGame() {
 
       {/* Board and Turn Info */}
       <div className="flex flex-col md:flex-row w-full text-white p-4 justify-center space-y-4 md:space-y-0">
-        
+
         {/* Board */}
         <div className="flex flex-col justify-around items-end mr-5 p-4 md:w-1/2">
           <div className="relative">
@@ -202,6 +219,7 @@ export default function ActiveGame() {
              selectedMovementPositions={selectedMovementPositions}
              figuresFormed={figuresFormed}
              syncEffect={syncEffect}
+             selectedBlockCard={selectedBlockCard}
              />
 
 
@@ -216,7 +234,7 @@ export default function ActiveGame() {
 
         {/* Right-side Panel: Turn Info and Your Cards */}
         <div className="md:w-1/2 h-full flex flex-col p-4 justify-center items-start ml-5">
-        
+
           <Chat gameId={gameId}/>
           <div className="rounded-lg bg-zinc-900 border border-zinc-800 text-white p-4 flex flex-col h-full w-[600px]">
             <h2 className="text-2xl text-center mb-10">Tus cartas</h2>
@@ -228,6 +246,7 @@ export default function ActiveGame() {
                 selectedMovementCard={selectedMovementCard}
                 currentTurn={currentTurn}
                 resetFigureSelection={resetFigureSelection}
+                resetBlock={resetBlock}
                 />
             </div>
             <div className="flex-grow">
@@ -240,6 +259,11 @@ export default function ActiveGame() {
                 resetMovement={resetMovement}
                 currentTurn={currentTurn}
                 getTurnInfo={getTurnInfo}
+                selectedBlockCard={selectedBlockCard}
+                setSelectedBlockCard={setSelectedBlockCard}
+                resetFigureSelection={resetFigureSelection}
+                resetBlock={resetBlock}
+                // turnBorder={turnBorder}
               />
             </div>
           </div>
@@ -256,7 +280,7 @@ export default function ActiveGame() {
       </div>
 
 
-      
+
       <motion.div
         className="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-zinc-800 p-4 z-40"
         initial={{ y: 100 }}
@@ -271,8 +295,9 @@ export default function ActiveGame() {
           selectedCard={selectedMovementCard} selectedPositions={selectedMovementPositions}
           resetMov={resetMovement} setLoadingFig={setLoadingFig} setSyncEffect={setSyncEffect}// agrgue el setLoading
           />
+        <BlockCardFigureButton gameId={gameId} playerIdBlock={selectedBlockCard ? selectedBlockCard.player_id : null} currentTurn={currentTurn} cardId={selectedBlockCard ? selectedBlockCard.id : null} figure={selectedBoardFigure} resetBlock={resetBlock}/>
         <EndTurnButton gameId={gameId} currentTurn={currentTurn} getTurnInfo={getTurnInfo} resetFigureSelection={resetFigureSelection} resetMovement={resetMovement} setLoadingFig={setLoadingFig}/>
-        
+
       </motion.div>
     </div>
   );

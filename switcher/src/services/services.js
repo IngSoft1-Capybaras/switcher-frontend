@@ -384,3 +384,31 @@ export const calculateFigures = async (gameId) => {
     throw new Error(`Error al calcular figuras: ${error.message}`);
   }
 }
+
+export const blockCardFigure = async (gameId, blockerPlayerId, blockedPlayerId, cardId, figure) => {
+  const url = `${apiUrl}/deck/figure/block_card`;
+  const body = {
+    game_id: gameId,
+    blocker_player_id: blockerPlayerId,
+    blocked_player_id: blockedPlayerId,
+    card_id: cardId,
+    figure: figure
+  };
+  console.log(`body sent to block card: ${JSON.stringify(body)}`);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al bloquear carta: ${errorMessage}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw new Error(`Error al bloquear carta: ${error.message}`);
+  }
+}

@@ -16,7 +16,6 @@ const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement
 
   useEffect(() => {
     if (currentTurn===playerId) {
-      // console.log("ES MI TURNO");
       setIsButtonActive(true);
     }
   }, [currentTurn, playerId]);
@@ -36,8 +35,6 @@ const EndTurnButton = ({gameId, currentTurn, resetFigureSelection, resetMovement
        if (!res) {
          console.error("Error actualizando el turno");
        }
-       // console.log("Turno finalizado", res);
-       setIsButtonActive(false); // Desactiva el botón después de terminar el turno
 
       // logica para msg action
       socket.send(JSON.stringify(

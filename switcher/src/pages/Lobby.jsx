@@ -10,8 +10,8 @@ import { useSocketContext } from '@/context/SocketContext';
 import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
-  const { gameId } = useParams(); // aca deberia tomar el token tambien
-  const { players, setPlayers, playerId, setPlayerId, gameName, setGameName, username, setUsername } = useGameContext();
+  const { gameId, username } = useParams(); // aca deberia tomar el token tambien. TODO: cambiar username por token y tomarlo de gamecontext
+  const { players, setPlayers, playerId, setPlayerId, gameName, setGameName, setUsername } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);

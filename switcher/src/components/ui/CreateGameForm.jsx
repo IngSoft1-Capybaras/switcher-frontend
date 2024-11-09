@@ -81,8 +81,9 @@ export default function CreateGameForm() {
     try {
       const result = await submitForm(data, username);
       setPlayerId(result.player.id);
-      navigate(`/games/lobby/${result.game.id}`);
-    } 
+      // TODO: cambiar username por token
+      navigate(`/games/lobby/${result.game.id}/${username}`);
+    }
     catch (error) {
       setErrorMessage(error.message);
 
@@ -90,23 +91,23 @@ export default function CreateGameForm() {
   };
 
   return (
-    <form 
-      data-testid="formComponent" 
-      onSubmit={form.handleSubmit(onSubmit)} 
+    <form
+      data-testid="formComponent"
+      onSubmit={form.handleSubmit(onSubmit)}
       className="space-y-8 bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 max-w-lg mx-auto"
     >
 
-      <div className="mb-6"> 
+      <div className="mb-6">
         <label className="block text-lg text-white mb-2">Nombre de la partida</label>
-        <input 
-          placeholder="Ingrese el nombre de la partida" 
-          {...form.register('name')} 
+        <input
+          placeholder="Ingrese el nombre de la partida"
+          {...form.register('name')}
           className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2"
         />
         {form.formState.errors.name && <p className="text-red-500 mt-1">{form.formState.errors.name.message}</p>}
       </div>
 
-      <div className="mb-6"> 
+      <div className="mb-6">
         <label className="block text-lg text-white mb-2">Rango de jugadores</label>
         <div className="flex justify-center">
           <Controller
@@ -122,9 +123,9 @@ export default function CreateGameForm() {
 
       <div className="mb-6">
         <label className="block text-lg text-white mb-2">Contraseña (opcional)</label>
-        <input 
-          placeholder="Ingrese una contraseña" 
-          {...form.register('password')} 
+        <input
+          placeholder="Ingrese una contraseña"
+          {...form.register('password')}
           className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2"
         />
         {form.formState.errors.password && <p className="text-red-500 mt-1">{form.formState.errors.password.message}</p>}

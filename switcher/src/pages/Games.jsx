@@ -45,7 +45,7 @@ const Games = () => {
       joinGame(selectedGame.id, username)
         .then((res) => {
           setPlayerId(res.player_id);
-          navigate(`/games/lobby/${selectedGame.id}/${username}`);// TODO: cambiar username por token
+          navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
 
         })
         .catch((err) => console.error("Error entrando al juego"));

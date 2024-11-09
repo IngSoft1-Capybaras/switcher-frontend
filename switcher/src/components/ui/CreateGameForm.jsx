@@ -81,8 +81,7 @@ export default function CreateGameForm() {
     try {
       const result = await submitForm(data, username);
       setPlayerId(result.player.id);
-      // TODO: cambiar username por token
-      navigate(`/games/lobby/${result.game.id}/${username}`);
+      navigate(`/games/lobby/${result.game.id}/${result.player.id}`);
     }
     catch (error) {
       setErrorMessage(error.message);

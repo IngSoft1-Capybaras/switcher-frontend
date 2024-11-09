@@ -10,8 +10,8 @@ import { useSocketContext } from '@/context/SocketContext';
 import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
-  const { gameId, username } = useParams(); // aca deberia tomar el token tambien. TODO: cambiar username por token y tomarlo de gamecontext
-  const { players, setPlayers, playerId, setPlayerId, gameName, setGameName, setUsername } = useGameContext();
+  const { gameId, playerId } = useParams();
+  const { players, setPlayers, setPlayerId, gameName, setGameName, username, setUsername } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
@@ -22,6 +22,13 @@ export default function Lobby() {
   // variables para manejar local storage
   const location = useLocation();
   const url = location.pathname;
+  /*
+  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
+    . "navigate": TYPE_NAVIGATE (Basic navigation)
+    . "reload": TYPE_RELOAD
+    . "back_forward": TYPE_BACK_FORWARD
+    . "prerender": TYPE_PRERENDER
+  */
   let navigationType = window.performance.getEntriesByType("navigation")[0].type;
 
   const fetchPlayersInfo = async () => {
@@ -103,16 +110,7 @@ export default function Lobby() {
 
 
   // local storage -> seteo y obtencion de data
-  /*
-  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
-    . "navigate": TYPE_NAVIGATE (Basic navigation)
-    . "reload": TYPE_RELOAD
-    . "back_forward": TYPE_BACK_FORWARD
-    . "prerender": TYPE_PRERENDER
-  */
     useEffect(() => {
-      //const url = location.pathname;
-      //let navigationType = window.performance.getEntriesByType("navigation")[0].type;
 
       // si recargo la pagina, traigo la data de local storage
       if (navigationType === 'reload') {

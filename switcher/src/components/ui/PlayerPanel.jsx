@@ -20,6 +20,7 @@ export default function PlayerPanel({ game, player, name, setSelectedCardFigure,
     />
     <OthersCardsMovement
       gameId={game}
+      playerId={player}
     />
 
     </>

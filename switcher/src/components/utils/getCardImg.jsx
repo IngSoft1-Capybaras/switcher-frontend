@@ -68,6 +68,8 @@ export const cardImg = (caseImg) => {
         return '/src/assets/images/cruceLinealLateral.svg';
       case "DORSO_MOV":
         return '/src/assets/images/back-mov.svg';
+      case "PROHIBIDO":
+        return '/src/assets/images/prohibido.png';
       default:
         throw new Error('Tipo de carta no válido');
     }

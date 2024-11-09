@@ -6,8 +6,8 @@ import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-car
 import { AnimatedGroup } from './animated-group';
 import { useGameContext } from "@/context/GameContext";
 
-export default function OthersCardsMovement({ gameId }) {
-    const { playerId, currentTurn } = useGameContext();
+export default function OthersCardsMovement({ gameId, playerId }) {
+    const { currentTurn } = useGameContext();
     const [movementCards, setMovementCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,10 +24,6 @@ export default function OthersCardsMovement({ gameId }) {
         }
     };
 
-    const handleCardPlayed = (cardId) => {
-        setMovementCards((prevCards) => prevCards.filter(card => card.id !== cardId));
-    };
-
     useEffect(() => {
         fetchMovementCards();
     }, [gameId, playerId]);
@@ -38,8 +34,9 @@ export default function OthersCardsMovement({ gameId }) {
     if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
     return (
+        <div className='flex flex-col mt-3 w-full h-full mb-0'>
         <AnimatedGroup
-            className='flex justify-center items-center transform translate-x-[-9rem] translate-y-[-23rem]'
+            className='flex justify-center items-center transform translate-x-[-9.5rem] translate-y-[-17rem]'
             variants={{
                 container: {
                     hidden: { opacity: 0 },
@@ -65,25 +62,39 @@ export default function OthersCardsMovement({ gameId }) {
                 },
             }}
         >
-            {movementCards.slice(0, 3).map((card, index) => (
-                <div
+            {movementCards.slice(0, 3).map((card, index) => {
+                return (
+                    <div
                     key={card.id}
                     className={cn(
-                        "relative h-28 w-auto rounded-lg overflow-hidden transform",
-                        index === 0 ? '-rotate-0 translate-x-[5rem] translate-y-[-0rem] z-30' :
-                        index === 1 ? 'rotate-0 translate-x-[-1rem] translate-y-[-1.1rem] z-20' :
-                        'rotate-0 translate-x-[-7rem] translate-y-[-2rem] z-10'
+                        "relative h-10 w-auto rounded-lg overflow-hidden transform",
+                        index === 0 ? '-rotate-0 translate-x-[4rem] translate-y-[-0rem] z-30' :
+                        index === 1 ? 'rotate-0 translate-x-[0rem] translate-y-[-0rem] z-20' :
+                        'rotate-0 translate-x-[-4rem] translate-y-[-0rem] z-10'
                     )}
-                    style={{ pointerEvents: 'none' }}
-                    onClick={() => handleCardPlayed(card.id)}
                 >
-                    <img
-                        src={cardImg("DORSO_MOV")}
-                        alt="Dorso de carta de movimiento"
-                        className="object-cover w-full h-full"
-                    />
+                    {card.used ? (
+                        <img
+                            src={cardImg("DORSO_MOV")}
+                            alt={`Dorso de carta de movimiento`}
+                            className="object-cover w-full h-full"
+                            style={{
+                                filter: 'brightness(1.2) contrast(1.3) saturate(1.5)',
+                            }}
+        
+                        />
+                    ) : (
+                        // No se muestra la carta si esta usada
+                        <img
+                            src={cardImg("PROHIBIDO")}
+                            alt={`Carta de movimiento prohibida`}
+                            className="object-cover w-full h-full "
+                        />
+                    )}
                 </div>
-            ))}
+                )
+            })}
         </AnimatedGroup>
+        </div>
     );
 }

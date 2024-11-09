@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback} from 'react'
+import React, { useEffect, useState} from 'react'
 import { cn } from "@/lib/utils"
 import { cardImg } from '../utils/getCardImg'
 import { getDeckFigure } from '@/services/services'
@@ -7,16 +7,14 @@ import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
 import { useBlockCardsFigureSocket } from "../hooks/use-block_cards_figure-socket";
 import { useGameContext } from "@/context/GameContext";
 
-export default function CardsFigure({gameId, playerId, setSelectedCardFigure, selectedCardFigure, name, resetMovement, selectedBlockCard, setSelectedBlockCard, resetFigureSelection, resetBlock}) {
+export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, selectedCardFigure, name, resetMovement, selectedBlockCard, setSelectedBlockCard, resetFigureSelection, resetBlock,  playerId, getTurnInfo, currentTurn, turnBorder}) {
 
-  const { currentTurn } = useGameContext();
+  // const { currentTurn } = useGameContext();
   const [loading, setLoading] = useState(true)
   const [figureCards, setFigureCards] = useState([])
+  const [error, setError] = useState(null);
 
   const handleSelectedFigure = (figure) => {
-    console.log("figure.player_id",figure.player_id);
-    console.log("currentTurn",currentTurn);
-    console.log('CartaFigure seleccionada:', figure);
     setSelectedCardFigure(figure);
     resetMovement();
     resetBlock();
@@ -24,33 +22,34 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
 
   // Maneja la selección de una carta para bloquear
   const handleBlockCardFigure = (figure) => {
-    console.log("figure.player_id",figure.player_id);
-    console.log("currentTurn",currentTurn);
-    console.log('Carta de bloqueo seleccionada:', figure);
     setSelectedBlockCard(figure);
     resetMovement();
     resetFigureSelection();
   }
 
-  const fetchFigureCards = useCallback(async () => {
+  const fetchFigureCards = async () => {
+    const figureCardsOwnerId = panelOwner === playerId ? playerId : panelOwner; 
     try {
-      const cards = await getDeckFigure(gameId, playerId)
+      const cards = await getDeckFigure(gameId, figureCardsOwnerId)
+      
       setFigureCards(cards)
     } catch (error) {
+      setError(`Error al obtener las cartas de figura del player: ${playerId}`);
       console.error('Error fetching figure cards', error)
     } finally {
       setLoading(false)
     }
-  }, [gameId, playerId, getDeckFigure, setFigureCards, setLoading]);
+  }
 
   useEffect(() => {
-    fetchFigureCards()
-  }, [])
+    fetchFigureCards();
+  }, []);
 
-  useFigureCardsSocket(gameId, fetchFigureCards);
+  useFigureCardsSocket(gameId, fetchFigureCards, getTurnInfo);
   useBlockCardsFigureSocket(gameId, fetchFigureCards);
 
-  if (loading) return <div data-testid='loadingDiv'>Loading figure cards...</div>
+  if (loading) return <div data-testid='loadingDiv' className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
+  if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
   return (
     <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10`}>
@@ -73,6 +72,9 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
                 !card.show ? "opacity-100" : "",
                 !card.blocked ? "opacity-100" : "opacity-50"
               )}
+              // onClick={() => handleSelectedFigure(card)}
+              style={{ cursor: playerId === currentTurn? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
+
               onClick={() =>
                 !card.blocked && card.player_id === currentTurn ? handleSelectedFigure(card): handleBlockCardFigure(card)}
                 disabled={card.blocked}
@@ -98,7 +100,7 @@ export default function CardsFigure({gameId, playerId, setSelectedCardFigure, se
                 </div>
               )}
             </button>
-          )
+          ) 
         })}
       </AnimatedGroup>
     </div>

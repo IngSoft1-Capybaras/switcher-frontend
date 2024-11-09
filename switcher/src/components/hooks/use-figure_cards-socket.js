@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSocketContext } from "@/context/SocketContext";
 
-export function useFigureCardsSocket(gameId, getFigureCards) {
+export function useFigureCardsSocket(gameId, getFigureCards, getTurnInfo) {
     const { socket } = useSocketContext();
 
     useEffect(() => {
@@ -13,7 +13,8 @@ export function useFigureCardsSocket(gameId, getFigureCards) {
             
             if (data.type === `${gameId}:FIGURE_UPDATE` || data.type === `${gameId}:NEXT_TURN` || data.type === `${gameId}:UNDOBLOCK_CARD`) {
                 getFigureCards();
-            }
+                getTurnInfo(gameId);
+            } 
         };
 
         

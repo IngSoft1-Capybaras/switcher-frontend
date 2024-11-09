@@ -27,7 +27,7 @@ export default function ActiveGame() {
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
-  const [blockedColor, setBlockedColor] = useState("RED");
+  const [blockedColor, setBlockedColor] = useState("GREEN");
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
   const [figuresFormed, setFiguresFormed] = useState([]);

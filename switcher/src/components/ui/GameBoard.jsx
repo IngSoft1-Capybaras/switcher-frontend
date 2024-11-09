@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
+import { ImBlocked } from "react-icons/im";
 
 const getColorBox = (color) => {
   switch (color) {
@@ -15,6 +16,20 @@ const getColorBox = (color) => {
   }
 };
 
+const getColorForbiddenIcon = (color) => {
+  switch (color) {
+    case 'GREEN':
+      return 'text-green-900';
+    case 'BLUE':
+      return 'text-blue-900';
+    case 'RED':
+      return 'text-red-900';
+    case 'YELLOW':
+      return 'text-yellow-900';
+    default:
+      return 'text-gray-900';
+  }
+};
 
 export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                                   selectedCardFigure, selectedBoardFigure, setSelectedBoardFigure,
@@ -82,12 +97,8 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
     <div className="relative flex h-[600px] w-[600px] flex-col items-center justify-center rounded-lg shadow-xl border-4 border-zinc-700 bg-zinc-800 p-4">
       <style jsx global>{`
         @keyframes glass-shine {
-          0% {
-            transform: translateX(-150%) translateY(-150%);
-          }
-          100% {
-            transform: translateX(150%) translateY(150%);
-          }
+          0% { transform: translateX(-150%) translateY(-150%); }
+          100% { transform: translateX(150%) translateY(150%); }
         }
         .shine-effect::before {
           content: '';
@@ -101,50 +112,54 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
           animation: glass-shine 5s ease-in-out infinite;
           pointer-events: none;
         }
-
         @keyframes fast-pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
         .animate-fast-pulse {
           animation: fast-pulse 0.3s ease-in-out 3;
-        }`}
-      </style>
+        }
+      `}</style>
       <div className="grid grid-cols-6 grid-rows-6 gap-2 w-full h-full">
         {boxes.length > 0 &&
           boxes.map((row, rowIndex) =>
             row.map((box, colIndex) => {
-              // Check if the current box is in the selectedBoardFigure
               const isSelectedFigure = selectedBoardFigure.some(
                 (selectedBox) =>
                   selectedBox.pos_x === box.pos_x &&
                   selectedBox.pos_y === box.pos_y &&
                   selectedBox.color === box.color
               );
-
-              // Check if the current box is in the selectedMovementPositions
               const isSelectedMovement = selectedMovementPositions.some(
                 (pos) => pos.x === box.pos_x && pos.y === box.pos_y
               );
-
+  
               return (
                 <button
-                  disabled={blockedColor === box.color && selectedCardFigure!==null}
+                  disabled={blockedColor === box.color && selectedCardFigure !== null}
                   onClick={
-                    (selectedCardFigure && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
+                    (selectedCardFigure && !selectedMovementCard)
+                      ? () => handleSelectFigure(box)
+                      : () => handleSelectMovement(box)
                   }
                   data-testid={`box-${box.pos_x}-${box.pos_y}`}
                   key={`${rowIndex}-${colIndex}`}
-                  className={`relative overflow-hidden rounded w-full h-full
-                    ${blockedColor === box.color ? 'bg-gradient-to-br from-gray-400 to-gray-600' : getColorBox(box.color)}
-                    ${(box.highlighted && blockedColor != box.color && !isSelectedFigure && currentTurn == playerId && syncEffect) ? 'shine-effect' : ''}
+                  className={`relative overflow-hidden rounded w-full h-full 
+                    ${getColorBox(box.color)}
                     ${isSelectedFigure ? 'animate-pulse' : ''}
                     ${isSelectedMovement ? 'brightness-75 animate-pulse' : 'brightness-100'}
                     ${(!selectedCardFigure && !selectedMovementCard) ? 'cursor-default' : 'cursor-pointer'}`}
                   style={{ gridColumn: box.pos_x + 1, gridRow: box.pos_y + 1 }}
                 >
-                </button>
-
+                  {/* Blocked Overlay */}
+                  {blockedColor === box.color && (
+                    <div className="absolute inset-0 flex items-center justify-center ">
+                      <ImBlocked className={`${getColorForbiddenIcon(box.color)} w-8 h-8 font-extrabold`} />
+                    </div>
+                  )}
+                  {box.highlighted && blockedColor !== box.color && !isSelectedFigure && currentTurn === playerId && syncEffect && (
+                    <div className="shine-effect"></div>
+                  )}                </button>
               );
             })
           )
@@ -152,4 +167,4 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
       </div>
     </div>
   );
-}
+}  

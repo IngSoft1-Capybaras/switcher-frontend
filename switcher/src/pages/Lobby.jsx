@@ -18,6 +18,8 @@ export default function Lobby() {
   const [host, setHost] = useState(false);
   const { socket } = useSocketContext();
   const [previousPlayers, setPreviousPlayers] = useState([]);
+
+  // variables para manejar local storage
   const location = useLocation();
   const url = location.pathname;
   let navigationType = window.performance.getEntriesByType("navigation")[0].type;
@@ -125,9 +127,9 @@ export default function Lobby() {
       // si estoy en la pagina, seteo la data en local storage
       if (navigationType === 'navigate' || navigationType === 'prerender') {
         const data = {
-                      username:`${username}`,
-                      playerId:`${playerId}`,
-                      host:`${host}`,
+                      username: username,
+                      playerId: playerId,
+                      host: host,
                      };
         localStorage.setItem(url,JSON.stringify(data));
       };

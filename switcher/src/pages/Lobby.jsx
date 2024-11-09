@@ -19,7 +19,8 @@ export default function Lobby() {
   const { socket } = useSocketContext();
   const [previousPlayers, setPreviousPlayers] = useState([]);
   const location = useLocation();
-
+  const url = location.pathname;
+  let navigationType = window.performance.getEntriesByType("navigation")[0].type;
 
   const fetchPlayersInfo = async () => {
     try {
@@ -78,11 +79,13 @@ export default function Lobby() {
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );
 
-    getPlayer(gameId, playerId).then((res) => {
-      setHost(res.host);
-    }).catch((err) =>
-      console.error(`Error: Unable to retrieve player data. ${err}`)
-    );
+    if (navigationType != 'reload') {
+      getPlayer(gameId, playerId).then((res) => {
+        setHost(res.host);
+      }).catch((err) =>
+        console.error(`Error: Unable to retrieve player data. ${err}`)
+      );
+    }
 
     fetchPlayersInfo(); // Initial fetch
   }, []);
@@ -106,8 +109,8 @@ export default function Lobby() {
     . "prerender": TYPE_PRERENDER
   */
     useEffect(() => {
-      const url = location.pathname;
-      let navigationType = window.performance.getEntriesByType("navigation")[0].type;
+      //const url = location.pathname;
+      //let navigationType = window.performance.getEntriesByType("navigation")[0].type;
 
       // si recargo la pagina, traigo la data de local storage
       if (navigationType === 'reload') {

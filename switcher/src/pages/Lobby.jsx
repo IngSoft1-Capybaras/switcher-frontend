@@ -89,13 +89,11 @@ export default function Lobby() {
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );
 
-    if (navigationType != 'reload') {
       getPlayer(gameId, playerId).then((res) => {
         setHost(res.host);
       }).catch((err) =>
         console.error(`Error: Unable to retrieve player data. ${err}`)
       );
-    }
 
     fetchPlayersInfo(); // Initial fetch
   }, []);
@@ -133,7 +131,7 @@ export default function Lobby() {
                      };
         localStorage.setItem(url,JSON.stringify(data));
       };
-  }, [location.pathname, username, playerId, host]);
+  }, [location.pathname, username, host]);
 
   useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates
 

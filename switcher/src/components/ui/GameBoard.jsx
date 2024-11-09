@@ -157,7 +157,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
                       <ImBlocked className={`${getColorForbiddenIcon(box.color)} w-8 h-8 font-extrabold`} />
                     </div>
                   )}
-                  {box.highlighted && blockedColor !== box.color && !isSelectedFigure && currentTurn === playerId && syncEffect && (
+                  {box.highlighted && blockedColor !== box.color && currentTurn === playerId && syncEffect && (
                     <div className="shine-effect"></div>
                   )}                </button>
               );

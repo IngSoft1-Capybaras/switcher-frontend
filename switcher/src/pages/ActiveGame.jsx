@@ -4,7 +4,7 @@ import { useGameContext } from '../context/GameContext';
 import { getPlayers, getBoard, calculateFigures, pathEndTurn } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
-import { fetchTurnInfo } from '@/services/services';
+import { fetchGameState } from '@/services/services';
 import { motion, sync } from 'framer-motion';
 import CardsMovement from '../components/ui/CardsMovement';
 import CardsFigure from '../components/ui/CardsFigure';
@@ -43,10 +43,10 @@ export default function ActiveGame() {
 
   const getTurnInfo = useCallback(async () => {
     try {
-      const newTurnData = await fetchTurnInfo(gameId);
-      if (newTurnData.current_player_id) {
-        setCurrentTurn(newTurnData.current_player_id);
-        setFetchedTurn(newTurnData.current_player_id); // Store fetched value
+      const newTurnData = await fetchGameState(gameId);
+      if (newTurnData.current_player) {
+        setCurrentTurn(newTurnData.current_player);
+        setFetchedTurn(newTurnData.current_player); // Store fetched value
         
         setBlockedColor(newTurnData.forbidden_color);
       } else {

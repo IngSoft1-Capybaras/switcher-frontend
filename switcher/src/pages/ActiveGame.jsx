@@ -145,6 +145,23 @@ export default function ActiveGame() {
     return () => clearTimeout(timer);
   },[currentTurn]);
 
+
+  // local storage
+  /*
+  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
+    . "navigate": TYPE_NAVIGATE (Basic navigation)
+    . "reload": TYPE_RELOAD
+    . "back_forward": TYPE_BACK_FORWARD
+    . "prerender": TYPE_PRERENDER
+  */
+  useEffect(() => {
+    let data = window.performance.getEntriesByType("navigation")[0].type;
+    if (data === 'reload') {};
+    if (data === 'navigate' || data === 'prerender') {};
+}, []);
+
+
+
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
   useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);

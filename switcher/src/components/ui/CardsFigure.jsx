@@ -52,7 +52,7 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
 
   useFigureCardsSocket(gameId, fetchFigureCards, getTurnInfo);
 
-  if (loading) return <div className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
+  if (loading) return <div data-testid='loadingDiv' className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
   if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
   return (

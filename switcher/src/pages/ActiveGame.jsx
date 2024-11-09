@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
 import { getPlayers, getBoard, calculateFigures, pathEndTurn } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
@@ -23,7 +23,7 @@ import { useSocketContext } from '@/context/SocketContext';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
-  const { players, setPlayers, playerId, currentTurn, setCurrentTurn } = useGameContext();
+  const { players, setPlayers, playerId, currentTurn, setCurrentTurn, username } = useGameContext();
   const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
@@ -38,8 +38,7 @@ export default function ActiveGame() {
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
   const [selectedBlockCard, setSelectedBlockCard] = useState(null);
-
-
+  const location = useLocation();
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -155,9 +154,16 @@ export default function ActiveGame() {
     . "prerender": TYPE_PRERENDER
   */
   useEffect(() => {
-    let data = window.performance.getEntriesByType("navigation")[0].type;
-    if (data === 'reload') {};
-    if (data === 'navigate' || data === 'prerender') {};
+    let navigationType = window.performance.getEntriesByType("navigation")[0].type;
+    if (navigationType === 'reload') {};
+    if (navigationType === 'navigate' || navigationType === 'prerender') {
+      const url = window.location.href;
+      const data = {
+                    gameId:`${gameId}`,
+                    username:`${username}`,
+                   };
+      //localStorage.setItem(url,);
+    };
 }, []);
 
 

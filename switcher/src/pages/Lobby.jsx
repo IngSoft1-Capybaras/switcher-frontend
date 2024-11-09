@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PlayersList from '../components/ui/PlayersList';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useGameContext } from '@/context/GameContext';
 import { getPlayers, getGameInfo, getPlayer, startGame, calculateFigures } from '../services/services';
 import { useLobbySocket } from '@/components/hooks/use-lobby-socket';
@@ -10,14 +10,16 @@ import { useSocketContext } from '@/context/SocketContext';
 import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
-  const { gameId } = useParams();
-  const { players, setPlayers, playerId, gameName, setGameName } = useGameContext();
+  const { gameId } = useParams(); // aca deberia tomar el token tambien
+  const { players, setPlayers, playerId, setPlayerId, gameName, setGameName, username, setUsername } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
   const [host, setHost] = useState(false);
   const { socket } = useSocketContext();
   const [previousPlayers, setPreviousPlayers] = useState([]);
+  const location = useLocation();
+
 
   const fetchPlayersInfo = async () => {
     try {
@@ -64,7 +66,7 @@ export default function Lobby() {
       console.error("Error al obtener jugadores", err);
     }
   };
-  
+
 
   useEffect(() => {
     getGameInfo(gameId).then((res) => {
@@ -92,8 +94,41 @@ export default function Lobby() {
     } else {
       setIniciateActive(false);
     }
-  }, [players, host, minPlayers]); 
+  }, [players, host, minPlayers]);
 
+
+  // local storage -> seteo y obtencion de data
+  /*
+  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
+    . "navigate": TYPE_NAVIGATE (Basic navigation)
+    . "reload": TYPE_RELOAD
+    . "back_forward": TYPE_BACK_FORWARD
+    . "prerender": TYPE_PRERENDER
+  */
+    useEffect(() => {
+      const url = location.pathname;
+      let navigationType = window.performance.getEntriesByType("navigation")[0].type;
+
+      // si recargo la pagina, traigo la data de local storage
+      if (navigationType === 'reload') {
+        const data = JSON.parse(localStorage.getItem(url));
+        console.log('local storage data');
+        console.log(data);
+        setPlayerId(data.playerId);
+        setHost(data.host);
+        setUsername(data.username);
+      };
+
+      // si estoy en la pagina, seteo la data en local storage
+      if (navigationType === 'navigate' || navigationType === 'prerender') {
+        const data = {
+                      username:`${username}`,
+                      playerId:`${playerId}`,
+                      host:`${host}`,
+                     };
+        localStorage.setItem(url,JSON.stringify(data));
+      };
+  }, [location.pathname, username, playerId, host]);
 
   useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates
 

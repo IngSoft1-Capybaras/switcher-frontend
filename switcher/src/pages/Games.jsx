@@ -58,10 +58,10 @@ const Games = () => {
   }, [currentPage, isFiltering]);
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-black text-white">
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-zinc-950 text-white">
       <h1 className="w-full text-6xl text-center mb-10 text-white">Lista de partidas</h1>
 
-      <div className="w-1/3">
+      <div className="sm:w-3/4 md:w-[700px] lg:1/2">
         <div className="flex justify-between mb-4 items-center">
           {/* Create Game Button */}
           <button
@@ -71,18 +71,6 @@ const Games = () => {
             <FaPlus size={30} className="mr-2" />
           </button>
 
-          {/* Join Game Button */}
-          <button
-            onClick={handleJoinGame}
-            disabled={!selectedGame}
-            className={`py-2 px-4 rounded transition-all duration-200 flex items-center ${
-              selectedGame
-                ? 'text-green-600 hover:text-green-700'
-                : 'text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <FaPlay size={30} className="mr-2" />
-          </button>
 
           <div className="flex space-x-4 items-center">
             {/* Filter Button */}
@@ -108,6 +96,18 @@ const Games = () => {
               <MdOutlineCleaningServices size={30} className="mr-2" />
             </button>
           </div>
+          {/* Join Game Button */}
+          <button
+            onClick={handleJoinGame}
+            disabled={!selectedGame}
+            className={`py-2 px-4 rounded transition-all duration-200 flex items-center ${
+              selectedGame
+                ? 'text-green-600 hover:text-green-700'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            <FaPlay size={30} className="mr-2" />
+          </button>
         </div>
 
         <GamesList

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { toast } from "@/components/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
@@ -29,8 +28,8 @@ const FormSchema = z.object({
 })
 
 export default function InputForm() {
-  const navigate = useNavigate();
-  const {setUsername } = useGameContext();
+  const navigate = useNavigate()
+  const { setUsername } = useGameContext()
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -49,35 +48,36 @@ export default function InputForm() {
       ),
     })
 
-    // seteo el estado global 'username'
-    setUsername(data.username);
-
-    // redirigir
-    navigate('/games');
+    setUsername(data.username)
+    navigate('/games')
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 max-w-lg mx-auto">
-        <div className=""> 
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem className="space-y-6 ">
-                <FormLabel className="block text-lg text-white mb-2">Nombre de usuario</FormLabel>
-                <FormControl>
-                  <Input className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2" placeholder="Ingrese su nombre de usuario" {...field} />
-                </FormControl>
-                <FormDescription className="text-base">
-                  Este nombre será visible para el resto de jugadores.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <Button className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition-all duration-200 w-1/3" type="submit">Siguiente</Button>
+      <form onSubmit={form.handleSubmit(onSubmit)} className=" h-60 bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-800 flex flex-col justify-between">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="block text-lg text-white mb-5">Nombre de usuario</FormLabel>
+              <FormControl>
+                <Input
+                  className="w-full bg-zinc-800  text-white rounded-full px-4 py-5  outline-none border-none !focus:border-none !focus:outline-none"
+                  placeholder="Ingrese su nombre de usuario"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription className="text-base mt-5">
+                Este nombre será visible para el resto de jugadores.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition-all duration-200 w-1/3 self-center" type="submit">
+          Siguiente
+        </Button>
       </form>
     </Form>
   )

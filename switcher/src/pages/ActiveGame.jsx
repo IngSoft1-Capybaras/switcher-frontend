@@ -144,13 +144,13 @@ export default function ActiveGame() {
     <div className="flex flex-col h-screen bg-zinc-950">
       
       {loadingFig && currentTurn === playerId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-zinc-950 bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
           <h2 className="text-white text-2xl ml-4">Calculando figuras formadas...</h2>
         </div>
       )}
       {loadingOut && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-zinc-950 bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
           <h2 className="text-white text-2xl ml-4">Redirigiendo...</h2>
         </div>

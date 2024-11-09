@@ -129,7 +129,7 @@ export default function GameBoard({boxes, blockedColor, currentTurn, playerId,
 
               return (
                 <button
-                  disabled={blockedColor === box.color}
+                  disabled={blockedColor === box.color && selectedCardFigure!==null}
                   onClick={
                     (selectedCardFigure && !selectedMovementCard) ? () => handleSelectFigure(box) : () => handleSelectMovement(box)
                   }

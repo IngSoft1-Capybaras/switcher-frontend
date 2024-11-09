@@ -27,7 +27,7 @@ export default function ActiveGame() {
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
   const [selectedMovementPositions, setSelectedMovementPositions] = useState([]);
-  const [blockedColor, setBlockedColor] = useState("GREEN");
+  const [blockedColor, setBlockedColor] = useState(null);
   const [selectedBoardFigure, setSelectedBoardFigure ] = useState([]);
   const [selectedCardFigure, setSelectedCardFigure] = useState(null);
   const [figuresFormed, setFiguresFormed] = useState([]);
@@ -45,7 +45,8 @@ export default function ActiveGame() {
       if (newTurnData.current_player_id) {
         setCurrentTurn(newTurnData.current_player_id);
         setFetchedTurn(newTurnData.current_player_id); // Store fetched value
-        // setBlockedColor(newTurnData.blocked_color);
+        
+        setBlockedColor(newTurnData.forbidden_color);
       } else {
         console.error("Received an undefined player ID.");
       }
@@ -144,13 +145,13 @@ export default function ActiveGame() {
     <div className="flex flex-col h-screen bg-zinc-950">
       
       {loadingFig && currentTurn === playerId && (
-        <div className="fixed inset-0 bg-zinc-950 bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
           <h2 className="text-white text-2xl ml-4">Calculando figuras formadas...</h2>
         </div>
       )}
       {loadingOut && (
-        <div className="fixed inset-0 bg-zinc-950 bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
           <h2 className="text-white text-2xl ml-4">Redirigiendo...</h2>
         </div>
@@ -168,6 +169,7 @@ export default function ActiveGame() {
               setSelectedCardFigure={setSelectedCardFigure}
               selectedCardFigure={selectedCardFigure}
               currentTurn={currentTurn}
+              getTurnInfo={getTurnInfo}
             />
             {currentTurn === player.id && (
               <motion.div
@@ -231,11 +233,13 @@ export default function ActiveGame() {
             <div className="flex-grow">
               <CardsFigure
                 gameId={gameId}
-                playerId={playerId}
+                playerId={playerId} 
+                panelOwner={playerId}
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}
                 resetMovement={resetMovement}
                 currentTurn={currentTurn}
+                getTurnInfo={getTurnInfo}
               />
             </div>
           </div>

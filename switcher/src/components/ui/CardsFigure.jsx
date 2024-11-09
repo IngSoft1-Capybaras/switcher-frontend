@@ -5,10 +5,11 @@ import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
 
-export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, selectedCardFigure, name, resetMovement, currentTurn, playerId}) {
+export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, selectedCardFigure, name, resetMovement, currentTurn, playerId, getTurnInfo}) {
 
   const [loading, setLoading] = useState(true)
   const [figureCards, setFigureCards] = useState([])
+  const [error, setError] = useState(null);
 
   const handleSelectedFigure = (figure) => {
     // console.log(figure);
@@ -17,28 +18,28 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
     resetMovement();
   }
 
-  const fetchFigureCards = useCallback(async () => {
+  const fetchFigureCards = async () => {
+    const figureCardsOwnerId = panelOwner === playerId ? playerId : panelOwner; 
     try {
-      let playerCardsId = playerId;
-      if (playerId!==panelOwner) {
-        playerCardsId = panelOwner;
-      }
-      const cards = await getDeckFigure(gameId, playerCardsId)
+      const cards = await getDeckFigure(gameId, figureCardsOwnerId)
+      
       setFigureCards(cards)
     } catch (error) {
+      setError(`Error al obtener las cartas de figura del player: ${playerId}`);
       console.error('Error fetching figure cards', error)
     } finally {
       setLoading(false)
     }
-  }, [gameId, playerId, getDeckFigure, setFigureCards, setLoading]);
+  }
 
   useEffect(() => {
-    fetchFigureCards()
-  }, [])
+    fetchFigureCards();
+  }, []);
 
-  useFigureCardsSocket(gameId, fetchFigureCards);
+  useFigureCardsSocket(gameId, fetchFigureCards, getTurnInfo);
 
-  if (loading) return <div data-testid='loadingDiv'>Loading figure cards...</div>
+  if (loading) return <div className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
+  if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
   return (
     <div className={`flex flex-col mt-3 justify-center items-center w-full h-full mb-10`}>

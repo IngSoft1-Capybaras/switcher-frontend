@@ -234,8 +234,10 @@ export const fetchTurnInfo = async (activeGameId) => {
         if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
         }
-
+        
         const data = await response.json();
+
+        console.log(data);
         return data;
     } catch (error) {
       throw new Error(`Error al obtener información del turno ${error.message}`);

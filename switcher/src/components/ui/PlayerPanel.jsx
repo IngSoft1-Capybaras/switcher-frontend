@@ -1,7 +1,7 @@
 import React from 'react'
 import CardsFigure from './CardsFigure'
 
-export default function PlayerPanel({ game, panelOwner, name, setSelectedCardFigure, selectedCardFigure, turnBorder, currentTurn, playerId}) {
+export default function PlayerPanel({ game, panelOwner, name, setSelectedCardFigure, selectedCardFigure, turnBorder, currentTurn, playerId, getTurnInfo}) {
   return (
     <>
     {/* <h2 className="text-xl text-center mb-5">{name}'s figures</h2> */}
@@ -14,6 +14,7 @@ export default function PlayerPanel({ game, panelOwner, name, setSelectedCardFig
           turnBorder={turnBorder}
           currentTurn={currentTurn}
           panelOwner={panelOwner}
+          getTurnInfo={getTurnInfo}
         />
     </>
   )

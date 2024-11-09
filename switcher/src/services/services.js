@@ -234,8 +234,10 @@ export const fetchTurnInfo = async (activeGameId) => {
         if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
         }
-
+        
         const data = await response.json();
+
+        console.log(data);
         return data;
     } catch (error) {
       throw new Error(`Error al obtener información del turno ${error.message}`);
@@ -408,5 +410,25 @@ export const blockCardFigure = async (gameId, blockerPlayerId, blockedPlayerId, 
   }
   catch (error) {
     throw new Error(`Error al bloquear carta: ${error.message}`);
+  }
+}
+
+export const fetchGameState = async (activeGameId) => {
+  try {
+      const response = await fetch(`${apiUrl}/game_state/${activeGameId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+
+      console.log(data);
+      return data;
+  } catch (error) {
+    throw new Error(`Error al obtener información del turno ${error.message}`);
   }
 }

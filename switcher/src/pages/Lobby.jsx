@@ -138,7 +138,7 @@ export default function Lobby() {
   useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates
 
   return (
-    <div className="flex flex-col w-100 h-100 items-center justify-center min-h-screen bg-black text-white">
+    <div className="flex flex-col w-100 h-100 items-center justify-center min-h-screen bg-zinc-950 text-white">
       <h1 className="w-full text-6xl text-center mb-10 text-white">{gameName}</h1>
 
         <div className="w-full mb-4 text-2xl">

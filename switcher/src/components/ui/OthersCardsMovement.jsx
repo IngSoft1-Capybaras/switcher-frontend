@@ -34,9 +34,9 @@ export default function OthersCardsMovement({ gameId, playerId }) {
     if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
     return (
-        <div className='flex flex-col mt-3 w-full h-full mb-0'>
+        <div className='absolute flex flex-col mt-2 w-full h-full'>
         <AnimatedGroup
-            className='flex justify-center items-center transform translate-x-[-9.5rem] translate-y-[-17rem]'
+            className='flex justify-center items-center transform translate-x-[-8rem] translate-y-[-15rem]'
             variants={{
                 container: {
                     hidden: { opacity: 0 },
@@ -67,10 +67,10 @@ export default function OthersCardsMovement({ gameId, playerId }) {
                     <div
                     key={card.id}
                     className={cn(
-                        "relative h-10 w-auto rounded-lg overflow-hidden transform",
-                        index === 0 ? '-rotate-0 translate-x-[4rem] translate-y-[-0rem] z-30' :
-                        index === 1 ? 'rotate-0 translate-x-[0rem] translate-y-[-0rem] z-20' :
-                        'rotate-0 translate-x-[-4rem] translate-y-[-0rem] z-10'
+                        "relative h-14 w-auto rounded-lg overflow-hidden transform",
+                        index === 0 ? '-rotate-0 translate-x-[-2rem] translate-y-[-2rem] z-30' :
+                        index === 1 ? 'rotate-0 translate-x-[-2rem] translate-y-[-2rem] z-20' :
+                        'rotate-0 translate-x-[-2rem] translate-y-[-2rem] z-10'
                     )}
                 >
                     {card.used ? (

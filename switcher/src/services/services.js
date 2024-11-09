@@ -1,5 +1,8 @@
+import { useGameContext } from "@/context/GameContext";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 // console.log(import.meta.env);
+// const { token } = useGameContext();
 
 export async function getGames(currentPage, data, isFiltering) {
 
@@ -321,11 +324,11 @@ export const submitForm = async (data, username) => {
     });
 }
 
-export const leaveGame = async (playerId, gameId) => {
+export const leaveGame = async (playerId, gameId, token) => {
   try {
     const response = await fetch(`${apiUrl}/players/${playerId}/leave?game_id=${gameId}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authentication': `Bearer ${token}`},
     });
     // console.log(response)
     if (!response.ok) {

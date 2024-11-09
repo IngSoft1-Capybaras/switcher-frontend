@@ -5,7 +5,7 @@ import { calculateFigures, leaveGame } from "@/services/services";
 import { MdLogout } from "react-icons/md";
 
 
-export default function LeaveButton({ gameId, setLoadingOut }) {
+export default function LeaveButton({ gameId, token }) {
   const { playerId } = useGameContext();
   const navigate = useNavigate();
   const [error, setError] = useState('');
@@ -13,25 +13,27 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setShowError(false), [1000])
+    console.log(`Token leave button: ${token}`)
+  }, [])
+
+  useEffect(() => {
+    setTimeout(() => setShowError(false), [3000])
   }, [showError, setShowError])
 
   const onAbandon = async () => {
     
-      leaveGame(playerId, gameId).then((res) => {
-        // console.log(res)
+      leaveGame(playerId, gameId, token).then((res) => {
+        console.log(res)
         if (res.reverted_movements) {
-          setLoadingOut(true);
+          // setLoadingOut(true);
           return calculateFigures(gameId);
         }
         navigate('/games');
+        // navigate('/games');
       }).catch(error => {
         setError(error.message);
         setShowError(true);
         console.error(error);
-      }). finally(() => {
-        setLoadingOut(false);
-        navigate('/games');
       })
 
   }

@@ -15,7 +15,7 @@ const Games = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
   const [loading, setLoading] = useState(true);
-  const { setPlayerId, username } = useGameContext();
+  const { setPlayerId, username, setToken } = useGameContext();
   const [formData, setFormData] = useState({ name: '', players: '' });
   const [isFiltering, setIsFiltering] = useState(false);
 
@@ -45,6 +45,7 @@ const Games = () => {
       joinGame(selectedGame.id, username)
         .then((res) => {
           setPlayerId(res.player_id);
+          setToken(res.token)
           navigate(`/games/lobby/${selectedGame.id}`);
         })
         .catch((err) => console.error("Error entrando al juego"));

@@ -11,13 +11,15 @@ import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
   const { gameId } = useParams();
-  const { players, setPlayers, playerId, gameName, setGameName } = useGameContext();
+  const { players, setPlayers, playerId, gameName, setGameName, token } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
   const [host, setHost] = useState(false);
   const { socket } = useSocketContext();
   const [previousPlayers, setPreviousPlayers] = useState([]);
+  
+
 
   const fetchPlayersInfo = async () => {
     try {
@@ -67,6 +69,7 @@ export default function Lobby() {
   
 
   useEffect(() => {
+    console.log(`TOKEN ${token}`)
     getGameInfo(gameId).then((res) => {
       setMaxPlayers(res.max_players);
       setMinPlayers(res.min_players);
@@ -127,7 +130,7 @@ export default function Lobby() {
 
 
       <div className="flex w-full justify-evenly m-8 space-x-3">
-        <BotonAbandonar gameId={gameId} />
+        <BotonAbandonar token={token} gameId={gameId} />
         {host && (
             <StartButton
               gameId={gameId}

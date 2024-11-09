@@ -56,7 +56,7 @@ function FormSlider({ value, onChange }) {
 
 export default function CreateGameForm() {
   const [errorMessage, setErrorMessage] = useState('');
-  const { username, setPlayerId } = useGameContext();
+  const { username, setPlayerId, setToken } = useGameContext();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -81,6 +81,7 @@ export default function CreateGameForm() {
     try {
       const result = await submitForm(data, username);
       setPlayerId(result.player.id);
+      setToken(result.player.token);
       navigate(`/games/lobby/${result.game.id}`);
     } 
     catch (error) {

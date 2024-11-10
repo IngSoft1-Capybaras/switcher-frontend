@@ -61,12 +61,12 @@ export default function ActiveGame() {
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
 
-      const isHost = fetchedPlayers.some(player => player.host && player.id === playerId);
+      const isHost = fetchedPlayers.some(player => player.host && player.id == playerId);
 
       if (isHost) {
         // verifo que jugadores salieron
         const leftPlayers = previousPlayers.filter(
-          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
+          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id == prevPlayer.id)
         );
         leftPlayers.forEach(leftPlayer => {
           if (socket) {
@@ -120,7 +120,7 @@ export default function ActiveGame() {
 
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
-      if (fetchedTurn === playerId) {
+      if (fetchedTurn == playerId) {
         calculateFigures(gameId); // highlight board figures
       }
     });
@@ -163,15 +163,20 @@ export default function ActiveGame() {
 
   const otherPlayers = players.filter(p => {
     console.log(`p.id: ${JSON.stringify(p.id)}, playerID: ${JSON.stringify(playerId)}`);
-    return String(p.id) !== playerId;
+    return p.id != playerId;
   });
 
-  console.log(`player id = ${playerId}, otherPlayers = ${JSON.stringify(otherPlayers.map(p => p.id))}, players = ${JSON.stringify(players.map(p => p.id))}`);
+  console.log(`player id = ${playerId}, players = ${JSON.stringify(players.map(p => p.id))}
+  currentTurn = ${currentTurn}`);
+
+  console.log("TIPOS")
+  console.log(`currentTurn = ${typeof(currentTurn)}`)
+  console.log(`playerId = ${typeof(playerId)}`)
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
 
-      {loadingFig && currentTurn === playerId && (
+      {loadingFig && currentTurn == playerId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
           <h2 className="text-white text-2xl ml-4">Calculando figuras formadas...</h2>
@@ -200,7 +205,7 @@ export default function ActiveGame() {
               resetFigureSelection={resetFigureSelection}
               resetBlock={resetBlock}
             />
-            {currentTurn === player.id && (
+            {currentTurn == player.id && (
               <motion.div
                 className="absolute bottom-0 left-0 right-0 bg-white h-1"
                 initial={{ width: '100%' }}
@@ -236,7 +241,7 @@ export default function ActiveGame() {
 
 
             :<>Loading board...</>}
-            {currentTurn !== playerId && currentTurn && (
+            {currentTurn != playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
                {`Turno de ${players.find(p => p.id == currentTurn)?.name}`}
              </div>
@@ -275,7 +280,7 @@ export default function ActiveGame() {
               />
             </div>
           </div>
-          {currentTurn === playerId && (
+          {currentTurn == playerId && (
             <motion.div
               className=" bg-green-500 h-2 z-40"
               initial={{ width: 600 }}

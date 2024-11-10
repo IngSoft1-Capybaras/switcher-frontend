@@ -69,6 +69,7 @@ export default function CreateGameForm() {
   });
 
   const onSubmit = async (data) => {
+    console.log(data)
     toast({
       title: "You submitted the following values:",
       description: (
@@ -120,15 +121,18 @@ export default function CreateGameForm() {
         {form.formState.errors.playersRange && <p className="text-red-500 text-center mt-1">{form.formState.errors.playersRange.message}</p>}
       </div>
 
-      <div className="mb-6">
+       {/* Password Field */}
+       <div className="mb-6">
         <label className="block text-lg text-white mb-2">Contraseña (opcional)</label>
         <input 
+          type="password"
           placeholder="Ingrese una contraseña" 
           {...form.register('password')} 
-          className="w-full bg-zinc-800 text-white rounded-full px-4 py-2 focus:outline-none"
+          className="w-full bg-zinc-800 text-white  rounded-full px-4 py-2 focus:outline-none"
         />
         {form.formState.errors.password && <p className="text-red-500 mt-1">{form.formState.errors.password.message}</p>}
       </div>
+
 
       {/* Centered button */}
       <div className="flex justify-center">

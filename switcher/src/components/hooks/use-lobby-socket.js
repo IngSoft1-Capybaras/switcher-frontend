@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 export function useLobbySocket(gameId, fetchGameInfo) {
   const { socket } = useSocketContext();  // Get WebSocket instance
   const navigate = useNavigate();
-  const { playerId } = useParams();
+  const {playerId} = useParams();
   useEffect(() => {
     if (!socket) return;
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
-import { getPlayers, getBoard, calculateFigures, pathEndTurn } from '@/services/services';
+import { getPlayers, getBoard, calculateFigures, pathEndTurn, startGame } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchGameState } from '@/services/services';
@@ -20,10 +20,11 @@ import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 import BlockCardFigureButton from '@/components/ui/BlockCardFigureButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
+import { parse } from 'dotenv';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
-  const { players, setPlayers, playerId, currentTurn, setCurrentTurn, username } = useGameContext();
+  const { players, setPlayers, currentTurn, setCurrentTurn, username, setPlayerId, setUsername } = useGameContext();
   const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
@@ -38,7 +39,23 @@ export default function ActiveGame() {
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
   const [selectedBlockCard, setSelectedBlockCard] = useState(null);
+  let {playerId} = useParams();
+  playerId = Number(playerId);
+
+  // variables para manejar local storage
   const location = useLocation();
+  const url = location.pathname;
+  /*
+  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
+    . "navigate": TYPE_NAVIGATE (Basic navigation)
+    . "reload": TYPE_RELOAD
+    . "back_forward": TYPE_BACK_FORWARD
+    . "prerender": TYPE_PRERENDER
+  */
+  let navigationType = window.performance.getEntriesByType("navigation")[0].type;
+
+  //const TIMER_DURATION = 120000;
+
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -83,7 +100,7 @@ export default function ActiveGame() {
     } catch (err) {
       console.error("Error al obtener jugadores", err);
     }
-  }, [gameId, setPlayers]);
+  }, [gameId, setPlayers, url]);
 
   const fetchBoard = useCallback(async () => {
     try {
@@ -125,7 +142,7 @@ export default function ActiveGame() {
         calculateFigures(gameId); // highlight board figures
       }
     });
-  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
+  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn, url]);
 
 
   useEffect(() => {
@@ -135,46 +152,82 @@ export default function ActiveGame() {
   }, [gameId, currentTurn, playerId, resetMovement]);
 
 
-  // timer
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (currentTurn == playerId) {
-        await pathEndTurn(gameId);
+    const TIMER_DURATION = 20000;
+    const timer_storage_key = `start-time-${url}`;
+    let time_remaining = TIMER_DURATION;
+    console.log(`.................................`)
+    if (navigationType === 'reload' && currentTurn === playerId) {
+      console.log(`||||||||||||||||||||||||||||||||||||`)
+      const start_time = Number(localStorage.getItem(timer_storage_key));
+
+      if (start_time) {
+        const time_elapsed = Date.now() - parseInt(start_time, 10);
+        console.log(`TIME ELAPSED -> ${time_elapsed/1000}s`);
+        time_remaining = Math.max(0, TIMER_DURATION - time_elapsed);
+        console.log(`TIME REMAINING -> ${time_remaining/1000}s`);
       }
-    }, 120000); // 2min
-    return () => clearTimeout(timer);
-  },[currentTurn]);
+      localStorage.setItem(timer_storage_key, Date.now().toString());
+    }
 
+    if ((navigationType === 'navigate' || navigationType === 'prerender') && currentTurn === playerId) {
+      localStorage.setItem(timer_storage_key, Date.now().toString());
+    }
 
-  // local storage
-  /*
-  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
-    . "navigate": TYPE_NAVIGATE (Basic navigation)
-    . "reload": TYPE_RELOAD
-    . "back_forward": TYPE_BACK_FORWARD
-    . "prerender": TYPE_PRERENDER
-  */
-  useEffect(() => {
-    let navigationType = window.performance.getEntriesByType("navigation")[0].type;
-    if (navigationType === 'reload') {};
-    if (navigationType === 'navigate' || navigationType === 'prerender') {
-      const url = window.location.href;
-      const data = {
-                    gameId:`${gameId}`,
-                    username:`${username}`,
-                   };
-      //localStorage.setItem(url,);
+    const timer = setTimeout(async () => {
+      if (currentTurn === playerId) {
+        await pathEndTurn(gameId);
+        localStorage.removeItem(timer_storage_key);
+      }
+    }, time_remaining);
+
+    return () => {
+      clearTimeout(timer);
     };
-}, []);
+  }, [currentTurn, url]);
 
 
+  // local storage -> seteo y obtencion de data
+  useEffect(() => {
+
+    // si recargo la pagina, traigo la data de local storage
+    if (navigationType === 'reload') {
+      const data = JSON.parse(localStorage.getItem(url));
+      console.log(`local storage data ${JSON.stringify(data)}`);
+      if(data){
+        setPlayerId(data.playerId);
+        setUsername(data.username);
+        setCurrentTurn(data.currentTurn);
+      }
+    };
+
+    // si estoy en la pagina, seteo la data en local storage
+    if (navigationType === 'navigate' || navigationType === 'prerender') {
+      const data = {
+                    username: username,
+                    playerId: playerId,
+                    currentTurn: currentTurn
+                   };
+      localStorage.setItem(url,JSON.stringify(data));
+    };
+  }, [url]);
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
   useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
 
 
-  const otherPlayers = players.filter(p => p.id !== playerId);
+  const otherPlayers = players.filter(p => {
+    console.log(`p.id: ${JSON.stringify(p.id)}, playerID: ${JSON.stringify(playerId)}`);
+    return p.id != playerId;
+  });
+
+  console.log(`player id = ${playerId}, players = ${JSON.stringify(players.map(p => p.id))}
+  currentTurn = ${currentTurn}`);
+
+  console.log("TIPOS")
+  console.log(`currentTurn = ${typeof(currentTurn)}`)
+  console.log(`playerId = ${typeof(playerId)}`)
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
@@ -247,7 +300,7 @@ export default function ActiveGame() {
 
 
             :<>Loading board...</>}
-            {currentTurn !== playerId && currentTurn && (
+            {currentTurn != playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
                {`Turno de ${players.find(p => p.id === currentTurn)?.name}`}
              </div>

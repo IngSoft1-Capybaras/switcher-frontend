@@ -23,9 +23,6 @@ import { useSocketContext } from '@/context/SocketContext';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
-  let {playerId} = useParams();
-  playerId = Number(playerId);
-
   const { players, setPlayers, currentTurn, setCurrentTurn, username, setPlayerId, setUsername } = useGameContext();
   const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
@@ -41,6 +38,8 @@ export default function ActiveGame() {
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
   const [selectedBlockCard, setSelectedBlockCard] = useState(null);
+  let {playerId} = useParams();
+  playerId = Number(playerId);
 
   // variables para manejar local storage
   const location = useLocation();
@@ -53,6 +52,9 @@ export default function ActiveGame() {
     . "prerender": TYPE_PRERENDER
   */
   let navigationType = window.performance.getEntriesByType("navigation")[0].type;
+
+  const TIMER_DURATION = 120000;
+
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -96,7 +98,7 @@ export default function ActiveGame() {
     } catch (err) {
       console.error("Error al obtener jugadores", err);
     }
-  }, [gameId, setPlayers, location.pathname]);
+  }, [gameId, setPlayers, url]);
 
   const fetchBoard = useCallback(async () => {
     try {
@@ -138,7 +140,7 @@ export default function ActiveGame() {
         calculateFigures(gameId); // highlight board figures
       }
     });
-  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn, location.pathname]);
+  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn, url]);
 
 
   useEffect(() => {
@@ -150,23 +152,20 @@ export default function ActiveGame() {
 
   // timer
   useEffect(() => {
+    if (navigationType === 'reload') {}
+    if (navigationType === 'navigate' || navigationType === 'prerender') {}
+
     const timer = setTimeout(async () => {
       if (currentTurn === playerId) {
         await pathEndTurn(gameId);
       }
     }, 120000); // 2min
+
+
+
     return () => clearTimeout(timer);
-  },[currentTurn]);
+  },[currentTurn, url]);
 
-
-  // local storage
-  /*
-  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
-    . "navigate": TYPE_NAVIGATE (Basic navigation)
-    . "reload": TYPE_RELOAD
-    . "back_forward": TYPE_BACK_FORWARD
-    . "prerender": TYPE_PRERENDER
-  */
 
   // local storage -> seteo y obtencion de data
   useEffect(() => {
@@ -189,7 +188,7 @@ export default function ActiveGame() {
                    };
       localStorage.setItem(url,JSON.stringify(data));
     };
-}, [location.pathname, currentTurn, playerId, players]);
+  }, [url]);
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);

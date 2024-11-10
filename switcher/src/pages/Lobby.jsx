@@ -10,7 +10,9 @@ import { useSocketContext } from '@/context/SocketContext';
 import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
-  const { gameId, playerId } = useParams();
+  const { gameId } = useParams();
+  let {playerId} = useParams();
+  playerId = Number(playerId);
   const { players, setPlayers, setPlayerId, gameName, setGameName, username, setUsername } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
@@ -116,9 +118,11 @@ export default function Lobby() {
       if (navigationType === 'reload') {
         const data = JSON.parse(localStorage.getItem(url));
         console.log(`local storage data ${JSON.stringify(data)}`);
-        setPlayerId(playerId);
-      //  setHost(data.host);
- //       setUsername(data.username);
+        if(data){
+          setPlayerId(data.playerId);
+          setHost(data.host);
+          setUsername(data.username);
+        }
         console.log(`PLAYERS = ${JSON.stringify(players)}`)
       };
 

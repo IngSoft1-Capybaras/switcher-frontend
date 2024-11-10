@@ -22,8 +22,11 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
 
 export default function ActiveGame() {
-  const { gameId, playerId} = useParams();
-  const { players, setPlayers, currentTurn, setCurrentTurn, username } = useGameContext();
+  const { gameId } = useParams();
+  let {playerId} = useParams();
+  playerId = Number(playerId);
+
+  const { players, setPlayers, currentTurn, setCurrentTurn, username, setPlayerId, setUsername } = useGameContext();
   const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
@@ -38,7 +41,18 @@ export default function ActiveGame() {
   const [syncEffect, setSyncEffect] = useState(true);
   const [previousPlayers, setPreviousPlayers] = useState(players);
   const [selectedBlockCard, setSelectedBlockCard] = useState(null);
+
+  // variables para manejar local storage
   const location = useLocation();
+  const url = location.pathname;
+  /*
+  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
+    . "navigate": TYPE_NAVIGATE (Basic navigation)
+    . "reload": TYPE_RELOAD
+    . "back_forward": TYPE_BACK_FORWARD
+    . "prerender": TYPE_PRERENDER
+  */
+  let navigationType = window.performance.getEntriesByType("navigation")[0].type;
 
   const getTurnInfo = useCallback(async () => {
     try {
@@ -61,12 +75,12 @@ export default function ActiveGame() {
       const fetchedPlayers = await getPlayers(gameId);
       setPlayers(fetchedPlayers);
 
-      const isHost = fetchedPlayers.some(player => player.host && player.id == playerId);
+      const isHost = fetchedPlayers.some(player => player.host && player.id === playerId);
 
       if (isHost) {
         // verifo que jugadores salieron
         const leftPlayers = previousPlayers.filter(
-          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id == prevPlayer.id)
+          prevPlayer => !fetchedPlayers.some(newPlayer => newPlayer.id === prevPlayer.id)
         );
         leftPlayers.forEach(leftPlayer => {
           if (socket) {
@@ -120,7 +134,7 @@ export default function ActiveGame() {
 
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchBoard(), getTurnInfo()]).then(() => {
-      if (fetchedTurn == playerId) {
+      if (fetchedTurn === playerId) {
         calculateFigures(gameId); // highlight board figures
       }
     });
@@ -137,7 +151,7 @@ export default function ActiveGame() {
   // timer
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (currentTurn == playerId) {
+      if (currentTurn === playerId) {
         await pathEndTurn(gameId);
       }
     }, 120000); // 2min
@@ -154,7 +168,28 @@ export default function ActiveGame() {
     . "prerender": TYPE_PRERENDER
   */
 
+  // local storage -> seteo y obtencion de data
+  useEffect(() => {
 
+    // si recargo la pagina, traigo la data de local storage
+    if (navigationType === 'reload') {
+      const data = JSON.parse(localStorage.getItem(url));
+      console.log(`local storage data ${JSON.stringify(data)}`);
+      if(data){
+        setPlayerId(data.playerId);
+        setUsername(data.username);
+      }
+    };
+
+    // si estoy en la pagina, seteo la data en local storage
+    if (navigationType === 'navigate' || navigationType === 'prerender') {
+      const data = {
+                    username: username,
+                    playerId: playerId,
+                   };
+      localStorage.setItem(url,JSON.stringify(data));
+    };
+}, [location.pathname, currentTurn, playerId, players]);
 
   useActiveGameSocket(gameId, fetchPlayers);
   useUpdateBoardSocket(gameId, fetchBoard, setSyncEffect, setLoadingFig);
@@ -176,7 +211,7 @@ export default function ActiveGame() {
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
 
-      {loadingFig && currentTurn == playerId && (
+      {loadingFig && currentTurn === playerId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <AiOutlineLoading3Quarters className="animate-spin text-white" size={50} />
           <h2 className="text-white text-2xl ml-4">Calculando figuras formadas...</h2>
@@ -205,7 +240,7 @@ export default function ActiveGame() {
               resetFigureSelection={resetFigureSelection}
               resetBlock={resetBlock}
             />
-            {currentTurn == player.id && (
+            {currentTurn === player.id && (
               <motion.div
                 className="absolute bottom-0 left-0 right-0 bg-white h-1"
                 initial={{ width: '100%' }}
@@ -243,7 +278,7 @@ export default function ActiveGame() {
             :<>Loading board...</>}
             {currentTurn != playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
-               {`Turno de ${players.find(p => p.id == currentTurn)?.name}`}
+               {`Turno de ${players.find(p => p.id === currentTurn)?.name}`}
              </div>
            )}
           </div>
@@ -280,7 +315,7 @@ export default function ActiveGame() {
               />
             </div>
           </div>
-          {currentTurn == playerId && (
+          {currentTurn === playerId && (
             <motion.div
               className=" bg-green-500 h-2 z-40"
               initial={{ width: 600 }}

@@ -4,6 +4,7 @@ import { cardImg } from '../utils/getCardImg'
 import { getDeckFigure } from '@/services/services'
 import { AnimatedGroup } from './animated-group'
 import { useFigureCardsSocket } from "../hooks/use-figure_cards-socket";
+import { useBlockCardsFigureSocket } from "../hooks/use-block_cards_figure-socket";
 import { useGameContext } from "@/context/GameContext";
 
 export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, selectedCardFigure, name, resetMovement, selectedBlockCard, setSelectedBlockCard, resetFigureSelection, resetBlock,  playerId, getTurnInfo, currentTurn, turnBorder}) {
@@ -14,9 +15,6 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
   const [error, setError] = useState(null);
 
   const handleSelectedFigure = (figure) => {
-    console.log("figure.player_id",figure.player_id);
-    console.log("currentTurn",currentTurn);
-    console.log('CartaFigure seleccionada:', figure);
     setSelectedCardFigure(figure);
     resetMovement();
     resetBlock();
@@ -24,9 +22,6 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
 
   // Maneja la selección de una carta para bloquear
   const handleBlockCardFigure = (figure) => {
-    console.log("figure.player_id",figure.player_id);
-    console.log("currentTurn",currentTurn);
-    console.log('Carta de bloqueo seleccionada:', figure);
     setSelectedBlockCard(figure);
     resetMovement();
     resetFigureSelection();
@@ -51,6 +46,7 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
   }, []);
 
   useFigureCardsSocket(gameId, fetchFigureCards, getTurnInfo);
+  useBlockCardsFigureSocket(gameId, fetchFigureCards);
 
   if (loading) return <div data-testid='loadingDiv' className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
   if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
@@ -71,32 +67,38 @@ export default function CardsFigure({gameId, panelOwner, setSelectedCardFigure, 
               key={card.id}
               className={cn(
                 "relative size-32 aspect-square rounded-lg overflow-hidden transition-transform",
-                isSelected || isBlocked ? "scale-125" : "hover:scale-110",
-                // isBlocked ? "scale-125" : "",
-                !card.show ? "opacity-100" : ""
+                isSelected ? "scale-125" : "hover:scale-110",
+                isBlocked ? "scale-125" : "hover:scale-110",
+                !card.show ? "opacity-100" : "",
+                !card.blocked ? "opacity-100" : "opacity-50"
               )}
               // onClick={() => handleSelectedFigure(card)}
               style={{ cursor: playerId === currentTurn? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
 
               onClick={() =>
-                card.player_id === currentTurn ? handleSelectedFigure(card): handleBlockCardFigure(card)}
+                !card.blocked && card.player_id === currentTurn ? handleSelectedFigure(card): handleBlockCardFigure(card)}
+                disabled={card.blocked}
             >
-              
-             
-              {!card.show ? 
-                <img data-testid='showCard'
-                src={cardImg("DORSO_FIG")}
-                alt={`Dorso de carta de movimiento`}
-                className="absolute inset-0  opacity-100 flex items-center justify-center"
-                // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
+            {!card.show ? 
+              <img data-testid='showCard'
+              src={cardImg("DORSO_FIG")}
+              alt={`Dorso de carta de movimiento`}
+              className="absolute inset-0  opacity-100 flex items-center justify-center"
+              // className={cn("object-contain w-full h-full", !card.show && "opacity-50")}
               />
-            : 
+              : 
               <img data-testid='figureCard'
               src={cardImg(card.type)}
               alt={`Figure card ${card.type}`}
               className={cn("object-contain w-full h-full", !card.show && "opacity-0")}
-            />
-          }
+              />
+            }
+            {/* Capa de bloqueo */}
+            {card.blocked && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <span className="text-white text-6xl">🔒</span>
+                </div>
+              )}
             </button>
           ) 
         })}

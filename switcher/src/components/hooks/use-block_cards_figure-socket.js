@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSocketContext } from "@/context/SocketContext";
 
-export function useBlockCardsFigureSocket(gameId, getFigureCards) {
+export function useBlockCardsFigureSocket(gameId, getFigureCards, getTurnInfo) {
     const { socket } = useSocketContext();
 
     useEffect(() => {
@@ -13,6 +13,7 @@ export function useBlockCardsFigureSocket(gameId, getFigureCards) {
             
             if (data.type === `${gameId}:BLOCK_CARD`) {
                 getFigureCards();
+                getTurnInfo();
             }
         };
 

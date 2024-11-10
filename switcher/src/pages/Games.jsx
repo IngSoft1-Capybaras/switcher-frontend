@@ -8,6 +8,52 @@ import { useGameContext } from '@/context/GameContext';
 import { PageFilter } from '@/components/ui/pageFilter';
 import { MdOutlineCleaningServices } from "react-icons/md";
 
+const PasswordModal = ({ isOpen, onClose, onSubmit, error }) => {
+  const [password, setPassword] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(password);
+    setPassword('');
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-zinc-900 p-8 rounded-lg shadow-md border border-zinc-800 w-80 h-auto mx-auto">
+        <h2 className="text-3xl mb-4">Ingrese la contraseña</h2>
+        <form onSubmit={handleSubmit}>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full bg-zinc-800 text-white rounded-full px-4 py-2 focus:outline-none"
+          />
+          {error && <p className="text-red-500 mt-1 ml-2">Contraseña incorrecta</p>}
+          <div className="flex mt-6 justify-end space-x-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-400 hover:bg-gray-300 rounded"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded"
+            >
+              Entrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const Games = () => {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
@@ -18,6 +64,9 @@ const Games = () => {
   const { setPlayerId, username } = useGameContext();
   const [formData, setFormData] = useState({ name: '', players: '' });
   const [isFiltering, setIsFiltering] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [error, setError] = useState('');
+
 
   const handleCreateGame = () => {
     navigate('/games/create');
@@ -42,14 +91,32 @@ const Games = () => {
 
   const handleJoinGame = () => {
     if (selectedGame) {
-      joinGame(selectedGame.id, username)
+      if (selectedGame.is_private) {
+        // Open modal if game is private
+        setIsPasswordModalOpen(true);
+      } else {
+        // Join directly if game is public
+        joinGame(selectedGame.id, username)
+          .then((res) => {
+            setPlayerId(res.player_id);
+            navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
+          })
+          .catch((err) => console.error("Error joining game"));
+      }
+    }
+  };
+
+  const handlePasswordSubmit = (password) => {
+    if (selectedGame) {
+      joinGame(selectedGame.id, username, password)
         .then((res) => {
           setPlayerId(res.player_id);
           navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
 
         })
-        .catch((err) => console.error("Error entrando al juego"));
+        .catch((err) => setError(err));
     }
+    // setIsPasswordModalOpen(false);
   };
 
   useGameSocket(fetchGames, currentPage, isFiltering, formData);
@@ -71,7 +138,6 @@ const Games = () => {
           >
             <FaPlus size={30} className="mr-2" />
           </button>
-
 
           <div className="flex space-x-4 items-center">
             {/* Filter Button */}
@@ -97,6 +163,7 @@ const Games = () => {
               <MdOutlineCleaningServices size={30} className="mr-2" />
             </button>
           </div>
+
           {/* Join Game Button */}
           <button
             onClick={handleJoinGame}
@@ -121,6 +188,17 @@ const Games = () => {
           setSelectedGame={setSelectedGame}
         />
       </div>
+
+      {/* Password Modal */}
+      <PasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => {
+          setIsPasswordModalOpen(false);
+          setError('')
+        }}
+        onSubmit={handlePasswordSubmit}
+        error={error}
+      />
     </div>
   );
 };

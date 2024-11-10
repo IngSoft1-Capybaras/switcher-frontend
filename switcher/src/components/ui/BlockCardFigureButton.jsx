@@ -24,14 +24,11 @@ export default function BlockCardFigureButton({ gameId, playerIdBlock, cardId, f
     }
 
     const handleBlockedCardFigure = async () => {
-        // console.log("HOLAAAA")
         if (!gameId || !playerId) {
             handleError("No gameId or playerId")
             return;
         }
         try {
-            console.log(`Voy a jugar la carta ${cardId} con la figura del tablero ${JSON.stringify(figure)}`);
-            console.log("playerId", playerId);
             const res = await blockCardFigure(gameId, playerId, playerIdBlock, cardId, figure);
             resetBlock(); // Llama a resetMov si la jugada es exitosa
 

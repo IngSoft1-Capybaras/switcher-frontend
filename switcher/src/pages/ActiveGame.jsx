@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext';
-import { getPlayers, getBoard, calculateFigures, pathEndTurn } from '@/services/services';
+import { getPlayers, getBoard, calculateFigures, pathEndTurn, startGame } from '@/services/services';
 import { useActiveGameSocket } from '@/components/hooks/use-active_game-socket';
 import { useUpdateBoardSocket } from '@/components/hooks/use-update_board-socket';
 import { fetchTurnInfo } from '@/services/services';
@@ -20,6 +20,7 @@ import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 import BlockCardFigureButton from '@/components/ui/BlockCardFigureButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
+import { parse } from 'dotenv';
 
 export default function ActiveGame() {
   const { gameId } = useParams();
@@ -53,7 +54,7 @@ export default function ActiveGame() {
   */
   let navigationType = window.performance.getEntriesByType("navigation")[0].type;
 
-  const TIMER_DURATION = 120000;
+  //const TIMER_DURATION = 120000;
 
 
   const getTurnInfo = useCallback(async () => {
@@ -150,21 +151,39 @@ export default function ActiveGame() {
   }, [gameId, currentTurn, playerId, resetMovement]);
 
 
-  // timer
   useEffect(() => {
-    if (navigationType === 'reload') {}
-    if (navigationType === 'navigate' || navigationType === 'prerender') {}
+    const TIMER_DURATION = 20000;
+    const timer_storage_key = `start-time-${url}`;
+    let time_remaining = TIMER_DURATION;
+    console.log(`.................................`)
+    if (navigationType === 'reload' && currentTurn === playerId) {
+      console.log(`||||||||||||||||||||||||||||||||||||`)
+      const start_time = Number(localStorage.getItem(timer_storage_key));
+
+      if (start_time) {
+        const time_elapsed = Date.now() - parseInt(start_time, 10);
+        console.log(`TIME ELAPSED -> ${time_elapsed/1000}s`);
+        time_remaining = Math.max(0, TIMER_DURATION - time_elapsed);
+        console.log(`TIME REMAINING -> ${time_remaining/1000}s`);
+      }
+      localStorage.setItem(timer_storage_key, Date.now().toString());
+    }
+
+    if ((navigationType === 'navigate' || navigationType === 'prerender') && currentTurn === playerId) {
+      localStorage.setItem(timer_storage_key, Date.now().toString());
+    }
 
     const timer = setTimeout(async () => {
       if (currentTurn === playerId) {
         await pathEndTurn(gameId);
+        localStorage.removeItem(timer_storage_key);
       }
-    }, 120000); // 2min
+    }, time_remaining);
 
-
-
-    return () => clearTimeout(timer);
-  },[currentTurn, url]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentTurn, url]);
 
 
   // local storage -> seteo y obtencion de data
@@ -177,6 +196,7 @@ export default function ActiveGame() {
       if(data){
         setPlayerId(data.playerId);
         setUsername(data.username);
+        setCurrentTurn(data.currentTurn);
       }
     };
 
@@ -185,6 +205,7 @@ export default function ActiveGame() {
       const data = {
                     username: username,
                     playerId: playerId,
+                    currentTurn: currentTurn
                    };
       localStorage.setItem(url,JSON.stringify(data));
     };

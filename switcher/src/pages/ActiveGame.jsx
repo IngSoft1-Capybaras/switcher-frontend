@@ -22,8 +22,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
 
 export default function ActiveGame() {
-  const { gameId } = useParams();
-  const { players, setPlayers, playerId, currentTurn, setCurrentTurn, username } = useGameContext();
+  const { gameId, playerId} = useParams();
+  const { players, setPlayers, currentTurn, setCurrentTurn, username } = useGameContext();
   const {socket} = useSocketContext();
   const [boxes, setBoxes] = useState();
   const [selectedMovementCard, setSelectedMovementCard] = useState(null);
@@ -82,7 +82,7 @@ export default function ActiveGame() {
     } catch (err) {
       console.error("Error al obtener jugadores", err);
     }
-  }, [gameId, setPlayers]);
+  }, [gameId, setPlayers, location.pathname]);
 
   const fetchBoard = useCallback(async () => {
     try {
@@ -124,7 +124,7 @@ export default function ActiveGame() {
         calculateFigures(gameId); // highlight board figures
       }
     });
-  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn]);
+  }, [fetchBoard, fetchPlayers, getTurnInfo, fetchedTurn, location.pathname]);
 
 
   useEffect(() => {
@@ -153,18 +153,6 @@ export default function ActiveGame() {
     . "back_forward": TYPE_BACK_FORWARD
     . "prerender": TYPE_PRERENDER
   */
-  useEffect(() => {
-    let navigationType = window.performance.getEntriesByType("navigation")[0].type;
-    if (navigationType === 'reload') {};
-    if (navigationType === 'navigate' || navigationType === 'prerender') {
-      const url = window.location.href;
-      const data = {
-                    gameId:`${gameId}`,
-                    username:`${username}`,
-                   };
-      //localStorage.setItem(url,);
-    };
-}, []);
 
 
 
@@ -173,7 +161,12 @@ export default function ActiveGame() {
   useTurnInfoSocket(gameId, fetchBoard, setLoadingFig, setSyncEffect);
 
 
-  const otherPlayers = players.filter(p => p.id !== playerId);
+  const otherPlayers = players.filter(p => {
+    console.log(`p.id: ${JSON.stringify(p.id)}, playerID: ${JSON.stringify(playerId)}`);
+    return String(p.id) !== playerId;
+  });
+
+  console.log(`player id = ${playerId}, otherPlayers = ${JSON.stringify(otherPlayers.map(p => p.id))}, players = ${JSON.stringify(players.map(p => p.id))}`);
 
   return (
     <div className="flex flex-col h-screen bg-zinc-950">
@@ -245,7 +238,7 @@ export default function ActiveGame() {
             :<>Loading board...</>}
             {currentTurn !== playerId && currentTurn && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
-               {`Turno de ${players.find(p => p.id === currentTurn)?.name}`}
+               {`Turno de ${players.find(p => p.id == currentTurn)?.name}`}
              </div>
            )}
           </div>

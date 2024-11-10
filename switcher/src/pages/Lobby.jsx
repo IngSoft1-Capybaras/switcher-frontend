@@ -88,16 +88,16 @@ export default function Lobby() {
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );
 
-    if (navigationType != 'reload') {
+    //if (navigationType != 'reload') {
       getPlayer(gameId, playerId).then((res) => {
         setHost(res.host);
       }).catch((err) =>
         console.error(`Error: Unable to retrieve player data. ${err}`)
       );
-    }
+    //}
 
     fetchPlayersInfo(); // Initial fetch
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     // Check if the button should be active
@@ -115,11 +115,11 @@ export default function Lobby() {
       // si recargo la pagina, traigo la data de local storage
       if (navigationType === 'reload') {
         const data = JSON.parse(localStorage.getItem(url));
-        console.log('local storage data');
-        console.log(data);
-        setPlayerId(data.playerId);
-        setHost(data.host);
-        setUsername(data.username);
+        console.log(`local storage data ${JSON.stringify(data)}`);
+        setPlayerId(playerId);
+      //  setHost(data.host);
+ //       setUsername(data.username);
+        console.log(`PLAYERS = ${JSON.stringify(players)}`)
       };
 
       // si estoy en la pagina, seteo la data en local storage
@@ -131,7 +131,8 @@ export default function Lobby() {
                      };
         localStorage.setItem(url,JSON.stringify(data));
       };
-  }, [location.pathname, username, playerId, host]);
+  }, [location.pathname, username, playerId, host, players]);
+
 
   useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates
 

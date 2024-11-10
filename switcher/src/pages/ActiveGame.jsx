@@ -170,7 +170,7 @@ export default function ActiveGame() {
       )}
 
       {/* Other Player Panels */}
-      <div className="flex flex-row w-full text-white  justify-center ">
+      <div className="flex flex-row w-full text-white justify-center">
         {otherPlayers.map((player) => (
           <div key={player.id} className="relative w-[600px] mx-10">
             <PlayerPanel

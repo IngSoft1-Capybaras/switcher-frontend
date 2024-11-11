@@ -20,7 +20,7 @@ import ConfirmMovementButton from '@/components/ui/ConfirmButton';
 import BlockCardFigureButton from '@/components/ui/BlockCardFigureButton';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSocketContext } from '@/context/SocketContext';
-import { parse } from 'dotenv';
+
 
 export default function ActiveGame() {
   const { gameId } = useParams();
@@ -41,6 +41,7 @@ export default function ActiveGame() {
   const [selectedBlockCard, setSelectedBlockCard] = useState(null);
   let {playerId} = useParams();
   playerId = Number(playerId);
+  const [remainingTime, setRemainingTime] = useState(120);
 
   // variables para manejar local storage
   const location = useLocation();
@@ -155,40 +156,55 @@ export default function ActiveGame() {
   const TIMER_DURATION = 120000;
   useEffect(() => {
     const timer_storage_key = `start-time-${url}`;
-    let timer;
+    let intervalId;
 
-    if (currentTurn === playerId) {
-        let initialTime;
+    //if (currentTurn === playerId) {
+      let startTime;
 
-        if (navigationType === 'reload') {
-            const storedStartTime = localStorage.getItem(timer_storage_key);
-            if (storedStartTime) {
-                initialTime = parseInt(storedStartTime, 10);
-            }
+      if (navigationType === 'reload') {
+        const storedStartTime = localStorage.getItem(timer_storage_key);
+        if (storedStartTime) {
+          startTime = parseInt(storedStartTime, 10);
         }
+      }
 
-        if (!initialTime) {
-            initialTime = Date.now();
-            localStorage.setItem(timer_storage_key, initialTime.toString());
-        }
+      if (!startTime) {
+        startTime = Date.now();
+        localStorage.setItem(timer_storage_key, startTime.toString());
+      }
 
-        const elapsedTime = Date.now() - initialTime;
-        const remainingTime = Math.max(0, TIMER_DURATION - elapsedTime);
+      intervalId = setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        const remaining = Math.max(0, TIMER_DURATION - elapsedTime);
+        setRemainingTime(remaining / 1000);
 
-        console.log(`Elapsed time: ${elapsedTime/1000}s`);
-        console.log(`Remaining time: ${remainingTime/1000}s`);
-
-        timer = setTimeout(async () => {
-            await pathEndTurn(gameId);
+        if (currentTurn === playerId){
+          if (remaining <= 0) {
+            clearInterval(intervalId);
             localStorage.removeItem(timer_storage_key);
-        }, remainingTime);
-    }
+            pathEndTurn(gameId);
+          }
+        }
+      }, 1000);
+
+      // calculo inicial debido a que interval espera 1s para ejecutarse
+      // sino lo hago, aparece al maximo, y despues de 1s se actualiza a donde verdaderamente esta
+      const initialElapsedTime = Date.now() - startTime;
+      const initialRemaining = Math.max(0, TIMER_DURATION - initialElapsedTime);
+      setRemainingTime(initialRemaining / 1000);
+    //}
 
     return () => {
-        if (timer) clearTimeout(timer);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
-}, [currentTurn, playerId, url, navigationType, gameId]);
+  }, [currentTurn, playerId, url, navigationType, gameId]);
 
+  const calculateTimeBar = useCallback((remainingTime) => {
+    const percentage = (remainingTime / 120) * 100;
+    return `${percentage}%`;
+  }, []);
 
   // local storage -> seteo y obtencion de data
   useEffect(() => {
@@ -268,13 +284,15 @@ export default function ActiveGame() {
               resetBlock={resetBlock}
             />
             {currentTurn === player.id && (
-              <motion.div
-                className="absolute bottom-0 left-0 right-0 bg-white h-1"
-                initial={{ width: '100%' }}
-                animate={{ width: '0%' }}
-                transition={{ duration: 120 }}
-
-              />
+              <div className="w-[600px] mt-2">
+                <motion.div
+                  className={`absolute bottom-0 left-0 right-0 h-1 ${
+                      remainingTime < 30 ? 'bg-red-500' : 'bg-white'
+                  }`}
+                  style={{ width: calculateTimeBar(remainingTime) }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
             )}
           </div>
         ))}
@@ -347,12 +365,15 @@ export default function ActiveGame() {
             </div>
           </div>
           {currentTurn === playerId && (
-            <motion.div
-              className=" bg-green-500 h-2 z-40"
-              initial={{ width: 600 }}
-              animate={{ width: '0%' }}
-              transition={{ duration: 120 }}
-            />
+            <div className="w-[600px] mt-2">
+              <motion.div
+                className={`h-2 z-40 ${
+                  remainingTime < 30 ? 'bg-red-500' : 'bg-green-500'
+                }`}
+                style={{ width: calculateTimeBar(remainingTime) }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
           )}
 
         </div>

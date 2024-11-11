@@ -17,15 +17,6 @@ export default function StartButton({ gameId, isActive }) {
     const onStartClick = () => {
         if (isActive) {
             startGame(gameId)
-                .then(res => {
-                    const shortUrl = location.pathname.split('/').slice(0, 4).join('/'); // saco el username
-                    // obtengo todas las keys y las mapeo para ver si coinciden en el gameId
-                    Object.keys(localStorage).forEach(key => {
-                        if (key.startsWith(shortUrl)) {
-                        localStorage.removeItem(key);
-                        }
-                    });
-                })
                 .catch(error => {
                     setError(error.message);
                     console.error(error);

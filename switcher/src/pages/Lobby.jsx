@@ -117,7 +117,7 @@ export default function Lobby() {
 
       // si recargo la pagina, traigo la data de local storage
       if (navigationType === 'reload') {
-        const data = JSON.parse(localStorage.getItem(url));
+        const data = JSON.parse(sessionStorage.getItem(url));
         console.log(`local storage data ${JSON.stringify(data)}`);
         if(data){
           setPlayerId(data.playerId);
@@ -133,7 +133,7 @@ export default function Lobby() {
                       username: username,
                       host: host,
                      };
-        localStorage.setItem(url,JSON.stringify(data));
+        sessionStorage.setItem(url,JSON.stringify(data));
       };
   }, [location.pathname, username, playerId, host, players]);
 

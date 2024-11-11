@@ -162,7 +162,7 @@ export default function ActiveGame() {
       let startTime;
 
       if (navigationType === 'reload') {
-        const storedStartTime = localStorage.getItem(timer_storage_key);
+        const storedStartTime = sessionStorage.getItem(timer_storage_key);
         if (storedStartTime) {
           startTime = parseInt(storedStartTime, 10);
         }
@@ -170,7 +170,7 @@ export default function ActiveGame() {
 
       if (!startTime) {
         startTime = Date.now();
-        localStorage.setItem(timer_storage_key, startTime.toString());
+        sessionStorage.setItem(timer_storage_key, startTime.toString());
       }
 
       intervalId = setInterval(() => {
@@ -181,7 +181,7 @@ export default function ActiveGame() {
 
         if (remaining <= 0) {
           clearInterval(intervalId);
-          localStorage.removeItem(timer_storage_key);
+          sessionStorage.removeItem(timer_storage_key);
           if (currentTurn === playerId){
             pathEndTurn(gameId);
           }
@@ -212,7 +212,7 @@ export default function ActiveGame() {
 
     // si recargo la pagina, traigo la data de local storage
     if (navigationType === 'reload') {
-      const data = JSON.parse(localStorage.getItem(url));
+      const data = JSON.parse(sessionStorage.getItem(url));
       console.log(`local storage data ${JSON.stringify(data)}`);
       if(data){
         setPlayerId(data.playerId);
@@ -228,7 +228,7 @@ export default function ActiveGame() {
                     playerId: playerId,
                     currentTurn: currentTurn
                    };
-      localStorage.setItem(url,JSON.stringify(data));
+      sessionStorage.setItem(url,JSON.stringify(data));
     };
   }, [url]);
 

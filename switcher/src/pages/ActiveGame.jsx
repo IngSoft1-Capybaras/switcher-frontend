@@ -63,7 +63,7 @@ export default function ActiveGame() {
       if (newTurnData.current_player) {
         setCurrentTurn(newTurnData.current_player);
         setFetchedTurn(newTurnData.current_player); // Store fetched value
-        
+
         setBlockedColor(newTurnData.forbidden_color);
       } else {
         console.error("Received an undefined player ID.");
@@ -152,39 +152,42 @@ export default function ActiveGame() {
   }, [gameId, currentTurn, playerId, resetMovement]);
 
 
+  const TIMER_DURATION = 120000;
   useEffect(() => {
-    const TIMER_DURATION = 20000;
     const timer_storage_key = `start-time-${url}`;
-    let time_remaining = TIMER_DURATION;
-    console.log(`.................................`)
-    if (navigationType === 'reload' && currentTurn === playerId) {
-      console.log(`||||||||||||||||||||||||||||||||||||`)
-      const start_time = Number(localStorage.getItem(timer_storage_key));
+    let timer;
 
-      if (start_time) {
-        const time_elapsed = Date.now() - parseInt(start_time, 10);
-        console.log(`TIME ELAPSED -> ${time_elapsed/1000}s`);
-        time_remaining = Math.max(0, TIMER_DURATION - time_elapsed);
-        console.log(`TIME REMAINING -> ${time_remaining/1000}s`);
-      }
-      localStorage.setItem(timer_storage_key, Date.now().toString());
+    if (currentTurn === playerId) {
+        let initialTime;
+
+        if (navigationType === 'reload') {
+            const storedStartTime = localStorage.getItem(timer_storage_key);
+            if (storedStartTime) {
+                initialTime = parseInt(storedStartTime, 10);
+            }
+        }
+
+        if (!initialTime) {
+            initialTime = Date.now();
+            localStorage.setItem(timer_storage_key, initialTime.toString());
+        }
+
+        const elapsedTime = Date.now() - initialTime;
+        const remainingTime = Math.max(0, TIMER_DURATION - elapsedTime);
+
+        console.log(`Elapsed time: ${elapsedTime/1000}s`);
+        console.log(`Remaining time: ${remainingTime/1000}s`);
+
+        timer = setTimeout(async () => {
+            await pathEndTurn(gameId);
+            localStorage.removeItem(timer_storage_key);
+        }, remainingTime);
     }
-
-    if ((navigationType === 'navigate' || navigationType === 'prerender') && currentTurn === playerId) {
-      localStorage.setItem(timer_storage_key, Date.now().toString());
-    }
-
-    const timer = setTimeout(async () => {
-      if (currentTurn === playerId) {
-        await pathEndTurn(gameId);
-        localStorage.removeItem(timer_storage_key);
-      }
-    }, time_remaining);
 
     return () => {
-      clearTimeout(timer);
+        if (timer) clearTimeout(timer);
     };
-  }, [currentTurn, url]);
+}, [currentTurn, playerId, url, navigationType, gameId]);
 
 
   // local storage -> seteo y obtencion de data
@@ -328,7 +331,7 @@ export default function ActiveGame() {
             <div className="flex-grow">
               <CardsFigure
                 gameId={gameId}
-                playerId={playerId} 
+                playerId={playerId}
                 panelOwner={playerId}
                 setSelectedCardFigure={setSelectedCardFigure}
                 selectedCardFigure={selectedCardFigure}

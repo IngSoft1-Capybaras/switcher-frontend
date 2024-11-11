@@ -10,13 +10,13 @@ import { MdOutlineCleaningServices } from "react-icons/md";
 
 const PasswordModal = ({ isOpen, onClose, onSubmit, error }) => {
   const [password, setPassword] = useState('');
-  
+
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(password);
-    setPassword(''); 
+    setPassword('');
   };
 
   return (
@@ -24,7 +24,7 @@ const PasswordModal = ({ isOpen, onClose, onSubmit, error }) => {
       <div className="bg-zinc-900 p-8 rounded-lg shadow-md border border-zinc-800 w-80 h-auto mx-auto">
         <h2 className="text-3xl mb-4">Ingrese la contraseña</h2>
         <form onSubmit={handleSubmit}>
-          
+
           <input
             type="password"
             value={password}
@@ -99,7 +99,7 @@ const Games = () => {
         joinGame(selectedGame.id, username)
           .then((res) => {
             setPlayerId(res.player_id);
-            navigate(`/games/lobby/${selectedGame.id}`);
+            navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
           })
           .catch((err) => console.error("Error joining game"));
       }
@@ -111,7 +111,8 @@ const Games = () => {
       joinGame(selectedGame.id, username, password)
         .then((res) => {
           setPlayerId(res.player_id);
-          navigate(`/games/lobby/${selectedGame.id}`);
+          navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
+
         })
         .catch((err) => setError(err));
     }

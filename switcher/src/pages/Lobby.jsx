@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PlayersList from '../components/ui/PlayersList';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useGameContext } from '@/context/GameContext';
 import { getPlayers, getGameInfo, getPlayer, startGame, calculateFigures } from '../services/services';
 import { useLobbySocket } from '@/components/hooks/use-lobby-socket';
@@ -11,13 +11,28 @@ import StartButton from '../components/ui/StartButton';
 
 export default function Lobby() {
   const { gameId } = useParams();
-  const { players, setPlayers, playerId, gameName, setGameName } = useGameContext();
+  let {playerId} = useParams();
+  playerId = Number(playerId);
+  const { players, setPlayers, setPlayerId, gameName, setGameName, username, setUsername } = useGameContext();
   const [iniciateActive, setIniciateActive] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState(0);
   const [minPlayers, setMinPlayers] = useState(Infinity);
   const [host, setHost] = useState(false);
   const { socket } = useSocketContext();
   const [previousPlayers, setPreviousPlayers] = useState([]);
+
+  // variables para manejar local storage
+  const location = useLocation();
+  const url = location.pathname;
+  /*
+  window.performance.getEntriesByType("navigation") method returns an array of PerformanceNavigationTiming entries, which includes the type of page load
+    . "navigate": TYPE_NAVIGATE (Basic navigation)
+    . "reload": TYPE_RELOAD
+    . "back_forward": TYPE_BACK_FORWARD
+    . "prerender": TYPE_PRERENDER
+  */
+  let navigationType = window.performance.getEntriesByType("navigation")[0].type;
+
 
   const fetchPlayersInfo = async () => {
     try {
@@ -64,7 +79,7 @@ export default function Lobby() {
       console.error("Error al obtener jugadores", err);
     }
   };
-  
+
 
   useEffect(() => {
     getGameInfo(gameId).then((res) => {
@@ -76,14 +91,16 @@ export default function Lobby() {
       console.error(`Error: Unable to retrieve basic game data. ${err}`)
     );
 
-    getPlayer(gameId, playerId).then((res) => {
-      setHost(res.host);
-    }).catch((err) =>
-      console.error(`Error: Unable to retrieve player data. ${err}`)
-    );
+    //if (navigationType != 'reload') {
+      getPlayer(gameId, playerId).then((res) => {
+        setHost(res.host);
+      }).catch((err) =>
+        console.error(`Error: Unable to retrieve player data. ${err}`)
+      );
+    //}
 
     fetchPlayersInfo(); // Initial fetch
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     // Check if the button should be active
@@ -92,7 +109,33 @@ export default function Lobby() {
     } else {
       setIniciateActive(false);
     }
-  }, [players, host, minPlayers]); 
+  }, [players, host, minPlayers]);
+
+
+  // local storage -> seteo y obtencion de data
+    useEffect(() => {
+
+      // si recargo la pagina, traigo la data de local storage
+      if (navigationType === 'reload') {
+        const data = JSON.parse(sessionStorage.getItem(url));
+        console.log(`local storage data ${JSON.stringify(data)}`);
+        if(data){
+          setPlayerId(data.playerId);
+          setHost(data.host);
+          setUsername(data.username);
+        }
+        console.log(`PLAYERS = ${JSON.stringify(players)}`)
+      };
+
+      // si estoy en la pagina, seteo la data en local storage
+      if (navigationType === 'navigate' || navigationType === 'prerender') {
+        const data = {
+                      username: username,
+                      host: host,
+                     };
+        sessionStorage.setItem(url,JSON.stringify(data));
+      };
+  }, [location.pathname, username, playerId, host, players]);
 
 
   useLobbySocket(gameId, fetchPlayersInfo, host); // Subscribe to events for dynamic updates

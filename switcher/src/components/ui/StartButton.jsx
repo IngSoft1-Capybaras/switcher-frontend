@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { startGame } from '@/services/services';
 import { FaPlay } from 'react-icons/fa';
-
+import { useLocation } from 'react-router-dom'
 
 export default function StartButton({ gameId, isActive }) {
     const [showTooltip, setShowTooltip] = useState(false);
     const [error, setError] = useState('');
     const [showError, setShowError] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         setTimeout(() => setShowError(false), [1000])
     }, [showError, setShowError])
-    
+
 
     const onStartClick = () => {
         if (isActive) {
-            startGame(gameId).catch(error => {
-                setError(error.message);
-                console.error(error);
-                setShowError(true);
-            });
+            startGame(gameId)
+                .catch(error => {
+                    setError(error.message);
+                    console.error(error);
+                    setShowError(true);
+                });
         }
     };
-
     return (
-        <div className="relative w-100"> 
+        <div className="relative w-100">
             <button
                 onClick={onStartClick}
                 onMouseEnter={() => setShowTooltip(true)}

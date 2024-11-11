@@ -89,11 +89,11 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
               (index === movementCards.length - 1 && movementCards.length !== 1) ? 'rotate-12' : '-translate-y-5'
             )}
             onClick={() => handleCardSelect(card)}
-            style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
+            style={{ cursor: playerId == currentTurn ? 'pointer' : 'not-allowed', opacity: playerId == currentTurn ? 1 : 0.5 }}
           >
             {card.used ? (
               <img
-              src={cardImg("DORSO_MOV")} 
+              src={cardImg("DORSO_MOV")}
               alt={`Dorso de carta de movimiento`}
               data-testid="UsedMovementCardId"
               className="object-cover w-full h-full"

@@ -178,10 +178,11 @@ export default function ActiveGame() {
         const remaining = Math.max(0, TIMER_DURATION - elapsedTime);
         setRemainingTime(remaining / 1000);
 
-        if (currentTurn === playerId){
-          if (remaining <= 0) {
-            clearInterval(intervalId);
-            localStorage.removeItem(timer_storage_key);
+
+        if (remaining <= 0) {
+          clearInterval(intervalId);
+          localStorage.removeItem(timer_storage_key);
+          if (currentTurn === playerId){
             pathEndTurn(gameId);
           }
         }
@@ -284,12 +285,13 @@ export default function ActiveGame() {
               resetBlock={resetBlock}
             />
             {currentTurn === player.id && (
-              <div className="w-[600px] mt-2">
+              <div className="absolute bottom-0 left-0 right-0 h-2 overflow-hidden">
                 <motion.div
-                  className={`absolute bottom-0 left-0 right-0 h-1 ${
-                      remainingTime < 30 ? 'bg-red-500' : 'bg-white'
-                  }`}
-                  style={{ width: calculateTimeBar(remainingTime) }}
+                  className={`h-full bg-white`}
+                  style={{
+                    width: calculateTimeBar(remainingTime),
+                    maxWidth: '100%'
+                  }}
                   transition={{ duration: 0.5 }}
                 />
               </div>
@@ -365,12 +367,15 @@ export default function ActiveGame() {
             </div>
           </div>
           {currentTurn === playerId && (
-            <div className="w-[600px] mt-2">
+            <div className="w-[600px] mt-2 overflow-hidden">
               <motion.div
                 className={`h-2 z-40 ${
-                  remainingTime < 30 ? 'bg-red-500' : 'bg-green-500'
+                  remainingTime < 15 ? 'bg-red-500' : 'bg-green-500'
                 }`}
-                style={{ width: calculateTimeBar(remainingTime) }}
+                style={{
+                  width: calculateTimeBar(remainingTime),
+                  maxWidth: '100%'
+                }}
                 transition={{ duration: 0.5 }}
               />
             </div>

@@ -1,11 +1,11 @@
 import { useSocketContext } from '@/context/SocketContext';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export function useLobbySocket(gameId, fetchGameInfo) {
   const { socket } = useSocketContext();  // Get WebSocket instance
   const navigate = useNavigate();
-
+  const {playerId} = useParams();
   useEffect(() => {
     if (!socket) return;
 
@@ -17,11 +17,11 @@ export function useLobbySocket(gameId, fetchGameInfo) {
       }
 
       if (data.type === `${gameId}:GAME_STARTED`) {
-        navigate(`/games/ongoing/${gameId}`);
+        navigate(`/games/ongoing/${gameId}/${playerId}`);
       }
 
       // si el owner abandona el lobby, redirigir a los jugadores a la pantalla de juegos
-      if (data.type === `OWNER_LEFT`) {
+      if (data.type === `${gameId}:OWNER_LEFT`) {
         navigate('/games');
       }
     };

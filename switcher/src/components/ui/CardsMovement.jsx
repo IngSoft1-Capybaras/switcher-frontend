@@ -6,7 +6,7 @@ import { useUpdateCardsMovementSocket } from '@/components/hooks/used-update-car
 import { AnimatedGroup } from './animated-group';
 
 // Componente que representa las cartas de movimiento
-export default function CardsMovement ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn, resetFigureSelection}) {
+export default function CardsMovement ({ gameId, playerId, setSelectedMovementCard, selectedMovementCard, currentTurn, resetFigureSelection, resetBlock}) {
 
   const [movementCards, setMovementCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +38,14 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
     console.log('CartaMovement seleccionada:', card);
     setSelectedMovementCard(card);
     resetFigureSelection();
+    resetBlock();
   };
 
   // Escucha el socket de actualización de cartas de movimiento (card.used y undo_move)
   useUpdateCardsMovementSocket(gameId, playerId, fetchMovementCards);
 
-  if (loading) return <div>Cargando cartas de movimiento...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className='m-auto align-middle'>Cargando cartas de movimiento...</div>;
+  if (error) return <div className='w-full h-full mt-10 text-center'>{error}</div>;
 
   return (
     // <div className="">
@@ -88,11 +89,11 @@ export default function CardsMovement ({ gameId, playerId, setSelectedMovementCa
               (index === movementCards.length - 1 && movementCards.length !== 1) ? 'rotate-12' : '-translate-y-5'
             )}
             onClick={() => handleCardSelect(card)}
-            style={{ cursor: playerId === currentTurn ? 'pointer' : 'not-allowed', opacity: playerId === currentTurn ? 1 : 0.5 }}
+            style={{ cursor: playerId == currentTurn ? 'pointer' : 'not-allowed', opacity: playerId == currentTurn ? 1 : 0.5 }}
           >
             {card.used ? (
               <img
-              src={cardImg("DORSO_MOV")} 
+              src={cardImg("DORSO_MOV")}
               alt={`Dorso de carta de movimiento`}
               data-testid="UsedMovementCardId"
               className="object-cover w-full h-full"

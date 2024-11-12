@@ -21,7 +21,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
           
           
 
-          <div className="bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900">
+          <div className=" bg-zinc-900 p-8 rounded-lg shadow-md border border-zinc-800 mx-auto">
             <ul className="flex flex-col gap-4">
               {games.map((game) => {
                
@@ -32,19 +32,19 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
                   <li
                     key={game.id}
                     onClick={() => handleGameSelect(game)}
-                    className={`group rounded-lg p-6 shadow border  relative transition-all duration-300 cursor-pointer ${
+                    className={`bg-zinc-800 group rounded-lg p-6 shadow border  relative transition-all duration-300 cursor-pointer ${
                       isFull
-                        ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed opacity-50'
+                        ? 'bg-zinc-700 text-zinc-300 cursor-not-allowed opacity-50'
                         : isSelected
-                        ? ' border-blue-500'
+                        ? ' border-green-500'
                         : 'border-zinc-800'
                     }`}
                   >
                     {/* Game details spread out with space-between */}
                     <div className="flex justify-between w-full">
-                      <div className="flex flex-col">
+                      {/* <div className="flex flex-col"> */}
                         <span className="text-xl font-semibold text-zinc-100">{game.name}</span>
-                      </div>
+                      {/* </div> */}
 
                       
                         <span className={`${isFull ? 'text-red-500' : 'text-zinc-300'}`}>
@@ -69,7 +69,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
         <button
           onClick={() => setCurrentPage(currentPage - 1)}
           disabled={currentPage === 1}
-          className="bg-zinc-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-zinc-500 transition-all duration-200"
+          className="bg-green-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-green-500 transition-all duration-200"
         >
           Anterior
         </button>
@@ -79,7 +79,7 @@ export default function GamesList({ games, currentPage, setCurrentPage, totalPag
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="bg-zinc-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-zinc-500 transition-all duration-200"
+          className="bg-green-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-green-500 transition-all duration-200"
         >
           Siguiente
         </button>

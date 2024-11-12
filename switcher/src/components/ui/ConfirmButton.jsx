@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { calculateFigures, playMovementCard } from "@/services/services";
+import { playMovementCard } from "@/services/services";
 import { IoMdMove } from "react-icons/io";
+
+import { useSocketContext } from "@/context/SocketContext";
+import { useGameContext } from "@/context/GameContext";
 
 
 export default function ConfirmButton({ gameId, selectedCard, selectedPositions, playerId, currentTurn, resetMov }) {
     const [error, setError] = useState(null);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [showError, setShowError] = useState(false);
-    const [showTooltip, setShowTooltip] = useState(false);  
-
+    const [showTooltip, setShowTooltip] = useState(false);
+    const {socket} = useSocketContext();
+    const {username} = useGameContext();
     useEffect(() => {
         // Habilita el botón solo si es el turno del jugador actual y hay una carta seleccionada y dos posiciones.
         if (currentTurn === playerId && selectedCard && selectedPositions.length === 2) {
@@ -31,11 +35,18 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
                 cardId: selectedCard.id,
                 posFrom: posFrom,
                 posTo: posTo,
-            
+
             })
             .then((res) => {
                 resetMov();
                 setError(null);
+                socket.send(JSON.stringify(
+                    {
+                      type: `${gameId}:CHAT_MESSAGE`,
+                      message: `${username} realizo un movimiento.`
+                    }
+                  ))
+
                 return;
             })
             .catch(error=>{
@@ -52,20 +63,20 @@ export default function ConfirmButton({ gameId, selectedCard, selectedPositions,
             })
         }
     };
-    
+
 
     return (
         <div className="relative">
             <button
                 data-testid = 'claimButtonTestId'
-                onClick={onConfirmMove} 
+                onClick={onConfirmMove}
                 disabled={!isButtonActive}
                 className={`text-white ${((playerId == currentTurn) && isButtonActive) ? 'animate-bounce' : 'opacity-50'}`}
 
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
             >
-                <IoMdMove size={28}/>
+                <IoMdMove size={40}/>
             </button>
 
             {showTooltip && (

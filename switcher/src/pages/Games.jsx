@@ -1,11 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaPlus, FaPlay, FaUndo, FaFilter } from 'react-icons/fa';
+import { FaPlus, FaPlay } from 'react-icons/fa';
 import GamesList from '../components/ui/GamesList';
 import { useGameSocket } from '../components/hooks/use-games-socket';
 import { getGames, joinGame } from '../services/services';
 import { useGameContext } from '@/context/GameContext';
 import { PageFilter } from '@/components/ui/pageFilter';
+import { MdOutlineCleaningServices } from "react-icons/md";
+
+const PasswordModal = ({ isOpen, onClose, onSubmit, error }) => {
+  const [password, setPassword] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(password);
+    setPassword('');
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-zinc-900 p-8 rounded-lg shadow-md border border-zinc-800 w-80 h-auto mx-auto">
+        <h2 className="text-3xl mb-4">Ingrese la contraseña</h2>
+        <form onSubmit={handleSubmit}>
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full bg-zinc-800 text-white rounded-full px-4 py-2 focus:outline-none"
+          />
+          {error && <p className="text-red-500 mt-1 ml-2">Contraseña incorrecta</p>}
+          <div className="flex mt-6 justify-end space-x-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-400 hover:bg-gray-300 rounded"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded"
+            >
+              Entrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const Games = () => {
   const navigate = useNavigate();
@@ -17,6 +64,9 @@ const Games = () => {
   const { setPlayerId, username } = useGameContext();
   const [formData, setFormData] = useState({ name: '', players: '' });
   const [isFiltering, setIsFiltering] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [error, setError] = useState('');
+
 
   const handleCreateGame = () => {
     navigate('/games/create');
@@ -41,13 +91,32 @@ const Games = () => {
 
   const handleJoinGame = () => {
     if (selectedGame) {
-      joinGame(selectedGame.id, username)
+      if (selectedGame.is_private) {
+        // Open modal if game is private
+        setIsPasswordModalOpen(true);
+      } else {
+        // Join directly if game is public
+        joinGame(selectedGame.id, username)
+          .then((res) => {
+            setPlayerId(res.player_id);
+            navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
+          })
+          .catch((err) => console.error("Error joining game"));
+      }
+    }
+  };
+
+  const handlePasswordSubmit = (password) => {
+    if (selectedGame) {
+      joinGame(selectedGame.id, username, password)
         .then((res) => {
           setPlayerId(res.player_id);
-          navigate(`/games/lobby/${selectedGame.id}`);
+          navigate(`/games/lobby/${selectedGame.id}/${res.player_id}`);
+
         })
-        .catch((err) => console.error("Error entrando al juego"));
+        .catch((err) => setError(err));
     }
+    // setIsPasswordModalOpen(false);
   };
 
   useGameSocket(fetchGames, currentPage, isFiltering, formData);
@@ -57,32 +126,17 @@ const Games = () => {
   }, [currentPage, isFiltering]);
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-black space-y-8 text-white">
-      <h1 className="text-5xl font-bold text-white mb-6">Lista de partidas</h1>
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-zinc-950 text-white">
+      <h1 className="w-full text-6xl text-center mb-10 text-white">Lista de partidas</h1>
 
-      <div className="w-1/3">
+      <div className="sm:w-3/4 md:w-[700px] lg:1/2">
         <div className="flex justify-between mb-4 items-center">
           {/* Create Game Button */}
           <button
             onClick={handleCreateGame}
-            className="text-white py-2 px-4 rounded hover:text-gray-500 transition-all duration-200 flex items-center"
+            className="text-white py-2 px-4 text-4xl rounded hover:text-gray-500 transition-all duration-200 flex items-center"
           >
-            <FaPlus className="mr-2" /> Crear
-          </button>
-
-          {/* Join Game Button */}
-          <button
-            onClick={handleJoinGame}
-            disabled={!selectedGame || selectedGame.players_count >= selectedGame.max_players}
-            className={`text-white rounded transition-all duration-200 flex items-center ${
-              selectedGame
-                ? selectedGame.players_count >= selectedGame.max_players
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-green-600 hover:text-green-700'
-                : 'text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <FaPlay className="mr-2" /> Jugar
+            <FaPlus size={30} className="mr-2" />
           </button>
 
           <div className="flex space-x-4 items-center">
@@ -96,25 +150,32 @@ const Games = () => {
               fetchGames={fetchGames}
             />
 
-            {/* Filter Icon
-            <button
-              onClick={() => setIsFiltering(true)}
-              className="text-white rounded hover:text-gray-400 transition-all duration-200 flex items-center"
-            >
-              <FaFilter className="mr-2" />
-            </button> */}
-
             {/* Undo Filter Button */}
             <button
               disabled={!isFiltering}
               onClick={handleRemoveFilter}
-              className={`text-white rounded hover:text-gray-500 transition-all duration-200 flex items-center ${
-                !isFiltering ? 'cursor-not-allowed' : ''
+              className={`py-2 px-4 rounded transition-all duration-200 flex items-center ${
+                isFiltering
+                  ? 'text-red-500 hover:text-red-600'
+                  : 'text-gray-400 cursor-not-allowed'
               }`}
             >
-              <FaUndo className="mr-2" />
+              <MdOutlineCleaningServices size={30} className="mr-2" />
             </button>
           </div>
+
+          {/* Join Game Button */}
+          <button
+            onClick={handleJoinGame}
+            disabled={!selectedGame}
+            className={`py-2 px-4 rounded transition-all duration-200 flex items-center ${
+              selectedGame
+                ? 'text-green-600 hover:text-green-700'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            <FaPlay size={30} className="mr-2" />
+          </button>
         </div>
 
         <GamesList
@@ -127,6 +188,17 @@ const Games = () => {
           setSelectedGame={setSelectedGame}
         />
       </div>
+
+      {/* Password Modal */}
+      <PasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => {
+          setIsPasswordModalOpen(false);
+          setError('')
+        }}
+        onSubmit={handlePasswordSubmit}
+        error={error}
+      />
     </div>
   );
 };

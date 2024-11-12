@@ -39,15 +39,15 @@ function FormSlider({ value, onChange }) {
       max={MAX_PLAYERS}
       sx={{
         width: 250,
-        color: '#eab308',
+        color: '#22c55e',
         '& .MuiSlider-thumb': {
-          backgroundColor: '#eab308',
+          backgroundColor: '#22c55e',
         },
         '& .MuiSlider-track': {
-          backgroundColor: '#eab308',
+          backgroundColor: '#22c55e',
         },
         '& .MuiSlider-rail': {
-          backgroundColor: '#eab308',
+          backgroundColor: '#22c55e',
         },
       }}
     />
@@ -69,6 +69,7 @@ export default function CreateGameForm() {
   });
 
   const onSubmit = async (data) => {
+    console.log(data)
     toast({
       title: "You submitted the following values:",
       description: (
@@ -81,8 +82,8 @@ export default function CreateGameForm() {
     try {
       const result = await submitForm(data, username);
       setPlayerId(result.player.id);
-      navigate(`/games/lobby/${result.game.id}`);
-    } 
+      navigate(`/games/lobby/${result.game.id}/${result.player.id}`);
+    }
     catch (error) {
       setErrorMessage(error.message);
 
@@ -90,23 +91,23 @@ export default function CreateGameForm() {
   };
 
   return (
-    <form 
-      data-testid="formComponent" 
-      onSubmit={form.handleSubmit(onSubmit)} 
-      className="space-y-8 bg-zinc-950 p-8 rounded-lg shadow-lg border border-zinc-900 max-w-lg mx-auto"
+    <form
+      data-testid="formComponent"
+      onSubmit={form.handleSubmit(onSubmit)}
+      className=" bg-zinc-900 p-8 rounded-lg shadow-md border border-zinc-800 max-w-lg mx-auto"
     >
 
-      <div className="mb-6"> 
+      <div className="mb-6">
         <label className="block text-lg text-white mb-2">Nombre de la partida</label>
-        <input 
-          placeholder="Ingrese el nombre de la partida" 
-          {...form.register('name')} 
-          className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2"
+        <input
+          placeholder="Ingrese el nombre de la partida"
+          {...form.register('name')}
+          className="w-full bg-zinc-800 text-white rounded-full px-4 py-2 focus:outline-none"
         />
         {form.formState.errors.name && <p className="text-red-500 mt-1">{form.formState.errors.name.message}</p>}
       </div>
 
-      <div className="mb-6"> 
+      <div className="mb-6">
         <label className="block text-lg text-white mb-2">Rango de jugadores</label>
         <div className="flex justify-center">
           <Controller
@@ -120,19 +121,22 @@ export default function CreateGameForm() {
         {form.formState.errors.playersRange && <p className="text-red-500 text-center mt-1">{form.formState.errors.playersRange.message}</p>}
       </div>
 
-      <div className="mb-6">
+       {/* Password Field */}
+       <div className="mb-6">
         <label className="block text-lg text-white mb-2">Contraseña (opcional)</label>
-        <input 
-          placeholder="Ingrese una contraseña" 
-          {...form.register('password')} 
-          className="p-3 w-full rounded-lg bg-zinc-900 text-white border border-zinc-800 focus:outline-none focus:ring-2"
+        <input
+          type="password"
+          placeholder="Ingrese una contraseña"
+          {...form.register('password')}
+          className="w-full bg-zinc-800 text-white  rounded-full px-4 py-2 focus:outline-none"
         />
         {form.formState.errors.password && <p className="text-red-500 mt-1">{form.formState.errors.password.message}</p>}
       </div>
 
+
       {/* Centered button */}
       <div className="flex justify-center">
-        <Button type="submit" className="bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-600 transition-all duration-200 w-1/3">
+        <Button type="submit" className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition-all duration-200 w-1/3">
           Crear
         </Button>
       </div>

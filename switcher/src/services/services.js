@@ -146,27 +146,39 @@ export async function startGame(gameId) {
 }
 
 
-export async function joinGame(gameId, playerName) {
-    const url = `${apiUrl}/players/join/${gameId}`;
+export async function joinGame(gameId, playerName, password) {
+  const url = `${apiUrl}/players/join/${gameId}`;
+  console.log(`Password to send: ${password}`); // Logging the password to confirm it's being passed
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            'player_name': playerName
-        })
-    });
+  try {
+      const payload = {
+          player_name: playerName,
+          password: password
+      };
 
-    if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-    }
 
-    const data = await response.json();
+      console.log(JSON.stringify(payload))
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+      });
 
-    return data;
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Error: ${errorData.detail || `Response status: ${response.status}`}`);
+      }
+
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error("Join game failed:", error);
+      throw error; 
+  }
 }
+
 // Finalizar turno
 export async function pathEndTurn(gameId) {
     try {
@@ -234,8 +246,10 @@ export const fetchTurnInfo = async (activeGameId) => {
         if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
         }
-
+        
         const data = await response.json();
+
+        console.log(data);
         return data;
     } catch (error) {
       throw new Error(`Error al obtener información del turno ${error.message}`);
@@ -294,6 +308,7 @@ export const submitForm = async (data, username) => {
       name: data.name,
       max_players: data.playersRange[1],
       min_players: data.playersRange[0],
+      password: data.password
     },
     player: {
       name: username,
@@ -380,5 +395,53 @@ export const calculateFigures = async (gameId) => {
   }
   catch (error) {
     throw new Error(`Error al calcular figuras: ${error.message}`);
+  }
+}
+
+export const blockCardFigure = async (gameId, blockerPlayerId, blockedPlayerId, cardId, figure) => {
+  const url = `${apiUrl}/deck/figure/block_card`;
+  const body = {
+    game_id: gameId,
+    blocker_player_id: blockerPlayerId,
+    blocked_player_id: blockedPlayerId,
+    card_id: cardId,
+    figure: figure
+  };
+  console.log(`body sent to block card: ${JSON.stringify(body)}`);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error al bloquear carta: ${errorMessage}`);
+    }
+    return response.json();
+  }
+  catch (error) {
+    throw new Error(`Error al bloquear carta: ${error.message}`);
+  }
+}
+
+export const fetchGameState = async (activeGameId) => {
+  try {
+      const response = await fetch(`${apiUrl}/game_state/${activeGameId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+
+      console.log(data);
+      return data;
+  } catch (error) {
+    throw new Error(`Error al obtener información del turno ${error.message}`);
   }
 }

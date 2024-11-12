@@ -34,7 +34,6 @@ global.fetch = vi.fn();
 describe('Leave Button', () => {
   const history = createMemoryHistory();
   
-  // Mock para setLoadingOut
   const setLoadingOut = vi.fn();
 
   beforeEach(() => {
@@ -44,7 +43,7 @@ describe('Leave Button', () => {
     render(
       <GameProvider>
         <Router location={history.location} navigator={history}>
-          <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} /> {/* Aquí pasamos setLoadingOut */}
+          <LeaveButton gameId={gameId} setLoadingOut={setLoadingOut} /> 
         </Router>
       </GameProvider>
     );
@@ -76,5 +75,4 @@ describe('Leave Button', () => {
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/games'));
   });
 
-  // Agregar otros tests según sea necesario
 });

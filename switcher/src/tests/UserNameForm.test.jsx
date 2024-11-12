@@ -4,7 +4,6 @@ import NameForm from '../components/ui/NameForm';
 import { toast } from "@/components/hooks/use-toast";
 import "@testing-library/jest-dom";
 
-// Mock useNavigate from react-router-dom
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
@@ -13,15 +12,13 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-// Mock the toast notification
 vi.mock("@/components/hooks/use-toast", () => ({
   toast: vi.fn(),
 }));
 
-// Mock the useGameContext to avoid undefined error
 vi.mock("@/context/GameContext", () => ({
   useGameContext: () => ({
-    setUsername: vi.fn(), // Mock the setUsername function
+    setUsername: vi.fn(), 
   }),
 }));
 

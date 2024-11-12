@@ -1,6 +1,6 @@
 import { useGameContext } from '../../context/GameContext';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { calculateFigures, leaveGame } from "@/services/services";
 import { MdLogout } from "react-icons/md";
 
@@ -10,6 +10,11 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setShowError(false), [1000])
+  }, [showError, setShowError])
 
   const onAbandon = async () => {
     
@@ -22,6 +27,7 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
         navigate('/games');
       }).catch(error => {
         setError(error.message);
+        setShowError(true);
         console.error(error);
       }). finally(() => {
         setLoadingOut(false);
@@ -31,7 +37,7 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
   }
 
   return (
-    <div className="relative"> {/* This ensures the tooltip is positioned relative to this button */}
+    <div className="relative"> 
       <button
         data-testid='leaveButtonId'
         onClick={onAbandon}
@@ -40,7 +46,7 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
         className="text-white hover:scale-110 transition-transform"
 
       >
-        <MdLogout size={28} />
+        <MdLogout size={40} />
       </button>
 
       {showTooltip && (
@@ -49,7 +55,11 @@ export default function LeaveButton({ gameId, setLoadingOut }) {
         </div>
       )}
 
-      {error && <p>{error}</p>}
+      {showError && (
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white p-4 rounded shadow-md z-50">
+              {error}
+          </div>
+      )}
     </div>
   );
 }

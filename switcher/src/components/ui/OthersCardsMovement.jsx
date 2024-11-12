@@ -35,66 +35,64 @@ export default function OthersCardsMovement({ gameId, playerId }) {
 
     return (
         <div className='absolute flex flex-col mt-2 w-full h-full'>
-        <AnimatedGroup
-            className='flex justify-center items-center transform translate-x-[-8rem] translate-y-[-15rem]'
-            variants={{
-                container: {
-                    hidden: { opacity: 0 },
-                    visible: {
-                        opacity: 1,
-                        transition: {
-                            staggerChildren: 0.05,
+            <AnimatedGroup
+                className='flex justify-center items-center transform translate-x-[-8rem] translate-y-[-15rem]'
+                variants={{
+                    container: {
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: {
+                                staggerChildren: 0.05,
+                            },
                         },
                     },
-                },
-                item: {
-                    hidden: { opacity: 0, y: 40, filter: 'blur(4px)' },
-                    visible: {
-                        opacity: 1,
-                        y: 0,
-                        filter: 'blur(0px)',
-                        transition: {
-                            duration: 1.2,
-                            type: 'spring',
-                            bounce: 0.3,
+                    item: {
+                        hidden: { opacity: 0, y: 40, filter: 'blur(4px)' },
+                        visible: {
+                            opacity: 1,
+                            y: 0,
+                            filter: 'blur(0px)',
+                            transition: {
+                                duration: 1.2,
+                                type: 'spring',
+                                bounce: 0.3,
+                            },
                         },
                     },
-                },
-            }}
-        >
-            {movementCards.slice(0, 3).map((card, index) => {
-                return (
-                    <div
-                    key={card.id}
-                    className={cn(
-                        "relative h-14 w-auto rounded-lg overflow-hidden transform",
-                        index === 0 ? '-rotate-0 translate-x-[-2rem] translate-y-[-2rem] z-30' :
-                        index === 1 ? 'rotate-0 translate-x-[-2rem] translate-y-[-2rem] z-20' :
-                        'rotate-0 translate-x-[-2rem] translate-y-[-2rem] z-10'
-                    )}
-                >
-                    {card.used ? (
-                        <img
-                            src={cardImg("DORSO_MOV")}
-                            alt={`Dorso de carta de movimiento`}
-                            className="object-cover w-full h-full"
-                            style={{
-                                filter: 'brightness(1.2) contrast(1.3) saturate(1.5)',
-                            }}
-        
-                        />
-                    ) : (
-                        // No se muestra la carta si esta usada
-                        <img
-                            src={cardImg("PROHIBIDO")}
-                            alt={`Carta de movimiento prohibida`}
-                            className="object-cover w-full h-full "
-                        />
-                    )}
-                </div>
-                )
-            })}
-        </AnimatedGroup>
+                }}
+            >
+                {movementCards.slice(0, 3).map((card, index) => {
+                    return (
+                        <div
+                            key={card.id}
+                            className={cn(
+                                "relative h-14 w-auto -translate-x-5 rounded-lg overflow-hidden transform",
+                                index === 0 ? '-rotate-6  translate-y-[-2rem] z-30' :
+                                index === 2 ? 'rotate-6 translate-y-[-2rem] z-20' :
+                                '  translate-y-[-2.2rem] z-10'
+                            )}
+                        >
+                            {card.used ? (
+                                <img
+                                    src={cardImg("DORSO_MOV")}
+                                    alt={`Dorso de carta de movimiento`}
+                                    className="object-cover w-full h-full"
+                                    style={{
+                                        filter: 'brightness(1.2) contrast(1.3) saturate(1.5)',
+                                    }}
+                                />
+                            ) : (
+                                <img
+                                    src={cardImg("PROHIBIDO")}
+                                    alt={`Carta de movimiento prohibida`}
+                                    className="object-cover w-full h-full"
+                                />
+                            )}
+                        </div>
+                    )
+                })}
+            </AnimatedGroup>
         </div>
     );
 }

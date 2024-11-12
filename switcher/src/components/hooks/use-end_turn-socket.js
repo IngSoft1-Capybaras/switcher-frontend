@@ -12,6 +12,11 @@ export function useEndTurnSocket(gameId, playerId, setIsButtonActive) {
             const data = JSON.parse(event.data);
             if (data.type === `${gameId}:NEXT_TURN`) {
                 data.nextPlayerId == playerId ? setIsButtonActive(true) : setIsButtonActive(false);
+
+                // reseteo timer
+                startTime = Date.now();
+                sessionStorage.setItem(timer_storage_key, startTime.toString());
+            
             }
         };
 
